@@ -1,84 +1,9 @@
-#########################
-# WHOSBALL              #
-#########################
+# WHOSBALL
 
-Automated Foosball Project
+##### Automated Foosball Project
 
+Every year, I accept an annual "challenge" of some kind. In past years, this has been anything from running a marathon (2007) or competing in a 1/2 ironman (2010) to a food challenge (2012) or even trying out for American Ninja Warrior (2018). According to StrengthsFinder, "learner" is my #1 strength, so the goal is to continually push myself into new areas that I'm less familiar with so that I continue to expand my horizons and grow as a leader.
 
+This year (2020), I've accepted the challenge to build an Automated Foosball Table. This will allow me to gain working knowledge of Python, OpenCV, Artificial Intelligence (AI), and Machine Learning (ML), as well as brush up on other areas including robotics, physics, electrical engineering, and programming. As an added benefit, it will also allow my oldest daughter (6 yr) to be able to play foosball any time she wants, even when I'm not available.
 
-#########################
-# SETUP PI              #
-#########################
-
-# Update packages, enable  camera & SSH
-sudo apt update && sudo apt upgrade
-sudo raspi-config
-
-# Set default python version to python3
-sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
-sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.7 2
-
-# Install packages
-sudo apt install -y git python3-gpiozero python3-numpy python3-pip vim
-pip3 install --upgrade imutils
-
-
-
-#########################
-# INSTALL OPENCV        #
-#########################
-
-# Install developer tools
-sudo apt install -y build-essential cmake pkg-config
-
-# Install image and video I/O packages (allows loading of various file formats from disk)
-sudo apt install -y libjpeg-dev libtiff5-dev libjasper-dev libpng-dev
-sudo apt install -y libavcodec-dev libavformat-dev libswscale-dev libv4l-dev
-sudo apt install -y libxvidcore-dev libx264-dev
-
-# Install GTK development library
-sudo apt install -y libfontconfig1-dev libcairo2-dev
-sudo apt install -y libgdk-pixbuf2.0-dev libpango1.0-dev
-sudo apt install -y libgtk2.0-dev libgtk-3-dev
-
-# Install optimization libraries (useful for Raspberry Pi)
-sudo apt install -y libatlas-base-dev gfortran
-
-# Install dependencies for opencv and so we can compile OpenCV with python bindings
-sudo apt install -y libhdf5-dev libhdf5-serial-dev libhdf5-103
-sudo apt install -y libqtgui4 libqtwebkit4 libqt4-test python3-pyqt5
-sudo apt install -y python3-dev
-
-# Install camera module
-pip3 install "picamera[array]"
-
-# Install OpenCV
-pip3 install opencv-contrib-python==4.1.0.25
-
-# Install missing dependencies
-# ImportError: libImath-2_2.so.12: cannot open shared object file: No such file or directory
-# ImportError: libIlmImf-2_2.so.22: cannot open shared object file: No such file or directory
-sudo apt install -y libilmbase23 libopenexr-dev
-
-
-
-#########################
-# FINISH SETUP          #
-#########################
-
-# Python default version
-python --version
-
-# GPIO
-pinout
-
-# Camera
-vcgencmd get_camera
-raspistill -v -o test.jpg
-
-# Clone GIT repo
-git clone https://github.com/justinmiller24/whosball.git
-cd whosball
-
-# Shut down
-sudo shutdown -h now
+The basic setup will be a foosball table and a camera connected to a Raspberry Pi. This will allow for image detection to be able to detect the position and velocity of the foosball in real time. This information will be fed into the main script, which will be running 24/7 and will allow the Raspberry Pi to control linear and rotary motors that are connected to the rods on one side of the foosball table. The end goal is to complete a working prototype of a foosball table that is capable of beating a human at the game of foosball by midnight on Dec 31, 2020.
