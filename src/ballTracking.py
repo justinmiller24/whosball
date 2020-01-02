@@ -1,18 +1,21 @@
 # USAGE
 # python ballTracking.py --video test-video.mp4
+# python ballTracking.py --picamera 1
 # python ballTracking.py
 
 # import the necessary packages
 from collections import deque
 from imutils.video import VideoStream
-import numpy as np
 import argparse
 import cv2
+import datetime
 import imutils
+import numpy as np
 import time
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
+ap.add_argument("-p", "--picamera", type=int, default=-1, help="whether or not the Raspberry Pi camera should be used")
 ap.add_argument("-v", "--video", help="path to the (optional) video file")
 ap.add_argument("-b", "--buffer", type=int, default=64, help="max buffer size")
 args = vars(ap.parse_args())
@@ -27,7 +30,8 @@ pts = deque(maxlen=args["buffer"])
 # if a video path was not supplied, grab the reference
 # to the webcam
 if not args.get("video", False):
-	vs = VideoStream(src=0).start()
+	#vs = VideoStream(src=0).start()
+	vs = VideoStream(usePiCamera=args["picamera"] > 0).start()
 
 # otherwise, grab a reference to the video file
 else:
@@ -106,7 +110,6 @@ while True:
 
 	# show the frame to our screen
 	#cv2.imshow("Frame", frame)
-	print('Skip displaying image since X server is not installed')
 	key = cv2.waitKey(1) & 0xFF
 
 	# if the 'q' key is pressed, stop the loop
