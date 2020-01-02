@@ -50,10 +50,10 @@ sudo apt install -y libqtgui4 libqtwebkit4 libqt4-test python3-pyqt5
 sudo apt install -y python3-dev
 
 # Install camera module
-pip3 install "picamera[array]"
+pip3 install --upgrade "picamera[array]"
 
 # Install OpenCV
-pip3 install opencv-contrib-python==4.1.0.25
+pip3 install --upgrade opencv-contrib-python==4.1.0.25
 
 # Install missing dependencies
 # ImportError: libImath-2_2.so.12: cannot open shared object file: No such file or directory
