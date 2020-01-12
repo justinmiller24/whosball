@@ -63,6 +63,19 @@ sudo apt install -y libilmbase23 libopenexr-dev
 
 
 #########################
+# INSTALL LXDE GUI      #
+#########################
+
+# https://www.raspberrypi.org/forums/viewtopic.php?p=890408#p890408
+sudo apt install -y --no-install-recommends xserver-xorg
+sudo apt install -y --no-install-recommends xinit
+sudo apt install -y lxde-core lxappearance
+sudo apt install -y lightdm
+sudo reboot
+
+
+
+#########################
 # FINISH SETUP          #
 #########################
 
