@@ -79,6 +79,9 @@ sudo reboot
 # FINISH SETUP          #
 #########################
 
+# Clean up unused packages
+sudo apt -y autoremove
+
 # Python default version
 python --version
 
