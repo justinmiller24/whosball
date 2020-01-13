@@ -1,7 +1,6 @@
 # WHOSBALL
 
->Automated Foosball
->Justin's 2020 Challenge
+>Automated Foosball Table
 
 Every year, I accept an annual "challenge" of some kind. In past years, this has been anything from running a marathon (2007) or completing a 1/2 ironman (2010) to a food challenge (2012) or even trying out for American Ninja Warrior (2018). According to StrengthsFinder, "learner" is my #1 strength, so the goal is to continually push myself into new areas that I'm less familiar with so that I continue to expand my horizons and grow as a leader.
 
