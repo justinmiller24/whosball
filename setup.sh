@@ -32,9 +32,6 @@ sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.7 2
 sudo apt install -y vim
 pip3 install --upgrade imutils
 
-# Download repo
-git clone https://github.com/justinmiller24/whosball.git
-
 
 #########################
 # INSTALL OPENCV        #
