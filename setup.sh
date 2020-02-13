@@ -21,17 +21,19 @@ sudo raspi-config
 
 # Remove LibreOffice packages
 sudo apt remove --purge -y libreoffice*
-sudo apt clean
-sudo apt autoremove
+sudo apt clean && sudo apt -y autoremove
 
 # Set default python version to python3
 sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
 sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.7 2
 
 # Install packages
-sudo apt install -y git python3-gpiozero python3-numpy python3-pip vim
+#sudo apt install -y git python3-gpiozero python3-numpy python3-pip vim
+sudo apt install -y vim
 pip3 install --upgrade imutils
 
+# Download repo
+git clone https://github.com/justinmiller24/whosball.git
 
 
 #########################
