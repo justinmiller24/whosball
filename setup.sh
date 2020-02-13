@@ -10,6 +10,11 @@
 # SETUP PI              #
 #########################
 
+# Download Raspbian OS
+# https://www.raspberrypi.org/downloads/raspbian/
+# Download Etcher
+# https://www.balena.io/etcher/
+
 # Update packages, enable  camera & SSH
 sudo apt update && sudo apt upgrade
 sudo raspi-config
@@ -59,19 +64,6 @@ pip3 install --upgrade opencv-contrib-python==4.1.0.25
 # ImportError: libImath-2_2.so.12: cannot open shared object file: No such file or directory
 # ImportError: libIlmImf-2_2.so.22: cannot open shared object file: No such file or directory
 sudo apt install -y libilmbase23 libopenexr-dev
-
-
-
-#########################
-# INSTALL LXDE GUI      #
-#########################
-
-# https://www.raspberrypi.org/forums/viewtopic.php?p=890408#p890408
-sudo apt install -y --no-install-recommends xserver-xorg
-sudo apt install -y --no-install-recommends xinit
-sudo apt install -y lxde-core lxappearance
-sudo apt install -y lightdm
-sudo reboot
 
 
 
