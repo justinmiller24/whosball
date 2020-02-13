@@ -19,6 +19,11 @@
 sudo apt update && sudo apt upgrade
 sudo raspi-config
 
+# Remove LibreOffice packages
+sudo apt remove --purge -y libreoffice*
+sudo apt clean
+sudo apt autoremove
+
 # Set default python version to python3
 sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
 sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.7 2
