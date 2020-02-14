@@ -29,11 +29,17 @@ while True:
 	#x = int(frame.shape[1] / 2)
 	#y = int(frame.shape[0] / 2)
 
-	# Convert to HSV
-	hsv_img = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+	# Resize image
+	#frame = imutils.resize(frame, width=600)
 
-	(h, w) = hsv_img.shape[:2]
-	print [h, w, int(h/2), int(w/2)]
+	# Convert to HSV
+	#print('Convert to HSV')
+	#hsv_img = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+	print('Determine height and width of image')
+	(h, w) = frame.shape[:2]
+	#print [h, w, int(h/2), int(w/2)]
+	#center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
+	print("Center: ", (h, w))
 	#centerPX = mask[int(h/2), int(w/2)]
     #print centerPX
 
