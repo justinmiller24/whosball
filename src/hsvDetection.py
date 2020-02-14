@@ -26,17 +26,17 @@ while True:
 	frame = frame[1]
 
 	# Find center
-	#x = int(frame.shape[1] / 2)
-	#y = int(frame.shape[0] / 2)
+	h = int(frame.shape[1] / 2)
+	w = int(frame.shape[0] / 2)
 
 	# Resize image
-	frame = imutils.resize(frame, width=600)
+	#frame = imutils.resize(frame, width=600)
 
 	# Convert to HSV
 	#print('Convert to HSV')
 	#hsv_img = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-	print('Determine height and width of image')
-	(h, w) = frame.shape[:2]
+	#print('Determine height and width of image')
+	#(h, w) = frame.shape[:2]
 	#print [h, w, int(h/2), int(w/2)]
 	#center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
 	print("Center: ", (h, w))
