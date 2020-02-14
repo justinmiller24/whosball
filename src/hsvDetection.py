@@ -30,7 +30,7 @@ while True:
 	#y = int(frame.shape[0] / 2)
 
 	# Resize image
-	#frame = imutils.resize(frame, width=600)
+	frame = imutils.resize(frame, width=600)
 
 	# Convert to HSV
 	#print('Convert to HSV')
