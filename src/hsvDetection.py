@@ -25,9 +25,17 @@ while True:
 	# handle the frame from VideoCapture or VideoStream
 	frame = frame[1]
 
+	#print("Frame: ", frame)
+
+	# convert image into numpy array
+    data = np.fromstring(frame.getvalue(), dtype=np.uint8)
+    # turn the array into a cv2 image
+    img = cv2.imdecode(data, 1)
+
 	# Find center
-	h = int(frame.shape[1] / 2)
-	w = int(frame.shape[0] / 2)
+	print("Shape: ", img.shape)
+	h = int(img.shape[1] / 2)
+	w = int(img.shape[0] / 2)
 
 	# Resize image
 	#frame = imutils.resize(frame, width=600)
@@ -71,7 +79,7 @@ while True:
 		break
 
 # stop the camera video stream
-vs.release()
+vs.stop()
 
 # close all windows
 cv2.destroyAllWindows()
