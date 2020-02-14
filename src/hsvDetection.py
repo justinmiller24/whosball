@@ -23,7 +23,7 @@ while True:
 	frame = vs.read()
 
 	# handle the frame from VideoCapture or VideoStream
-	frame = frame[1] if args.get("video", False) else frame
+	frame = frame[1]
 
 	# Find center
 	#x = int(frame.shape[1] / 2)
