@@ -17,14 +17,14 @@ import time
 ap = argparse.ArgumentParser()
 ap.add_argument("-p", "--picamera", type=int, default=-1, help="whether or not the Raspberry Pi camera should be used")
 ap.add_argument("-v", "--video", help="path to the (optional) video file")
-ap.add_argument("-b", "--buffer", type=int, default=64, help="max buffer size")
+ap.add_argument("-b", "--buffer", type=int, default=30, help="max buffer size")
 args = vars(ap.parse_args())
 
 # define the lower and upper boundaries of the "green"
 # ball in the HSV color space, then initialize the
 # list of tracked points
-ballLower = (324, 12, 37)
-ballUpper = (360, 52, 77)
+ballLower = (175, 12, 37)
+ballUpper = (180, 255, 255)
 pts = deque(maxlen=args["buffer"])
 
 # if a video path was not supplied, grab the reference
