@@ -72,7 +72,7 @@ def main():
 
             frame_to_thresh = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
-        v1_min, v2_min, v3_min, v1_max, v2_max, v3_max = get_trackbar_values(range_filter)
+        v1_min, v2_min, v3_min, v1_max, v2_max, v3_max = get_trackbar_values('HSV')
 
         thresh = cv2.inRange(frame_to_thresh, (v1_min, v2_min, v3_min), (v1_max, v2_max, v3_max))
 
