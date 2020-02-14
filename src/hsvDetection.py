@@ -33,8 +33,9 @@ while True:
 	hsv_img = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
 	(h, w) = hsv_img.shape[:2]
-	centerPX = mask[int(h/2), int(w/2)]
-    print centerPX
+	print [h, w, int(h/2), int(w/2)]
+	#centerPX = mask[int(h/2), int(w/2)]
+    #print centerPX
 
 	# Crop image
 	#cropped = image[70:170, 440:540]
