@@ -55,26 +55,22 @@ while True:
 		print("End of file")
 		break
 
-	# resize the frame, blur it, and convert it to the HSV
-	# color space
+	# Resize, blur it, and convert to HSV
 	frame = imutils.resize(frame, width=600)
 	blurred = cv2.GaussianBlur(frame, (11, 11), 0)
 	hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
 
-	# construct a mask for the color "green", then perform
-	# a series of dilations and erosions to remove any small
-	# blobs left in the mask
+	# Create "red" color mask, perform erosions and dilation to remove small blobs in mask
 	mask = cv2.inRange(hsv, ballLower, ballUpper)
 	mask = cv2.erode(mask, None, iterations=2)
 	mask = cv2.dilate(mask, None, iterations=2)
 
-	# find contours in the mask and initialize the current
-	# (x, y) center of the ball
+	# Find contours in mask and initialize the current center (x, y) of the ball
 	cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 	cnts = imutils.grab_contours(cnts)
 	center = None
 
-	# only proceed if at least one contour was found
+	# Ensure at least one contour was found
 	if len(cnts) > 0:
 
 		# find the largest contour in the mask, then use
