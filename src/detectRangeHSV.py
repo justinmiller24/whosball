@@ -61,7 +61,7 @@ def main():
     else:
         camera = cv2.VideoCapture(0)
 
-    setup_trackbars(range_filter)
+    setup_trackbars('HSV')
 
     while True:
         if args['webcam']:
