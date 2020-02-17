@@ -28,7 +28,7 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
 	# Find center and draw circle
 	w = int(img.shape[1] / 2)
 	h = int(img.shape[0] / 2)
-	cv2.circle(img, (w, h), 10, (0, 255, 255), 2)
+	cv2.circle(img, (w, h), 5, (0, 255, 255), 1)
 	#cv2.circle(img, (w, h), 5, (0, 0, 255), -1)
 
 	# Show the frame
