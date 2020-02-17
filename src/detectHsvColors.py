@@ -35,13 +35,13 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
 	cv2.imshow("Frame", img)
 	key = cv2.waitKey(1) & 0xFF
 
-	print(type(img))
-	print('RGB shape: ', img.shape)        # Rows, cols, channels
-	print('img.dtype: ', img.dtype)
-	print('img.size: ', img.size)
-	print("Center: ", (w, h))
-	print("BGR Value of center: ", img[h, w])
-	print("Grayscale Value of center: ", gray[h, w])
+	#print(type(img))
+	#print('RGB shape: ', img.shape)        # Rows, cols, channels
+	#print('img.dtype: ', img.dtype)
+	#print('img.size: ', img.size)
+	#print("Center: ", (w, h))
+	#print("BGR Value of center: ", img[h, w])
+	#print("Grayscale Value of center: ", gray[h, w])
 	print("HSV Value of center: ", hsv[h, w])
 
 	# clear the stream in preparation for the next frame
