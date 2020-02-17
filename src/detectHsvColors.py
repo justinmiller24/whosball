@@ -2,7 +2,7 @@
 # Detect HSV Colors     #
 #########################
 
-# This script is used to detect and display HSV values
+# This script is used to detect HSV color values
 # Created by Justin Miller on 2.14.2020
 
 # USAGE:
