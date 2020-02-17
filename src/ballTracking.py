@@ -20,13 +20,13 @@ ap.add_argument("-v", "--video", help="path to the (optional) video file")
 ap.add_argument("-b", "--buffer", type=int, default=30, help="max buffer size")
 args = vars(ap.parse_args())
 
-# define the lower and upper boundaries of the "green"
-# ball in the HSV color space, then initialize the
-# list of tracked points
+# Define HSV bounds for "red" foosball
 ballLower1 = (0, 70, 37)
 ballUpper1 = (3, 220, 255)
 ballLower2 = (177, 70, 37)
 ballUpper2 = (180, 220, 255)
+
+# Initialize list of tracked points
 pts = deque(maxlen=args["buffer"])
 
 # if a video path was not supplied, grab the reference
