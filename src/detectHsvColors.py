@@ -25,6 +25,12 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
 	# Convert to HSV
 	hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
+	# Find center and draw circle
+	w = int(img.shape[1] / 2)
+	h = int(img.shape[0] / 2)
+	cv2.circle(img, (w, h), 10, (0, 255, 255), 2)
+	#cv2.circle(img, (w, h), 5, (0, 0, 255), -1)
+
 	# Show the frame
 	cv2.imshow("Frame", img)
 	key = cv2.waitKey(1) & 0xFF
@@ -33,10 +39,6 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
 	print('RGB shape: ', img.shape)        # Rows, cols, channels
 	print('img.dtype: ', img.dtype)
 	print('img.size: ', img.size)
-
-	# Find center
-	w = int(img.shape[1] / 2)
-	h = int(img.shape[0] / 2)
 	print("Center: ", (w, h))
 	print("BGR Value of center: ", img[h, w])
 	print("Grayscale Value of center: ", gray[h, w])
