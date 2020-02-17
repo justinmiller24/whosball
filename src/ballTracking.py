@@ -23,8 +23,10 @@ args = vars(ap.parse_args())
 # define the lower and upper boundaries of the "green"
 # ball in the HSV color space, then initialize the
 # list of tracked points
-ballLower = (175, 12, 37)
-ballUpper = (180, 255, 255)
+ballLower1 = (0, 12, 37)
+ballUpper1 = (3, 255, 255)
+ballLower2 = (177, 12, 37)
+ballUpper2 = (180, 255, 255)
 pts = deque(maxlen=args["buffer"])
 
 # if a video path was not supplied, grab the reference
@@ -61,7 +63,9 @@ while True:
 	hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
 
 	# Create "red" color mask, perform erosions and dilation to remove small blobs in mask
-	mask = cv2.inRange(hsv, ballLower, ballUpper)
+	mask1 = cv2.inRange(hsv, ballLower1, ballUpper1)
+	mask2 = cv2.inRange(hsv, ballLower2, ballUpper2)
+	mask = cv2.bitwise_or(mask1, mask2)
 	mask = cv2.erode(mask, None, iterations=2)
 	mask = cv2.dilate(mask, None, iterations=2)
 
