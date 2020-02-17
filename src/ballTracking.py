@@ -21,10 +21,10 @@ ap.add_argument("-b", "--buffer", type=int, default=30, help="max buffer size")
 args = vars(ap.parse_args())
 
 # Define HSV bounds for "red" foosball
-ballLower1 = (0, 70, 37)
-ballUpper1 = (3, 220, 255)
-ballLower2 = (177, 70, 37)
-ballUpper2 = (180, 220, 255)
+ballLower1 = (0, 70, 50)
+ballUpper1 = (3, 220, 210)
+ballLower2 = (177, 70, 50)
+ballUpper2 = (180, 220, 210)
 
 # Initialize list of tracked points
 pts = deque(maxlen=args["buffer"])
