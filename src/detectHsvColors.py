@@ -1,19 +1,29 @@
-# import the necessary packages
+#########################
+# Detect HSV Colors     #
+#########################
+
+# This script is used to detect and display HSV values
+# Created by Justin Miller on 2.14.2020
+
+# USAGE:
+# python3 detectHsvColors.py
+
+# Import packages
 from picamera.array import PiRGBArray
 from picamera import PiCamera
 import time
 import cv2
 
-# initialize the camera and grab a reference to the raw camera capture
+# Initialize camera and grab a reference to the raw camera capture
 camera = PiCamera()
 camera.resolution = (640, 480)
 camera.framerate = 32
 rawCapture = PiRGBArray(camera, size=(640, 480))
 
-# allow the camera to warmup
+# Let camera warm up
 time.sleep(0.1)
 
-# capture frames from the camera
+# Capture frames from camera
 for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
 
 	# Convert to NumPy array
@@ -25,16 +35,17 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
 	# Convert to HSV
 	hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
-	# Find center and draw circle
+	# Find center
 	w = int(img.shape[1] / 2)
 	h = int(img.shape[0] / 2)
+
+	# Draw circle
 	cv2.circle(img, (w, h), 0, (0, 255, 255), 8)
-	#cv2.circle(img, (w, h), 5, (0, 0, 255), -1)
 
 	# Show the frame
 	cv2.imshow("Frame", img)
-	key = cv2.waitKey(1) & 0xFF
 
+	# Console log
 	#print(type(img))
 	#print('RGB shape: ', img.shape)        # Rows, cols, channels
 	#print('img.dtype: ', img.dtype)
@@ -44,9 +55,10 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
 	#print("Grayscale Value of center: ", gray[h, w])
 	print("HSV Value of center: ", hsv[h, w])
 
-	# clear the stream in preparation for the next frame
+	# Clear stream in preparation for next frame
 	rawCapture.truncate(0)
 
-	# if the `q` key was pressed, break from the loop
+	# Press `q` to break from loop
+	key = cv2.waitKey(1) & 0xFF
 	if key == ord("q"):
 		break
