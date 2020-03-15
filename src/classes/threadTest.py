@@ -1,7 +1,13 @@
 #
-# Python script to compare the effect of
-# threaded video on processing time / FPS
+# This script is used to compare the effect of
+# video threading on overall processing speed
 #
+# Created by Justin Miller on 2.14.2020
+#
+# USAGE:
+# python3 threadTest.py
+# python3 threadTest.py --num-frames=30
+# python3 threadTest.py --display=1
 
 
 # import the necessary packages
