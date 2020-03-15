@@ -15,9 +15,8 @@
 # Download Etcher
 # https://www.balena.io/etcher/
 
-# Update packages, enable  camera & SSH
-sudo apt update && sudo apt upgrade
-sudo raspi-config
+# Update packages
+sudo apt update && sudo apt upgrade -y
 
 # Remove packages to reclaim ~1GB of space
 sudo apt purge -y wolfram-engine libreoffice*
@@ -28,9 +27,14 @@ sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
 sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.7 2
 
 # Install packages
-#sudo apt install -y git python3-gpiozero python3-numpy python3-pip vim
-sudo apt install -y vim
+sudo apt install -y git i2c-tools python3-gpiozero python3-numpy python3-pip python3-smbus vim
 pip3 install --upgrade imutils
+
+# Enable camera, SSH, and I2C interface
+sudo raspi-config
+
+# Increase default I2C bus speed from 100Kbit/s to 400Kbit/s
+# https://www.raspberrypi-spy.co.uk/2018/02/change-raspberry-pi-i2c-bus-speed/
 
 
 #########################
@@ -64,11 +68,19 @@ pip3 install --upgrade "picamera[array]"
 # Install OpenCV
 pip3 install --upgrade opencv-contrib-python==4.1.0.25
 
-# Install missing dependencies
-# ImportError: libImath-2_2.so.12: cannot open shared object file: No such file or directory
-# ImportError: libIlmImf-2_2.so.22: cannot open shared object file: No such file or directory
-#sudo apt install -y libilmbase23 libopenexr-dev
 
+#########################
+# INSTALL MOTOR DRIVER  #
+#########################
+
+# Install I2C packages
+sudo apt install -y i2c-tools python3-smbus
+
+# Install CircuitPython helper library for DC and Stepper Motors
+pip3 install --upgrade adafruit-circuitpython-motorkit
+
+# Increase default I2C bus speed
+# https://www.raspberrypi-spy.co.uk/2018/02/change-raspberry-pi-i2c-bus-speed/
 
 
 #########################
@@ -87,6 +99,9 @@ pinout
 # Camera
 vcgencmd get_camera
 raspistill -v -o test.jpg
+
+# I2C
+sudo i2cdetect -y 1
 
 # Clone GIT repo
 git clone https://github.com/justinmiller24/whosball.git
