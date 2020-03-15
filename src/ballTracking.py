@@ -22,8 +22,8 @@ args = vars(ap.parse_args())
 
 # Define HSV bounds for "red" foosball
 ballLower1 = (0, 20, 30)
-ballUpper1 = (3, 255, 255)
-ballLower2 = (175, 20, 30)
+ballUpper1 = (10, 255, 255)
+ballLower2 = (170, 20, 30)
 ballUpper2 = (180, 255, 255)
 
 # Initialize list of tracked points
@@ -59,14 +59,20 @@ while True:
 
 	# Resize, blur it, and convert to HSV
 	frame = imutils.resize(frame, width=600)
-	blurred = cv2.GaussianBlur(frame, (11, 11), 0)
+	origImg = frame.copy()
+
+	# Blur image
+	blurred = cv2.GaussianBlur(origImg, (11, 11), 0)
 	hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
+
+	# Detect edges
+	edge = cv2.Canny(origImg, 100, 200)
 
 	# Create "red" color mask, perform erosions and dilation to remove small blobs in mask
 	mask1 = cv2.inRange(hsv, ballLower1, ballUpper1)
 	mask2 = cv2.inRange(hsv, ballLower2, ballUpper2)
-	mask = cv2.bitwise_or(mask1, mask2)
-	mask = cv2.erode(mask, None, iterations=2)
+	mask_pre = cv2.bitwise_or(mask1, mask2)
+	mask = cv2.erode(mask_pre, None, iterations=2)
 	mask = cv2.dilate(mask, None, iterations=2)
 
 	# Find contours in mask and initialize the current center (x, y) of the ball
@@ -84,7 +90,7 @@ while True:
 		((x, y), radius) = cv2.minEnclosingCircle(c)
 		M = cv2.moments(c)
 		center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
-		print("Center: ", center)
+		print("Center: ", center,  "Radius: ", radius)
 
 		# only proceed if the radius meets a minimum size
 		if radius > 10:
@@ -108,9 +114,35 @@ while True:
 		thickness = int(np.sqrt(args["buffer"] / float(i + 1)) * 2.5)
 		cv2.line(frame, pts[i - 1], pts[i], (0, 0, 255), thickness)
 
+	# construct the final output frame, storing the original frame
+	# at the top-left, the red channel in the top-right, the green
+	# channel in the bottom-right, and the blue channel in the
+	# bottom-left
+	#(h, w) = frame.shape[:2]
+	#output = np.zeros((h * 2, w * 2, 3), dtype="uint8")
+	#output[0:h, 0:w] = origImg
+	#output[0:h, w:w * 2] = blurred
+	#output[h:h * 2, w:w * 2] = hsv
+	#output[h:h * 2, 0:w] = frame
+	# write the output frame to file
+#	writer.write(output)
+
+
 	# show the frame to our screen
-	cv2.imshow("Frame", frame)
+	cv2.imshow("Mask", mask_pre)
+
+	#edge2 = np.reshape(edge, edge.shape + (1,))
+	#cv2.imshow("Edges", edge2)
+
+	# Create a table showing input image, mask, and output
+    #mask2 = np.stack((mask,)*3, axis=-1)
+	output = np.concatenate((origImg, frame), axis=1)
+	cv2.imshow("Output", output)
+
 	key = cv2.waitKey(1) & 0xFF
+
+	# TODO: save the frame to our video output
+	# https://www.pyimagesearch.com/2016/02/22/writing-to-video-with-opencv/
 
 	# if the 'q' key is pressed, stop the loop
 	if key == ord("q"):
