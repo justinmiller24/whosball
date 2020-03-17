@@ -25,9 +25,9 @@ ap.add_argument("--ballUpper2", help="max HSV values upper2")
 args = vars(ap.parse_args())
 
 # Define HSV bounds for foosball
-ballLower1 = (0, 100, 100)
+ballLower1 = (0, 20, 30)
 ballUpper1 = (5, 255, 255)
-ballLower2 = (175, 100, 100)
+ballLower2 = (175, 20, 30)
 ballUpper2 = (180, 255, 255)
 
 ballLower1 = ballLower1 if args.get("ballLower1", False) else ballLower1
