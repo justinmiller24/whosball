@@ -18,13 +18,23 @@ ap = argparse.ArgumentParser()
 ap.add_argument("-p", "--picamera", type=int, default=-1, help="whether or not the Raspberry Pi camera should be used")
 ap.add_argument("-v", "--video", help="path to the (optional) video file")
 ap.add_argument("-b", "--buffer", type=int, default=30, help="max buffer size")
+ap.add_argument("--ballLower1", help="min HSV values lower1")
+ap.add_argument("--ballUpper1", help="max HSV values upper1")
+ap.add_argument("--ballLower2", help="min HSV values lower2")
+ap.add_argument("--ballUpper2", help="max HSV values upper2")
 args = vars(ap.parse_args())
 
-# Define HSV bounds for "red" foosball
-ballLower1 = (0, 20, 30)
-ballUpper1 = (10, 255, 255)
-ballLower2 = (170, 20, 30)
+# Define HSV bounds for foosball
+ballLower1 = (0, 100, 100)
+ballUpper1 = (5, 255, 255)
+ballLower2 = (175, 100, 100)
 ballUpper2 = (180, 255, 255)
+
+ballLower1 = ballLower1 if args.get("ballLower1", False) else ballLower1
+ballUpper1 = ballUpper1 if args.get("ballUpper1", False) else ballUpper1
+ballLower2 = ballLower2 if args.get("ballLower2", False) else ballLower2
+ballUpper2 = ballUpper2 if args.get("ballUpper2", False) else ballUpper2
+
 
 # Initialize list of tracked points
 pts = deque(maxlen=args["buffer"])
@@ -66,7 +76,7 @@ while True:
 	hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
 
 	# Detect edges
-	edge = cv2.Canny(origImg, 100, 200)
+	#edge = cv2.Canny(origImg, 100, 200)
 
 	# Create "red" color mask, perform erosions and dilation to remove small blobs in mask
 	mask1 = cv2.inRange(hsv, ballLower1, ballUpper1)
@@ -90,7 +100,7 @@ while True:
 		((x, y), radius) = cv2.minEnclosingCircle(c)
 		M = cv2.moments(c)
 		center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
-		print("Center: ", center,  "Radius: ", radius)
+		print("Center:", center,  " Radius:", radius)
 
 		# only proceed if the radius meets a minimum size
 		if radius > 10:
@@ -129,14 +139,26 @@ while True:
 
 
 	# show the frame to our screen
-	cv2.imshow("Mask", mask_pre)
+	#cv2.imshow("Frame", frame)
+	cv2.namedWindow("mask")
+	cv2.moveWindow("mask", 100, 100)
+	cv2.imshow("mask", mask_pre)
 
 	#edge2 = np.reshape(edge, edge.shape + (1,))
 	#cv2.imshow("Edges", edge2)
 
 	# Create a table showing input image, mask, and output
+
+	#mask_pre = mask_pre.reshape((mask_pre.shape[0], mask_pre.shape[1], 1))
     #mask2 = np.stack((mask,)*3, axis=-1)
+	#print("Size: ", origImg.ndim, mask_pre.ndim, frame.ndim)
+	#print(mask_pre)
+	#break
+
+
 	output = np.concatenate((origImg, frame), axis=1)
+	cv2.namedWindow("Output")
+	cv2.moveWindow("Output", 100, 600)
 	cv2.imshow("Output", output)
 
 	key = cv2.waitKey(1) & 0xFF
