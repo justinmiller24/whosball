@@ -18,19 +18,19 @@ ap = argparse.ArgumentParser()
 ap.add_argument("-p", "--picamera", type=int, default=-1, help="whether or not the Raspberry Pi camera should be used")
 ap.add_argument("-v", "--video", help="path to the (optional) video file")
 ap.add_argument("-b", "--buffer", type=int, default=30, help="max buffer size")
-ap.add_argument("--ballLower", help="min HSV value")
-ap.add_argument("--ballUpper", help="max HSV value")
+ap.add_argument("--ballMinHSV", help="min HSV value")
+ap.add_argument("--ballMaxHSV", help="max HSV value")
 args = vars(ap.parse_args())
 
 # Define HSV bounds for foosball
-ballLower = (172, 155, 210)
-ballUpper = (176, 180, 240)
+ballMinHSV = (172, 155, 210)
+ballMaxHSV = (176, 180, 240)
 
-ballLower = tuple(int(num) for num in args.get("ballLower").replace('(', '').replace(')', '').split(','))
-ballUpper = tuple(int(num) for num in args.get("ballUpper").replace('(', '').replace(')', '').split(','))
+ballMinHSV = tuple(int(num) for num in args.get("ballMinHSV").replace('(', '').replace(')', '').split(','))
+ballMaxHSV = tuple(int(num) for num in args.get("ballMaxHSV").replace('(', '').replace(')', '').split(','))
 
-print(ballLower)
-print(ballUpper)
+print(ballMinHSV)
+print(ballMaxHSV)
 
 
 # Initialize list of tracked points
@@ -76,7 +76,7 @@ while True:
 	#edge = cv2.Canny(origImg, 100, 200)
 
 	# Create color mask for foosball and perform erosions and dilation to remove small blobs in mask
-	mask_pre = cv2.inRange(hsv, ballLower, ballUpper)
+	mask_pre = cv2.inRange(hsv, ballMinHSV, ballMaxHSV)
 	mask = cv2.erode(mask_pre, None, iterations=2)
 	mask = cv2.dilate(mask, None, iterations=2)
 
@@ -97,14 +97,10 @@ while True:
 		center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
 		print("Center:", center,  " Radius:", radius)
 
-		# only proceed if the radius meets a minimum size
-		#if radius > 8:
-			# draw the circle and centroid on the frame,
-			# then update the list of tracked points
-			#cv2.circle(frame, (int(x), int(y)), int(radius), (0, 255, 255), 2)
+		# Draw centroid
 		cv2.circle(frame, center, 5, (0, 0, 255), -1)
 
-	# update the points queue
+	# Update list of tracked points
 	pts.appendleft(center)
 
 	# loop over the set of tracked points
