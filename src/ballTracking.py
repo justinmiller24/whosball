@@ -98,7 +98,7 @@ while True:
 		print("Center:", center,  " Radius:", radius)
 
 		# only proceed if the radius meets a minimum size
-		if radius > 10:
+		if radius > 8:
 			# draw the circle and centroid on the frame,
 			# then update the list of tracked points
 			cv2.circle(frame, (int(x), int(y)), int(radius), (0, 255, 255), 2)
