@@ -18,10 +18,8 @@ ap = argparse.ArgumentParser()
 ap.add_argument("-p", "--picamera", type=int, default=-1, help="whether or not the Raspberry Pi camera should be used")
 ap.add_argument("-v", "--video", help="path to the (optional) video file")
 ap.add_argument("-b", "--buffer", type=int, default=30, help="max buffer size")
-ap.add_argument("--ballLower1", help="min HSV values lower1")
-ap.add_argument("--ballUpper1", help="max HSV values upper1")
-ap.add_argument("--ballLower2", help="min HSV values lower2")
-ap.add_argument("--ballUpper2", help="max HSV values upper2")
+ap.add_argument("--ballLower", help="min HSV value")
+ap.add_argument("--ballUpper", help="max HSV value")
 args = vars(ap.parse_args())
 
 # Define HSV bounds for foosball
