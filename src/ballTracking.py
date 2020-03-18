@@ -18,19 +18,18 @@ ap = argparse.ArgumentParser()
 ap.add_argument("-p", "--picamera", type=int, default=-1, help="whether or not the Raspberry Pi camera should be used")
 ap.add_argument("-v", "--video", help="path to the (optional) video file")
 ap.add_argument("-b", "--buffer", type=int, default=30, help="max buffer size")
-ap.add_argument("--ballMinHSV", help="min HSV value")
-ap.add_argument("--ballMaxHSV", help="max HSV value")
+#ap.add_argument("--ballMinHSV", help="min HSV value")
+#ap.add_argument("--ballMaxHSV", help="max HSV value")
 args = vars(ap.parse_args())
 
 # Define HSV bounds for foosball
-ballMinHSV = (172, 155, 210)
+ballMinHSV = (174, 155, 205)
 ballMaxHSV = (176, 180, 240)
 
-ballMinHSV = tuple(int(num) for num in args.get("ballMinHSV").replace('(', '').replace(')', '').split(','))
-ballMaxHSV = tuple(int(num) for num in args.get("ballMaxHSV").replace('(', '').replace(')', '').split(','))
-
-print(ballMinHSV)
-print(ballMaxHSV)
+#ballMinHSV = tuple(int(num) for num in args.get("ballMinHSV").replace('(', '').replace(')', '').split(','))
+#ballMaxHSV = tuple(int(num) for num in args.get("ballMaxHSV").replace('(', '').replace(')', '').split(','))
+#print(ballMinHSV)
+#print(ballMaxHSV)
 
 
 # Initialize list of tracked points
