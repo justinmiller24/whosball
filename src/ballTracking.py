@@ -55,7 +55,8 @@ print("Warming up camera or video file")
 time.sleep(2.0)
 
 # Define the codec and create VideoWriter object
-if not args.get("output", False):
+outputFile = True if args.get("output", False) else False
+if outputFile:
 	print("Recording to file:", args["output"])
 	#fourcc = cv2.VideoWriter_fourcc(*'MP4V')
 	#fourcc = cv2.VideoWriter_fourcc(*args["codec"])
