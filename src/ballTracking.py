@@ -167,7 +167,7 @@ while True:
 	output = np.concatenate((origImg, frame), axis=1)
 
 	# Write to output file
-	if not args.get("output", False):
+	if outputFile:
 		# check if the writer is None
 		if writer is None:
 			writer = cv2.VideoWriter(args["output"], fourcc, 6, (w * 2, h), True)
@@ -198,7 +198,7 @@ else:
 	vs.release()
 
 # Stop recording video file
-if not args.get("output", False):
+if outputFile:
 	writer.release()
 
 # close all windows
