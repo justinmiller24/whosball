@@ -18,7 +18,7 @@ ap = argparse.ArgumentParser()
 ap.add_argument("-p", "--picamera", type=int, default=-1, help="whether or not the Raspberry Pi camera should be used")
 ap.add_argument("-v", "--video", help="path to the (optional) video file")
 ap.add_argument("-b", "--buffer", type=int, default=30, help="max buffer size")
-ap.add_argument("-w", "--record", help="path to the (optional) location to record video output")
+ap.add_argument("-r", "--record", help="path to the (optional) location to record video output")
 #ap.add_argument("--ballMinHSV", help="min HSV value")
 #ap.add_argument("--ballMaxHSV", help="max HSV value")
 args = vars(ap.parse_args())
@@ -53,7 +53,7 @@ time.sleep(2.0)
 # Define the codec and create VideoWriter object
 if not args.get("record", False):
 	print("Recording to file:", args["record"])
-	fourcc = cv2.VideoWriter_fourcc(*'X264')
+	fourcc = cv2.VideoWriter_fourcc(*'MP4V')
 	out = cv2.VideoWriter(args["record"], fourcc, 20.0, (640,480))
 
 # keep looping
