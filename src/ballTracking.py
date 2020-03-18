@@ -18,7 +18,9 @@ ap = argparse.ArgumentParser()
 ap.add_argument("-p", "--picamera", type=int, default=-1, help="whether or not the Raspberry Pi camera should be used")
 ap.add_argument("-v", "--video", help="path to the (optional) video file")
 ap.add_argument("-b", "--buffer", type=int, default=30, help="max buffer size")
-ap.add_argument("-r", "--record", help="path to the (optional) location to record video output")
+ap.add_argument("-o", "--output", help="path to output video file")
+ap.add_argument("-f", "--fps", type=int, default=20, help="FPS of output video")
+ap.add_argument("-c", "--codec", type=str, default="MJPG", help="codec of output video")
 #ap.add_argument("--ballMinHSV", help="min HSV value")
 #ap.add_argument("--ballMaxHSV", help="max HSV value")
 args = vars(ap.parse_args())
@@ -51,10 +53,13 @@ print("Warming up camera or video file")
 time.sleep(2.0)
 
 # Define the codec and create VideoWriter object
-if not args.get("record", False):
-	print("Recording to file:", args["record"])
-	fourcc = cv2.VideoWriter_fourcc(*'MP4V')
-	out = cv2.VideoWriter(args["record"], fourcc, 20.0, (640,480))
+if not args.get("output", False):
+	print("Recording to file:", args["output"])
+	#fourcc = cv2.VideoWriter_fourcc(*'MP4V')
+	fourcc = cv2.VideoWriter_fourcc(*args["codec"])
+	writer = None
+
+#	writer = cv2.VideoWriter(args["output"], fourcc, 20.0, (640,480))
 
 # keep looping
 while True:
@@ -131,8 +136,6 @@ while True:
 	#output[0:h, w:w * 2] = blurred
 	#output[h:h * 2, w:w * 2] = hsv
 	#output[h:h * 2, 0:w] = frame
-	# write the output frame to file
-#	writer.write(output)
 
 
 	# show the frame to our screen
@@ -156,8 +159,13 @@ while True:
 	output = np.concatenate((origImg, frame), axis=1)
 
 	# Write to output file
-	if not args.get("record", False):
-		out.write(frame)
+	if not args.get("output", False):
+		# check if the writer is None
+		if writer is None:
+			writer = cv2.VideoWriter(args["output"], fourcc, args["fps"], (w * 2, h), True)
+
+		# write the output frame to file
+		writer.write(output)
 
 	# Display on screen
 	cv2.namedWindow("Output")
@@ -182,8 +190,8 @@ else:
 	vs.release()
 
 # Stop recording video file
-if not args.get("record", False):
-	out.release()
+if not args.get("output", False):
+	writer.release()
 
 # close all windows
 cv2.destroyAllWindows()
