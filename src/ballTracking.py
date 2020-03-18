@@ -1,9 +1,11 @@
 # USAGE
-# python ballTracking.py --video test-video.mp4
-# python ballTracking.py --picamera 1
 # python ballTracking.py
+# python ballTracking.py --picamera 1
+# python ballTracking.py --video test-video.mp4
+# python ballTracking.py --video input-video.mp4 --output output-video.mp4
 
 # import the necessary packages
+from __future__ import print_function
 from collections import deque
 from imutils.video import VideoStream
 import argparse
@@ -111,6 +113,10 @@ while True:
 
 		# Draw centroid
 		cv2.circle(frame, center, 5, (0, 0, 255), -1)
+
+		# Display centroid and radius info
+		#cv2.rectangle(overlay, (420, 205), (595, 385), (0, 0, 255), -1)
+		cv2.putText(overlay, "Center: {}".format(center), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 3)
 
 	# Update list of tracked points
 	pts.appendleft(center)
