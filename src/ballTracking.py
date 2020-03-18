@@ -18,6 +18,7 @@ ap = argparse.ArgumentParser()
 ap.add_argument("-p", "--picamera", type=int, default=-1, help="whether or not the Raspberry Pi camera should be used")
 ap.add_argument("-v", "--video", help="path to the (optional) video file")
 ap.add_argument("-b", "--buffer", type=int, default=30, help="max buffer size")
+ap.add_argument("-w", "--save", help="path to the (optional) location to record video output")
 #ap.add_argument("--ballMinHSV", help="min HSV value")
 #ap.add_argument("--ballMaxHSV", help="max HSV value")
 args = vars(ap.parse_args())
@@ -48,6 +49,11 @@ else:
 # allow the camera or video file to warm up
 print("Warming up camera or video file")
 time.sleep(2.0)
+
+# Define the codec and create VideoWriter object
+if not args.get("file", False):
+	fourcc = cv2.VideoWriter_fourcc(*'X264')
+	out = cv2.VideoWriter('output.mp4',fourcc, 20.0, (640,480))
 
 # keep looping
 while True:
@@ -147,6 +153,12 @@ while True:
 
 
 	output = np.concatenate((origImg, frame), axis=1)
+
+	# Write to output file
+	if not args.get("file", False):
+		out.write(frame)
+
+	# Display on screen
 	cv2.namedWindow("Output")
 	cv2.moveWindow("Output", 100, 600)
 	cv2.imshow("Output", output)
@@ -167,6 +179,10 @@ if not args.get("video", False):
 # otherwise, release the camera
 else:
 	vs.release()
+
+# Stop recording video file
+if not args.get("file", False):
+	out.release()
 
 # close all windows
 cv2.destroyAllWindows()
