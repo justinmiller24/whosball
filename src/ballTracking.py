@@ -138,7 +138,7 @@ while True:
 	# at the top-left, the red channel in the top-right, the green
 	# channel in the bottom-right, and the blue channel in the
 	# bottom-left
-	#(h, w) = frame.shape[:2]
+	(h, w) = frame.shape[:2]
 	#output = np.zeros((h * 2, w * 2, 3), dtype="uint8")
 	#output[0:h, 0:w] = origImg
 	#output[0:h, w:w * 2] = blurred
