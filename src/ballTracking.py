@@ -21,7 +21,7 @@ ap.add_argument("-p", "--picamera", type=int, default=-1, help="whether or not t
 ap.add_argument("-v", "--video", help="path to the (optional) video file")
 ap.add_argument("-b", "--buffer", type=int, default=30, help="max buffer size")
 ap.add_argument("-o", "--output", help="path to output video file")
-ap.add_argument("-f", "--fps", type=int, default=20, help="FPS of output video")
+ap.add_argument("-f", "--fps", type=int, default=30, help="FPS of output video")
 ap.add_argument("-c", "--codec", type=str, default="MJPG", help="codec of output video")
 #ap.add_argument("--ballMinHSV", help="min HSV value")
 #ap.add_argument("--ballMaxHSV", help="max HSV value")
