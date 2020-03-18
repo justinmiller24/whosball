@@ -56,7 +56,8 @@ time.sleep(2.0)
 if not args.get("output", False):
 	print("Recording to file:", args["output"])
 	#fourcc = cv2.VideoWriter_fourcc(*'MP4V')
-	fourcc = cv2.VideoWriter_fourcc(*args["codec"])
+	#fourcc = cv2.VideoWriter_fourcc(*args["codec"])
+	fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
 	writer = None
 
 #	writer = cv2.VideoWriter(args["output"], fourcc, 20.0, (640,480))
@@ -162,7 +163,7 @@ while True:
 	if not args.get("output", False):
 		# check if the writer is None
 		if writer is None:
-			writer = cv2.VideoWriter(args["output"], fourcc, args["fps"], (w * 2, h), True)
+			writer = cv2.VideoWriter(args["output"], fourcc, 6, (w * 2, h), True)
 
 		# write the output frame to file
 		writer.write(output)
