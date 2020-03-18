@@ -30,10 +30,10 @@ ballUpper1 = (5, 255, 255)
 ballLower2 = (175, 20, 30)
 ballUpper2 = (180, 255, 255)
 
-ballLower1 = ballLower1 if args.get("ballLower1", False) else args.get("ballLower1")
-ballUpper1 = ballUpper1 if args.get("ballUpper1", False) else args.get("ballUpper1")
-ballLower2 = ballLower2 if args.get("ballLower2", False) else args.get("ballLower2")
-ballUpper2 = ballUpper2 if args.get("ballUpper2", False) else args.get("ballUpper2")
+ballLower1 = args.get("ballLower1") if args.get("ballLower1", False) else ballLower1
+ballUpper1 = args.get("ballUpper1") if args.get("ballUpper1", False) else ballUpper1
+ballLower2 = args.get("ballLower2") if args.get("ballLower2", False) else ballLower2
+ballUpper2 = args.get("ballUpper2") if args.get("ballUpper2", False) else ballUpper2
 
 print(ballLower1)
 print(ballUpper1)
