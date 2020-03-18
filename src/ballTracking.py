@@ -35,6 +35,11 @@ ballUpper1 = ballUpper1 if args.get("ballUpper1", False) else ballUpper1
 ballLower2 = ballLower2 if args.get("ballLower2", False) else ballLower2
 ballUpper2 = ballUpper2 if args.get("ballUpper2", False) else ballUpper2
 
+print(ballLower1)
+print(ballUpper1)
+print(ballLower2)
+print(ballUpper2)
+
 
 # Initialize list of tracked points
 pts = deque(maxlen=args["buffer"])
