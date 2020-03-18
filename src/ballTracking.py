@@ -116,7 +116,7 @@ while True:
 
 		# Display centroid and radius info
 		#cv2.rectangle(overlay, (420, 205), (595, 385), (0, 0, 255), -1)
-		cv2.putText(overlay, "Center: {}".format(center), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 3)
+		cv2.putText(frame, "Center: {}".format(center), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 3)
 
 	# Update list of tracked points
 	pts.appendleft(center)
