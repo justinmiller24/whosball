@@ -25,13 +25,13 @@ ap.add_argument("--ballUpper2", help="max HSV values upper2")
 args = vars(ap.parse_args())
 
 # Define HSV bounds for foosball
-ballLower1 = (0, 20, 30)
-ballUpper1 = (5, 255, 255)
-ballLower2 = (175, 20, 30)
-ballUpper2 = (180, 255, 255)
+#ballLower1 = (0, 20, 30)
+#ballUpper1 = (5, 255, 255)
+ballLower2 = (172, 20, 210)
+ballUpper2 = (176, 255, 240)
 
-ballLower1 = tuple(int(num) for num in args.get("ballLower1").replace('(', '').replace(')', '').split(','))
-ballUpper1 = tuple(int(num) for num in args.get("ballUpper1").replace('(', '').replace(')', '').split(','))
+#ballLower1 = tuple(int(num) for num in args.get("ballLower1").replace('(', '').replace(')', '').split(','))
+#ballUpper1 = tuple(int(num) for num in args.get("ballUpper1").replace('(', '').replace(')', '').split(','))
 ballLower2 = tuple(int(num) for num in args.get("ballLower2").replace('(', '').replace(')', '').split(','))
 ballUpper2 = tuple(int(num) for num in args.get("ballUpper2").replace('(', '').replace(')', '').split(','))
 #ballLower1 = (args.get("ballLower1").split(',')) if args.get("ballLower1", False) else ballLower1
@@ -39,8 +39,8 @@ ballUpper2 = tuple(int(num) for num in args.get("ballUpper2").replace('(', '').r
 #ballLower2 = args.get("ballLower2") if args.get("ballLower2", False) else ballLower2
 #ballUpper2 = args.get("ballUpper2") if args.get("ballUpper2", False) else ballUpper2
 
-print(ballLower1)
-print(ballUpper1)
+#print(ballLower1)
+#print(ballUpper1)
 print(ballLower2)
 print(ballUpper2)
 
@@ -88,9 +88,10 @@ while True:
 	#edge = cv2.Canny(origImg, 100, 200)
 
 	# Create "red" color mask, perform erosions and dilation to remove small blobs in mask
-	mask1 = cv2.inRange(hsv, ballLower1, ballUpper1)
-	mask2 = cv2.inRange(hsv, ballLower2, ballUpper2)
-	mask_pre = cv2.bitwise_or(mask1, mask2)
+	#mask1 = cv2.inRange(hsv, ballLower1, ballUpper1)
+	#mask2 = cv2.inRange(hsv, ballLower2, ballUpper2)
+	#mask_pre = cv2.bitwise_or(mask1, mask2)
+	mask_pre = cv2.inRange(hsv, ballLower2, ballUpper2)
 	mask = cv2.erode(mask_pre, None, iterations=2)
 	mask = cv2.dilate(mask, None, iterations=2)
 
