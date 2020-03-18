@@ -52,6 +52,7 @@ time.sleep(2.0)
 
 # Define the codec and create VideoWriter object
 if not args.get("record", False):
+	print("Recording to file:", args["record"])
 	fourcc = cv2.VideoWriter_fourcc(*'X264')
 	out = cv2.VideoWriter(args["record"], fourcc, 20.0, (640,480))
 
