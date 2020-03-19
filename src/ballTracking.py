@@ -22,7 +22,6 @@ ap.add_argument("-v", "--video", help="path to the (optional) video file")
 ap.add_argument("-b", "--buffer", type=int, default=30, help="max buffer size")
 ap.add_argument("-o", "--output", help="path to output video file")
 ap.add_argument("-f", "--fps", type=int, default=30, help="FPS of output video")
-ap.add_argument("-c", "--codec", type=str, default="MJPG", help="codec of output video")
 #ap.add_argument("--ballMinHSV", help="min HSV value")
 #ap.add_argument("--ballMaxHSV", help="max HSV value")
 args = vars(ap.parse_args())
@@ -40,13 +39,11 @@ ballMaxHSV = (176, 180, 240)
 # Initialize list of tracked points
 pts = deque(maxlen=args["buffer"])
 
-# if a video path was not supplied, grab the reference
-# to the webcam
+# if a video path was not supplied, grab the reference to the webcam
+# otherwise, grab a reference to the video file
 if not args.get("video", False):
 	#vs = VideoStream(src=0).start()
 	vs = VideoStream(usePiCamera=args["picamera"] > 0).start()
-
-# otherwise, grab a reference to the video file
 else:
 	vs = cv2.VideoCapture(args["video"])
 
@@ -58,12 +55,8 @@ time.sleep(2.0)
 outputFile = True if args.get("output", False) else False
 if outputFile:
 	print("Recording to file:", args["output"])
-	#fourcc = cv2.VideoWriter_fourcc(*'MP4V')
-	#fourcc = cv2.VideoWriter_fourcc(*args["codec"])
 	fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
 	writer = None
-
-#	writer = cv2.VideoWriter(args["output"], fourcc, 20.0, (640,480))
 
 # keep looping
 while True:
@@ -81,6 +74,7 @@ while True:
 
 	# Resize, blur it, and convert to HSV
 	frame = imutils.resize(frame, width=600)
+	(h, w) = frame.shape[:2]
 	origImg = frame.copy()
 
 	# Blur image
@@ -99,6 +93,7 @@ while True:
 	cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 	cnts = imutils.grab_contours(cnts)
 	center = None
+	radius = None
 
 	# Ensure at least one contour was found
 	if len(cnts) > 0:
@@ -117,7 +112,7 @@ while True:
 
 		# Display centroid and radius info
 		#cv2.rectangle(overlay, (420, 205), (595, 385), (0, 0, 255), -1)
-		cv2.putText(frame, "Center: {}".format(center), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 3)
+		#cv2.putText(infoBar, "Center: {}".format(center), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 3)
 
 	# Update list of tracked points
 	pts.appendleft(center)
@@ -134,50 +129,54 @@ while True:
 		thickness = int(np.sqrt(args["buffer"] / float(i + 1)) * 2.5)
 		cv2.line(frame, pts[i - 1], pts[i], (0, 0, 255), thickness)
 
-	# construct the final output frame, storing the original frame
-	# at the top-left, the red channel in the top-right, the green
-	# channel in the bottom-right, and the blue channel in the
-	# bottom-left
-	(h, w) = frame.shape[:2]
-	#output = np.zeros((h * 2, w * 2, 3), dtype="uint8")
-	#output[0:h, 0:w] = origImg
-	#output[0:h, w:w * 2] = blurred
-	#output[h:h * 2, w:w * 2] = hsv
-	#output[h:h * 2, 0:w] = frame
 
+	# Construct multiview display
+	output = np.zeros((h*2+3+3+20+20+20, w * 2 + 9, 3), dtype="uint8")
+
+	# Top Left
+	cv2.putText(output, "Original", (280, 15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+	output[20:h+20, 3:w+3] = origImg
+
+	# Top Right
+	cv2.putText(output, "Blurred", (880, 15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+	output[20:h+20, w+6:w * 2 + 6] = blurred
+
+	# Bottom Left
+	cv2.putText(output, "HSV", (280, 20+h+3+15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+	output[h+3+20+20:h*2+3+20+20, 3:w+3] = hsv
+
+	# Bottom Right
+	cv2.putText(output, "Output", (880, 20+h+3+15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+	output[h+3+20+20:h*2+3+20+20, w+6:w * 2 + 6] = frame
+
+	# Bottom
+	cv2.putText(output, "Center: {}".format(center), (400, h*2+3+3+20+20+15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+	cv2.putText(output, "Radius: {}".format(radius), (600, h*2+3+3+20+20+15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
 
 	# show the frame to our screen
 	#cv2.imshow("Frame", frame)
-	cv2.namedWindow("mask")
-	cv2.moveWindow("mask", 100, 100)
-	cv2.imshow("mask", mask_pre)
+	cv2.namedWindow("mask_orig")
+	cv2.moveWindow("mask_orig", 1250, 120)
+	cv2.imshow("mask_orig", mask_pre)
 
+	cv2.namedWindow("mask")
+	cv2.moveWindow("mask", 1250, 620)
+	cv2.imshow("mask", mask)
 	#edge2 = np.reshape(edge, edge.shape + (1,))
 	#cv2.imshow("Edges", edge2)
-
-	# Create a table showing input image, mask, and output
-
-	#mask_pre = mask_pre.reshape((mask_pre.shape[0], mask_pre.shape[1], 1))
-    #mask2 = np.stack((mask,)*3, axis=-1)
-	#print("Size: ", origImg.ndim, mask_pre.ndim, frame.ndim)
-	#print(mask_pre)
-	#break
-
-
-	output = np.concatenate((origImg, frame), axis=1)
 
 	# Write to output file
 	if outputFile:
 		# check if the writer is None
 		if writer is None:
-			writer = cv2.VideoWriter(args["output"], fourcc, args["fps"], (w * 2, h), True)
+			writer = cv2.VideoWriter(args["output"], fourcc, 30, (w * 2, h), True)
 
 		# write the output frame to file
 		writer.write(output)
 
 	# Display on screen
 	cv2.namedWindow("Output")
-	cv2.moveWindow("Output", 100, 600)
+	cv2.moveWindow("Output", 10, 120)
 	cv2.imshow("Output", output)
 
 	key = cv2.waitKey(1) & 0xFF
