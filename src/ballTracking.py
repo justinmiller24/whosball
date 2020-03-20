@@ -1,3 +1,7 @@
+#########################
+# Automated Foosball    #
+#########################
+
 # USAGE
 # python ballTracking.py
 # python ballTracking.py --picamera 1
@@ -15,6 +19,10 @@ import imutils
 import math
 import numpy as np
 import time
+
+import detection
+import foosball
+import gui
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
@@ -46,9 +54,11 @@ if not args.get("video", False):
 else:
 	vs = cv2.VideoCapture(args["video"])
 
+
 # allow the camera or video file to warm up
 print("Warming up camera or video file")
 time.sleep(2.0)
+
 
 # Define the codec and create VideoWriter object
 outputFile = True if args.get("output", False) else False
@@ -70,6 +80,46 @@ while True:
 	if frame is None:
 		print("End of file")
 		break
+
+	# Main loop
+	while gameInProgress:
+		detection.detectBall()
+		detection.detectPlayers("RED")
+		detection.detectPlayers("BLUE")
+
+		foosball.checkForScore()
+		foosball.determineMotorMovement()
+		foosball.moveMotors()
+
+		# Update video display and handle user input
+		gui.updateDisplay()
+		if gui.detectUserInput():
+			break
+
+
+
+
+
+	// Calculate and show ball position and score
+        scoreCounter.trackBallAndScore(foundBallsState.getCenter(), foundBallsState.getFoundball());
+
+        // Display GUI elements and score board
+        cv::copyMakeBorder(flippedFrame, flippedFrame, 45, 45, 5, 5, cv::BORDER_CONSTANT);
+        gui::printScoreBoard(scoreCounter, flippedFrame, (int)(5.0 / 12 * config["gameTableWidth"].get<int>()), 30);
+        gui::showCenterPosition(flippedFrame, foundBallsState.getCenter(), 10, config["gameTableHeight"].get<int>() + 65);
+        gui::showStatistics(flippedFrame, founded, counter, 10, config["gameTableHeight"].get<int>() + 80);
+	gui::printKeyDoc(flippedFrame, 300, config["gameTableHeight"].get<int>() + 65);
+	cv::imshow("Foosball", flippedFrame);
+
+	redPlayersFinder.clearVectors();
+	bluePlayersFinder.clearVectors();
+        foundBallsState.clearVectors();
+
+	gui::handlePressedKeys(cv::waitKey(10), originalEnabled, trackingEnabled,
+			       blueDetectionEnabled, redDetectionEnabled, pause, debugMode);
+    }
+
+
 
 	# Resize, blur it, and convert to HSV
 	frame = imutils.resize(frame, width=600)
@@ -168,38 +218,10 @@ while True:
 		thickness = int(np.sqrt(args["buffer"] / float(i + 1)) * 2.5)
 		cv2.line(frame, pts[i - 1], pts[i], (0, 0, 255), thickness)
 
-	# Construct multiview display
-	mvHeight = h*2+3+3+20+20+20
-	mvWidth = w * 2 + 9
-	output = np.zeros((mvHeight, mvWidth, 3), dtype="uint8")
-
-	# Top Left
-	cv2.putText(output, "Original", (280, 15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-	output[20:h+20, 3:w+3] = origImg
-
-	# Top Right
-	cv2.putText(output, "Grayscale", (880, 15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-	output[20:h+20, w+6:w * 2 + 6] = gray3
-
-	# Bottom Left
-	cv2.putText(output, "Mask", (280, 20+h+3+15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-	output[h+3+20+20:h*2+3+20+20, 3:w+3] = mask3
-
-	# Bottom Right
-	cv2.putText(output, "Output", (880, 20+h+3+15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-	output[h+3+20+20:h*2+3+20+20, w+6:w * 2 + 6] = frame
-
-	# Bottom
-	cDisplay = ("{}".format(center)) if center is not None else "-"
-	rDisplay = ("%2.1f" % radius) if radius is not None else "-"
-	dDisplay = ("%2.1f" % distance) if distance is not None else "-"
-	aDisplay = ("%2.1f" % degrees) if degrees is not None else "-"
-	vDisplay = "-"
-	cv2.putText(output, "Center: %s" % cDisplay, (90, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-	cv2.putText(output, "Radius: %s" % rDisplay, (290, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-	cv2.putText(output, "Distance: %s" % dDisplay, (420, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-	cv2.putText(output, "Direction: %s" % aDisplay, (620, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-	cv2.putText(output, "Velocity: %s" % vDisplay, (820, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+	# Build multi view display and show on screen
+	velocity = None
+	output = gui.getVideoDisplay((origImg, gray3, mask3, frame), center, radius, distance, degrees, velocity)
+	cv2.imshow("Output", output)
 
 	# Write to output file
 	if outputFile:
@@ -209,9 +231,6 @@ while True:
 
 		# write the output frame to file
 		writer.write(output)
-
-	# Display on screen
-	cv2.imshow("Output", output)
 
 	# if the 'q' key is pressed, stop the loop
 	key = cv2.waitKey(1) & 0xFF
