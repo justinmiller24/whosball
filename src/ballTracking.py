@@ -195,7 +195,7 @@ while True:
 
 	# Build multi view display and show on screen
 	velocity = None
-	output = gui.getVideoDisplay((origImg, gray3, mask3, frame), center, radius, distance, degrees, velocity)
+	output = gui.updateDisplay((origImg, gray3, mask3, frame), center, radius, distance, degrees, velocity)
 	cv2.imshow("Output", output)
 
 	# Write to output file
