@@ -12,6 +12,7 @@ import argparse
 import cv2
 import datetime
 import imutils
+import math
 import numpy as np
 import time
 
@@ -27,8 +28,15 @@ args = vars(ap.parse_args())
 ballMinHSV = (174, 155, 205)
 ballMaxHSV = (176, 180, 240)
 
+# Define Table Size
+table_dim_cm = (56 * 2.54, 29 * 2.54)
+
 # Initialize list of tracked points
 pts = deque(maxlen=args["buffer"])
+
+# Initialize ball position array
+ball_position_history = []
+
 
 # if a video path was not supplied, grab the reference to the webcam
 # otherwise, grab a reference to the video file
@@ -90,17 +98,59 @@ while True:
 	cnts = imutils.grab_contours(cnts)
 	center = None
 	radius = None
+	distance = None
+	degrees = None
+	velocity = None
 
 	# Ensure at least one contour was found
 	if len(cnts) > 0:
 
-		# find the largest contour in the mask, then use
-		# it to compute the minimum enclosing circle and
-		# centroid
+		# Find the largest contour in the mask and use this to
+		# compute the minimum enclosing circle and centroid
 		c = max(cnts, key=cv2.contourArea)
 		((x, y), radius) = cv2.minEnclosingCircle(c)
 		M = cv2.moments(c)
 		center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
+		#print("Center: {}".format(center))
+
+		# Add to list of tracked points
+		ball_position_history.append(center)
+		if len(ball_position_history) > 1:
+
+			# Last ball position
+			#print(ball_position_history)
+			lastPosition = ball_position_history[-2:][0]
+			origX = lastPosition[0]
+			origY = lastPosition[1]
+
+			# Current ball position
+			currPosition = ball_position_history[-1:][0]
+			destX = currPosition[0]
+			destY = currPosition[1]
+			#print("Last Position: {} Current Position: {}".format(lastPosition, currPosition))
+			#print("OrigX: {} OrigY: {} DestX: {} DestY: {}".format(origX, origY, destX, destY))
+
+			# Deltas
+			deltaX = destX - origX
+			deltaY = destY - origY
+
+			# Distance
+			distancePX = math.sqrt(deltaX * deltaX + deltaY * deltaY)
+	        #distanceCM = distancePX / ratio_pxcm
+	        #distanceM = distanceCM / 100
+			distance = distancePX
+
+			# Velocity
+			#velocity = distance / frame_time
+
+			# Direction
+			# Calculate number degrees between two points
+			# Calculate arc tangent (in radians) and convert to degrees
+			degrees_temp = math.atan2(deltaX, deltaY) / math.pi * 180
+			if degrees_temp < 0:
+				degrees = 360 + degrees_temp
+			else:
+				degrees = degrees_temp
 
 		# Draw centroid
 		cv2.circle(frame, center, 5, (0, 0, 255), -1)
@@ -142,10 +192,14 @@ while True:
 	# Bottom
 	cDisplay = ("{}".format(center)) if center is not None else "-"
 	rDisplay = ("%2.1f" % radius) if radius is not None else "-"
+	dDisplay = ("%2.1f" % distance) if distance is not None else "-"
+	aDisplay = ("%2.1f" % degrees) if degrees is not None else "-"
 	vDisplay = "-"
 	cv2.putText(output, "Center: %s" % cDisplay, (90, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
 	cv2.putText(output, "Radius: %s" % rDisplay, (290, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-	cv2.putText(output, "Velocity: %s" % vDisplay, (420, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+	cv2.putText(output, "Distance: %s" % dDisplay, (420, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+	cv2.putText(output, "Direction: %s" % aDisplay, (620, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+	cv2.putText(output, "Velocity: %s" % vDisplay, (820, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
 
 	# Write to output file
 	if outputFile:
