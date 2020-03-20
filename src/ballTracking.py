@@ -154,9 +154,9 @@ while True:
 	cDisplay = ("{}".format(center)) if center is not None else "-"
 	rDisplay = ("%2.1f" % radius) if radius is not None else "-"
 	vDisplay = "-"
-	cv2.putText(output, "Center: %s" % cDisplay, (50, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-	cv2.putText(output, "Radius: %s" % rDisplay, (250, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-	cv2.putText(output, "Velocity: %s" % vDisplay, (400, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+	cv2.putText(output, "Center: %s" % cDisplay, (90, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+	cv2.putText(output, "Radius: %s" % rDisplay, (290, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+	cv2.putText(output, "Velocity: %s" % vDisplay, (420, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
 
 	# show the frame to our screen
 	#cv2.imshow("Frame", frame)
