@@ -82,6 +82,7 @@ while True:
 		break
 
 	# Main loop
+	gameInProgress = False
 	while gameInProgress:
 		detection.detectBall()
 		detection.detectPlayers()
@@ -94,31 +95,6 @@ while True:
 		gui.updateDisplay()
 		if gui.detectUserInput():
 			break
-
-
-
-
-
-	// Calculate and show ball position and score
-        scoreCounter.trackBallAndScore(foundBallsState.getCenter(), foundBallsState.getFoundball());
-
-        // Display GUI elements and score board
-        cv::copyMakeBorder(flippedFrame, flippedFrame, 45, 45, 5, 5, cv::BORDER_CONSTANT);
-        gui::printScoreBoard(scoreCounter, flippedFrame, (int)(5.0 / 12 * config["gameTableWidth"].get<int>()), 30);
-        gui::showCenterPosition(flippedFrame, foundBallsState.getCenter(), 10, config["gameTableHeight"].get<int>() + 65);
-        gui::showStatistics(flippedFrame, founded, counter, 10, config["gameTableHeight"].get<int>() + 80);
-	gui::printKeyDoc(flippedFrame, 300, config["gameTableHeight"].get<int>() + 65);
-	cv::imshow("Foosball", flippedFrame);
-
-	redPlayersFinder.clearVectors();
-	bluePlayersFinder.clearVectors();
-        foundBallsState.clearVectors();
-
-	gui::handlePressedKeys(cv::waitKey(10), originalEnabled, trackingEnabled,
-			       blueDetectionEnabled, redDetectionEnabled, pause, debugMode);
-    }
-
-
 
 	# Resize, blur it, and convert to HSV
 	frame = imutils.resize(frame, width=600)
