@@ -131,7 +131,9 @@ while True:
 
 
 	# Construct multiview display
-	output = np.zeros((h*2+3+3+20+20+20, w * 2 + 9, 3), dtype="uint8")
+	mvHeight = h*2+3+3+20+20+20
+	mvWidth = w * 2 + 9
+	output = np.zeros((mvHeight, mvWidth, 3), dtype="uint8")
 
 	# Top Left
 	cv2.putText(output, "Original", (280, 15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
@@ -169,7 +171,7 @@ while True:
 	if outputFile:
 		# check if the writer is None
 		if writer is None:
-			writer = cv2.VideoWriter(args["output"], fourcc, 30, (w * 2, h), True)
+			writer = cv2.VideoWriter(args["output"], fourcc, 30, (mvWidth, mvHeight), True)
 
 		# write the output frame to file
 		writer.write(output)
