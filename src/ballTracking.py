@@ -84,8 +84,7 @@ while True:
 	# Main loop
 	while gameInProgress:
 		detection.detectBall()
-		detection.detectPlayers("RED")
-		detection.detectPlayers("BLUE")
+		detection.detectPlayers()
 
 		foosball.checkForScore()
 		foosball.determineMotorMovement()
