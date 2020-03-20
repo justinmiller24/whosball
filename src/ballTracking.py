@@ -77,17 +77,22 @@ while True:
 	(h, w) = frame.shape[:2]
 	origImg = frame.copy()
 
-	# Blur image
+	# Blurred
 	blurred = cv2.GaussianBlur(origImg, (11, 11), 0)
 	hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
 
-	# Detect edges
+	# Grayscale
+	gray = cv2.cvtColor(origImg, cv2.COLOR_RGB2GRAY)
+	gray3 = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
+
+	# Edges
 	#edge = cv2.Canny(origImg, 100, 200)
 
 	# Create color mask for foosball and perform erosions and dilation to remove small blobs in mask
-	mask_pre = cv2.inRange(hsv, ballMinHSV, ballMaxHSV)
-	mask = cv2.erode(mask_pre, None, iterations=2)
+	mask = cv2.inRange(hsv, ballMinHSV, ballMaxHSV)
+	mask = cv2.erode(mask, None, iterations=2)
 	mask = cv2.dilate(mask, None, iterations=2)
+	mask3 = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
 
 	# Find contours in mask and initialize the current center (x, y) of the ball
 	cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -109,25 +114,18 @@ while True:
 		# Draw centroid
 		cv2.circle(frame, center, 5, (0, 0, 255), -1)
 
-		# Display centroid and radius info
-		#cv2.rectangle(overlay, (420, 205), (595, 385), (0, 0, 255), -1)
-		#cv2.putText(infoBar, "Center: {}".format(center), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 3)
-
 	# Update list of tracked points
 	pts.appendleft(center)
 
 	# loop over the set of tracked points
 	for i in range(1, len(pts)):
-		# if either of the tracked points are None, ignore
-		# them
+		# if either of the tracked points are None, ignore them
 		if pts[i - 1] is None or pts[i] is None:
 			continue
 
-		# otherwise, compute the thickness of the line and
-		# draw the connecting lines
+		# otherwise, compute the thickness of the line and draw the connecting lines
 		thickness = int(np.sqrt(args["buffer"] / float(i + 1)) * 2.5)
 		cv2.line(frame, pts[i - 1], pts[i], (0, 0, 255), thickness)
-
 
 	# Construct multiview display
 	mvHeight = h*2+3+3+20+20+20
@@ -139,12 +137,12 @@ while True:
 	output[20:h+20, 3:w+3] = origImg
 
 	# Top Right
-	cv2.putText(output, "Blurred", (880, 15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-	output[20:h+20, w+6:w * 2 + 6] = blurred
+	cv2.putText(output, "Grayscale", (880, 15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+	output[20:h+20, w+6:w * 2 + 6] = gray3
 
 	# Bottom Left
-	cv2.putText(output, "HSV", (280, 20+h+3+15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-	output[h+3+20+20:h*2+3+20+20, 3:w+3] = hsv
+	cv2.putText(output, "Mask", (280, 20+h+3+15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+	output[h+3+20+20:h*2+3+20+20, 3:w+3] = mask3
 
 	# Bottom Right
 	cv2.putText(output, "Output", (880, 20+h+3+15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
