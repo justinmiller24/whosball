@@ -156,18 +156,6 @@ while True:
 	cv2.putText(output, "Radius: %s" % rDisplay, (290, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
 	cv2.putText(output, "Velocity: %s" % vDisplay, (420, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
 
-	# show the frame to our screen
-	#cv2.imshow("Frame", frame)
-	cv2.namedWindow("mask_orig")
-	cv2.moveWindow("mask_orig", 1250, 120)
-	cv2.imshow("mask_orig", mask_pre)
-
-	cv2.namedWindow("mask")
-	cv2.moveWindow("mask", 1250, 620)
-	cv2.imshow("mask", mask)
-	#edge2 = np.reshape(edge, edge.shape + (1,))
-	#cv2.imshow("Edges", edge2)
-
 	# Write to output file
 	if outputFile:
 		# check if the writer is None
@@ -178,8 +166,6 @@ while True:
 		writer.write(output)
 
 	# Display on screen
-	cv2.namedWindow("Output")
-	cv2.moveWindow("Output", 10, 120)
 	cv2.imshow("Output", output)
 
 	key = cv2.waitKey(1) & 0xFF
