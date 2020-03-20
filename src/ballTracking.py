@@ -105,7 +105,6 @@ while True:
 		((x, y), radius) = cv2.minEnclosingCircle(c)
 		M = cv2.moments(c)
 		center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
-		#print("Center:", center,  " Radius:", radius)
 
 		# Draw centroid
 		cv2.circle(frame, center, 5, (0, 0, 255), -1)
@@ -152,8 +151,12 @@ while True:
 	output[h+3+20+20:h*2+3+20+20, w+6:w * 2 + 6] = frame
 
 	# Bottom
-	cv2.putText(output, "Center: {}".format(center), (400, h*2+3+3+20+20+15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-	cv2.putText(output, "Radius: {}".format(radius), (600, h*2+3+3+20+20+15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+	cDisplay = ("{}".format(center)) if center is not None else "-"
+	rDisplay = ("%2.1f" % radius) if radius is not None else "-"
+	vDisplay = "-"
+	cv2.putText(output, "Center: %s" % cDisplay, (50, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+	cv2.putText(output, "Radius: %s" % rDisplay, (250, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+	cv2.putText(output, "Velocity: %s" % vDisplay, (400, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
 
 	# show the frame to our screen
 	#cv2.imshow("Frame", frame)
