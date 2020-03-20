@@ -21,20 +21,11 @@ ap.add_argument("-p", "--picamera", type=int, default=-1, help="whether or not t
 ap.add_argument("-v", "--video", help="path to the (optional) video file")
 ap.add_argument("-b", "--buffer", type=int, default=30, help="max buffer size")
 ap.add_argument("-o", "--output", help="path to output video file")
-ap.add_argument("-f", "--fps", type=int, default=30, help="FPS of output video")
-#ap.add_argument("--ballMinHSV", help="min HSV value")
-#ap.add_argument("--ballMaxHSV", help="max HSV value")
 args = vars(ap.parse_args())
 
 # Define HSV bounds for foosball
 ballMinHSV = (174, 155, 205)
 ballMaxHSV = (176, 180, 240)
-
-#ballMinHSV = tuple(int(num) for num in args.get("ballMinHSV").replace('(', '').replace(')', '').split(','))
-#ballMaxHSV = tuple(int(num) for num in args.get("ballMaxHSV").replace('(', '').replace(')', '').split(','))
-#print(ballMinHSV)
-#print(ballMaxHSV)
-
 
 # Initialize list of tracked points
 pts = deque(maxlen=args["buffer"])
@@ -168,12 +159,8 @@ while True:
 	# Display on screen
 	cv2.imshow("Output", output)
 
-	key = cv2.waitKey(1) & 0xFF
-
-	# TODO: save the frame to our video output
-	# https://www.pyimagesearch.com/2016/02/22/writing-to-video-with-opencv/
-
 	# if the 'q' key is pressed, stop the loop
+	key = cv2.waitKey(1) & 0xFF
 	if key == ord("q"):
 		break
 
