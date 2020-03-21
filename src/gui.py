@@ -2,14 +2,8 @@ import cv2
 import numpy as np
 
 
-# Start Game
-def start():
-    # allow the camera or video file to warm up
-    print("Warming up camera or video file")
-
-
-def detectUserInput():
-	return cv2.waitKey(1) & 0xFF == ord("q")
+def userInput():
+    return cv2.waitKey(1) & 0xFF
 
 
 # Function to update video display
