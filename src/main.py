@@ -3,10 +3,10 @@
 #########################
 
 # USAGE
-# python ballTracking.py
-# python ballTracking.py --picamera 1
-# python ballTracking.py --video test-video.mp4
-# python ballTracking.py --video input-video.mp4 --output output-video.mp4
+# python main.py
+# python main.py --picamera 1
+# python main.py --video test-video.mp4
+# python main.py --video input-video.mp4 --output output-video.mp4
 
 # import the necessary packages
 from __future__ import print_function
@@ -21,8 +21,8 @@ import numpy as np
 import time
 
 import detection
-import foosball
 import gui
+import motors
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
@@ -86,10 +86,10 @@ while True:
 	while gameInProgress:
 		detection.detectBall()
 		detection.detectPlayers()
+		detection.detectScore()
 
-		foosball.checkForScore()
-		foosball.determineMotorMovement()
-		foosball.moveMotors()
+		motors.determineMove()
+		motors.move()
 
 		# Update video display and handle user input
 		gui.updateDisplay()

@@ -1,15 +1,11 @@
 from adafruit_motorkit import MotorKit
 
 
-def checkForScore():
-    print("Check to see if a score occurred")
-
-
-def determineMotorMovement():
+def determineMove():
 	print("Determine which motors to move")
 
 
-def moveMotors():
+def move():
     print("Move motors")
 
     # Initialise the first hat on the default address

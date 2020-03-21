@@ -1,12 +1,12 @@
-#########################
-# Detect HSV Colors     #
-#########################
+###########################
+# Detect HSV Color Values #
+###########################
 
 # This script is used to detect HSV color values
 # Created by Justin Miller on 2.14.2020
 
 # USAGE:
-# python3 detectHsvColors.py
+# python3 detectHsvColorValues.py
 
 # Import packages
 from picamera.array import PiRGBArray
