@@ -7,13 +7,17 @@ import time
 class videoStream:
 
     # Initialize video stream instance
-    def __init__(self, usePiCamera=False, videoFile=None):
+    def __init__(self, usePiCamera=False, videoFile=None, outputFile=None):
 
         # Initialize the camera and stream
         print("Initialize Camera")
 
         self.usePiCamera = usePiCamera
         self.videoFile = videoFile
+        self.outputFile = outputFile
+        self.writer = None
+
+        return self
 
 
     # Start stream
@@ -28,7 +32,15 @@ class videoStream:
         print("Warming up camera or video file")
         time.sleep(2.0)
 
-        return self.stream
+        # Record to video output file
+        if self.outputFile:
+            print("Record to file:", self.outputFile)
+            mvWidth = 1208
+            mvHeight = 756
+            fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
+            self.writer = cv2.VideoWriter(self.outputFile, fourcc, 30, (mvWidth, mvHeight), True)
+
+        return self
 
 
     # Get next frame from camera or video stream and resize
@@ -62,12 +74,20 @@ class videoStream:
         return self.grayscale
 
 
+    # Write output frame
+    def write(output):
+        if self.writer is not None:
+            self.writer.write(output)
+
+
     # Stop stream
     def stop(self):
-        # if we are using a video file, stop the camera video stream
+        # Stop video/camera stream
         if self.videoFile is not None:
             self.stream.stop()
-
-        # otherwise, release the camera
         else:
             self.stream.release()
+
+        # Stop recording video file
+        if outputFile:
+            self.writer.release()

@@ -43,17 +43,9 @@ pts = deque(maxlen=30)
 ball_position_history = []
 
 
-# Initialize camera
-vs = videoStream(args["picamera"] > 0, args["video"])
-vs.start()
+# Initialize camera or video stream
+vs = videoStream(args["picamera"] > 0, args["video"], args["output"]).start()
 
-
-# Define the codec and create VideoWriter object
-outputFile = True if args.get("output", False) else False
-if outputFile:
-	print("Recording to file:", args["output"])
-	fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
-	writer = None
 
 # keep looping
 while True:
@@ -175,14 +167,9 @@ while True:
 	if args["display"]:
 		cv2.imshow("Output", output)
 
-	# Save output to video file
-	if outputFile:
-		# check if the writer is None
-		if writer is None:
-			writer = cv2.VideoWriter(args["output"], fourcc, 30, (mvWidth, mvHeight), True)
-
-		# write the output frame to file
-		writer.write(output)
+	# Write frame to video output file
+	if args["output"]:
+		video.write(output)
 
 
 	# Handle user input
@@ -190,12 +177,9 @@ while True:
 	if gui.detectUserInput():
 		break
 
-# Stop video stream or camera feed
-vs.stop()
 
-# Stop recording video file
-if outputFile:
-	writer.release()
+# Stop video/camera feed and output writer
+vs.stop()
 
 # close all windows
 cv2.destroyAllWindows()
