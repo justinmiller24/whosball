@@ -11,24 +11,21 @@
 # import the necessary packages
 from __future__ import print_function
 from collections import deque
-from imutils.video import VideoStream
 import argparse
-import cv2
 import datetime
-import imutils
 import math
 import numpy as np
-import time
 
+from video import videoStream
 import detection
 import gui
-import motors
+import motor
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
+ap.add_argument("-d", "--display", type=int, default=1, help="whether or not to display output")
 ap.add_argument("-p", "--picamera", type=int, default=-1, help="whether or not the Raspberry Pi camera should be used")
 ap.add_argument("-v", "--video", help="path to the (optional) video file")
-ap.add_argument("-b", "--buffer", type=int, default=30, help="max buffer size")
 ap.add_argument("-o", "--output", help="path to output video file")
 args = vars(ap.parse_args())
 
@@ -40,24 +37,15 @@ ballMaxHSV = (176, 180, 240)
 table_dim_cm = (56 * 2.54, 29 * 2.54)
 
 # Initialize list of tracked points
-pts = deque(maxlen=args["buffer"])
+pts = deque(maxlen=30)
 
 # Initialize ball position array
 ball_position_history = []
 
 
-# if a video path was not supplied, grab the reference to the webcam
-# otherwise, grab a reference to the video file
-if not args.get("video", False):
-	#vs = VideoStream(src=0).start()
-	vs = VideoStream(usePiCamera=args["picamera"] > 0).start()
-else:
-	vs = cv2.VideoCapture(args["video"])
-
-
-# allow the camera or video file to warm up
-print("Warming up camera or video file")
-time.sleep(2.0)
+# Initialize camera
+vs = videoStream(args["picamera"] > 0, args["video"])
+vs.start()
 
 
 # Define the codec and create VideoWriter object
@@ -69,47 +57,22 @@ if outputFile:
 
 # keep looping
 while True:
-	# grab the current frame
-	frame = vs.read()
 
-	# handle the frame from VideoCapture or VideoStream
-	frame = frame[1] if args.get("video", False) else frame
-
-	# if we are viewing a video and we did not grab a frame,
-	# then we have reached the end of the video
+	# Read next frame. If no frame exists, then we've reached the end of the video.
+	frame = video.getNextFrame()
 	if frame is None:
-		print("End of file")
+		print("No frame exists, reached end of file")
 		break
 
-	# Main loop
-	gameInProgress = False
-	while gameInProgress:
-		detection.detectBall()
-		detection.detectPlayers()
-		detection.detectScore()
+    (h, w) = frame.shape[:2]
+    origImg = frame.copy()
 
-		motors.determineMove()
-		motors.move()
+	# Detect foosball and players
+	detection.detectBall()
 
-		# Update video display and handle user input
-		gui.updateDisplay()
-		if gui.detectUserInput():
-			break
-
-	# Resize, blur it, and convert to HSV
-	frame = imutils.resize(frame, width=600)
-	(h, w) = frame.shape[:2]
-	origImg = frame.copy()
-
-	# Blurred
-	blurred = cv2.GaussianBlur(origImg, (11, 11), 0)
-	hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
-
-	# Grayscale
-	gray = cv2.cvtColor(origImg, cv2.COLOR_RGB2GRAY)
-	gray3 = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
-
-	# Edges
+	# HSV, Grayscale, Edges
+	hsv = video.getHSVImage()
+	gray3 = video.getGrayscale()
 	#edge = cv2.Canny(origImg, 100, 200)
 
 	# Create color mask for foosball and perform erosions and dilation to remove small blobs in mask
@@ -193,12 +156,26 @@ while True:
 		thickness = int(np.sqrt(args["buffer"] / float(i + 1)) * 2.5)
 		cv2.line(frame, pts[i - 1], pts[i], (0, 0, 255), thickness)
 
-	# Build multi view display and show on screen
-	velocity = None
-	output = gui.updateDisplay((origImg, gray3, mask3, frame), center, radius, distance, degrees, velocity)
-	cv2.imshow("Output", output)
 
-	# Write to output file
+
+	detection.detectPlayers()
+
+	# Check for score
+	detection.detectScore()
+
+	# Determine move, if any, and move linear and rotational motors
+	motors.determineMove()
+	motors.move()
+
+	velocity = None
+	# Build multi view display and show on screen
+	output = gui.updateDisplay((origImg, gray3, mask3, frame), center, radius, distance, degrees, velocity)
+
+	# View output on screen/display
+	if args["display"]:
+		cv2.imshow("Output", output)
+
+	# Save output to video file
 	if outputFile:
 		# check if the writer is None
 		if writer is None:
@@ -207,18 +184,14 @@ while True:
 		# write the output frame to file
 		writer.write(output)
 
+
+	# Handle user input
 	# if the 'q' key is pressed, stop the loop
-	key = cv2.waitKey(1) & 0xFF
-	if key == ord("q"):
+	if gui.detectUserInput():
 		break
 
-# if we are not using a video file, stop the camera video stream
-if not args.get("video", False):
-	vs.stop()
-
-# otherwise, release the camera
-else:
-	vs.release()
+# Stop video stream or camera feed
+vs.stop()
 
 # Stop recording video file
 if outputFile:
