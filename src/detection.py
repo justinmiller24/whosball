@@ -5,7 +5,7 @@ def detectBall():
 
 
 def detectPlayers():
-	print("Detect RED and BLUE players")
+    print("Detect RED and BLUE players")
 
 
 def detectScore():
