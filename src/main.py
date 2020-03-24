@@ -124,8 +124,8 @@ while True:
 
 			# Distance
 			distancePX = math.sqrt(deltaX * deltaX + deltaY * deltaY)
-	        #distanceCM = distancePX / ratio_pxcm
-	        #distanceM = distanceCM / 100
+			#distanceCM = distancePX / ratio_pxcm
+			#distanceM = distanceCM / 100
 			distance = distancePX
 
 			# Velocity
