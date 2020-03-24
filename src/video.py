@@ -66,7 +66,7 @@ class videoStream:
     def stop(self):
         # if we are using a video file, stop the camera video stream
         if self.videoFile is not None:
-        	self.stream.stop()
+            self.stream.stop()
 
         # otherwise, release the camera
         else:
