@@ -70,4 +70,4 @@ class videoStream:
 
         # otherwise, release the camera
         else:
-        	self.stream.release()
+            self.stream.release()
