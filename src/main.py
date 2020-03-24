@@ -64,8 +64,8 @@ while True:
 		print("No frame exists, reached end of file")
 		break
 
-    (h, w) = frame.shape[:2]
-    origImg = frame.copy()
+	(h, w) = frame.shape[:2]
+	origImg = frame.copy()
 
 	# Detect foosball and players
 	detection.detectBall()
