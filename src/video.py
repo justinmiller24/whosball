@@ -54,14 +54,9 @@ class videoStream:
         return self.frame
 
 
-    def getBlurredImage(self):
-        print("Get blurred image")
-        self.blurred = cv2.GaussianBlur(self.frame, (11, 11), 0)
-        return self.blurred
-
-
     def getHSVImage(self):
         print("Get HSV image")
+        self.blurred = cv2.GaussianBlur(self.frame, (11, 11), 0)
         self.hsv = cv2.cvtColor(self.blurred, cv2.COLOR_BGR2HSV)
         return self.hsv
 
