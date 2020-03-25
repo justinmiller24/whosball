@@ -3,11 +3,11 @@ import display
 
 
 def determineMove():
-	out("Determine which motors to move")
+	display.out("Determine which motors to move")
 
 
 def move():
-	out("Move motors")
+	display.out("Move motors")
 
 	# Initialise the first hat on the default address
 	# Stepper motors are available as stepper1 and stepper2

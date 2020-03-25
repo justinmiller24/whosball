@@ -11,7 +11,7 @@ class videoStream:
     def __init__(self, usePiCamera=False, videoFile=None, outputFile=None):
 
         # Initialize the camera and stream
-        out("Initialize Camera")
+        display.out("Initialize Camera")
 
         self.usePiCamera = usePiCamera
         self.videoFile = videoFile
@@ -28,12 +28,12 @@ class videoStream:
             self.stream = VideoStream(usePiCamera=self.usePiCamera).start()
 
         # Allow camera or video file to warm up
-        out("Warming up camera or video file")
+        display.out("Warming up camera or video file")
         time.sleep(2.0)
 
         # Record to video output file
         if self.outputFile:
-            out("Record to file:", self.outputFile)
+            display.out("Record to file:", self.outputFile)
             mvWidth = 1208
             mvHeight = 756
             fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
@@ -44,7 +44,7 @@ class videoStream:
 
     # Get next frame from camera or video stream and resize
     def getNextFrame(self):
-        out("Get Next Frame")
+        display.out("Get Next Frame")
         self.frame = self.stream.read()
         #self.frame = self.frame[1] if args.get("video", False) else self.frame
         self.frame = self.frame[1] if self.videoFile is not None else self.frame
@@ -56,14 +56,14 @@ class videoStream:
 
 
     def getHSVImage(self):
-        out("Get HSV image")
+        display.out("Get HSV image")
         self.blurred = cv2.GaussianBlur(self.frame, (11, 11), 0)
         self.hsv = cv2.cvtColor(self.blurred, cv2.COLOR_BGR2HSV)
         return self.hsv
 
 
     def getGrayscale(self):
-        out("Get grayscale image")
+        display.out("Get grayscale image")
         gray = cv2.cvtColor(self.frame, cv2.COLOR_RGB2GRAY)
         self.grayscale = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
         return self.grayscale

@@ -24,7 +24,7 @@ import display
 import motor
 
 
-out("Starting Main Script")
+display.out("Starting Main Script")
 
 
 # construct the argument parse and parse the arguments
@@ -59,7 +59,7 @@ while True:
 	# Read next frame. If no frame exists, then we've reached the end of the video.
 	frame = vs.getNextFrame()
 	if frame is None:
-		out("No frame exists, reached end of file")
+		display.out("No frame exists, reached end of file")
 		break
 
 	(h, w) = frame.shape[:2]
@@ -97,14 +97,14 @@ while True:
 		((x, y), radius) = cv2.minEnclosingCircle(c)
 		M = cv2.moments(c)
 		center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
-		#out("Center: {}".format(center))
+		#display.out("Center: {}".format(center))
 
 		# Add to list of tracked points
 		ball_position_history.append(center)
 		if len(ball_position_history) > 1:
 
 			# Last ball position
-			#out(ball_position_history)
+			#display.out(ball_position_history)
 			lastPosition = ball_position_history[-2:][0]
 			origX = lastPosition[0]
 			origY = lastPosition[1]
@@ -113,8 +113,8 @@ while True:
 			currPosition = ball_position_history[-1:][0]
 			destX = currPosition[0]
 			destY = currPosition[1]
-			#out("Last Position: {} Current Position: {}".format(lastPosition, currPosition))
-			#out("OrigX: {} OrigY: {} DestX: {} DestY: {}".format(origX, origY, destX, destY))
+			#display.out("Last Position: {} Current Position: {}".format(lastPosition, currPosition))
+			#display.out("OrigX: {} OrigY: {} DestX: {} DestY: {}".format(origX, origY, destX, destY))
 
 			# Deltas
 			deltaX = destX - origX
