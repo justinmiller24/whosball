@@ -51,7 +51,7 @@ vs = videoStream(args["picamera"] > 0, args["video"], args["output"]).start()
 while True:
 
 	# Read next frame. If no frame exists, then we've reached the end of the video.
-	frame = video.getNextFrame()
+	frame = vs.getNextFrame()
 	if frame is None:
 		print("No frame exists, reached end of file")
 		break
@@ -63,8 +63,8 @@ while True:
 	detection.detectBall()
 
 	# HSV, Grayscale, Edges
-	hsv = video.getHSVImage()
-	gray3 = video.getGrayscale()
+	hsv = vs.getHSVImage()
+	gray3 = vs.getGrayscale()
 	#edge = cv2.Canny(origImg, 100, 200)
 
 	# Create color mask for foosball and perform erosions and dilation to remove small blobs in mask
@@ -169,7 +169,7 @@ while True:
 
 	# Write frame to video output file
 	if args["output"]:
-		video.write(output)
+		vs.write(output)
 
 
 	# Handle user input
