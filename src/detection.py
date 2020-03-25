@@ -1,12 +1,12 @@
 
 
 def detectBall():
-    print("Detect Foosball")
+    out("Detect Foosball")
 
 
 def detectPlayers():
-    print("Detect RED and BLUE players")
+    out("Detect RED and BLUE players")
 
 
 def detectScore():
-    print("Check to see if a score occurred")
+    out("Check to see if a score occurred")

@@ -2,11 +2,11 @@ from adafruit_motorkit import MotorKit
 
 
 def determineMove():
-	print("Determine which motors to move")
+	out("Determine which motors to move")
 
 
 def move():
-	print("Move motors")
+	out("Move motors")
 
 	# Initialise the first hat on the default address
 	# Stepper motors are available as stepper1 and stepper2

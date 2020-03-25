@@ -5,7 +5,7 @@ import numpy as np
 # Start Game
 def start():
     # allow the camera or video file to warm up
-    print("Warming up camera or video file")
+    out("Start GUI")
 
 
 def detectUserInput():
