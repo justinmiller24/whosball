@@ -17,8 +17,6 @@ class videoStream:
         self.outputFile = outputFile
         self.writer = None
 
-        return self
-
 
     # Start stream
     def start(self):
