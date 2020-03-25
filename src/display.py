@@ -11,7 +11,7 @@ def detectUserInput():
 
 
 # Function to update video display
-def updateDisplay(images, ballLocation, ballRadius, ballDistance, ballDirection, ballSpeed):
+def update(images, ballLocation, ballRadius, ballDistance, ballDirection, ballSpeed):
 
     # Grab dimensions of first image
     (h, w) = images[0].shape[:2]

@@ -166,9 +166,9 @@ while True:
 	motor.determineMove()
 	motor.move()
 
-	velocity = None
 	# Build multi view display and show on screen
-	output = gui.updateDisplay((origImg, gray3, mask3, frame), center, radius, distance, degrees, velocity)
+	velocity = None
+	output = display.update((origImg, gray3, mask3, frame), center, radius, distance, degrees, velocity)
 
 	# View output on screen/display
 	if args["display"]:
@@ -181,7 +181,7 @@ while True:
 
 	# Handle user input
 	# if the 'q' key is pressed, stop the loop
-	if gui.detectUserInput():
+	if display.detectUserInput():
 		break
 
 
