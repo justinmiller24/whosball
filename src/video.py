@@ -42,7 +42,7 @@ class videoStream:
 
 
     # Get next frame from camera or video stream and resize
-    def getNextFrame():
+    def getNextFrame(self):
         print("Get Next Frame")
         self.frame = self.stream.read()
         self.frame = self.frame[1] if args.get("video", False) else self.frame
@@ -53,19 +53,19 @@ class videoStream:
         return self.frame
 
 
-    def getBlurredImage():
+    def getBlurredImage(self):
         print("Get blurred image")
         self.blurred = cv2.GaussianBlur(self.frame, (11, 11), 0)
         return self.blurred
 
 
-    def getHSVImage():
+    def getHSVImage(self):
         print("Get HSV image")
         self.hsv = cv2.cvtColor(self.blurred, cv2.COLOR_BGR2HSV)
         return self.hsv
 
 
-    def getGrayscale():
+    def getGrayscale(self):
         print("Get grayscale image")
         gray = cv2.cvtColor(self.frame, cv2.COLOR_RGB2GRAY)
         self.grayscale = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
@@ -73,7 +73,7 @@ class videoStream:
 
 
     # Write output frame
-    def write(output):
+    def write(self, output):
         if self.writer is not None:
             self.writer.write(output)
 
