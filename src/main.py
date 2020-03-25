@@ -20,12 +20,8 @@ import numpy as np
 
 from video import videoStream
 import detection
-import gui
+import display
 import motor
-
-
-def out(str):
-	print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), str)
 
 
 out("Starting Main Script")

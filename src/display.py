@@ -2,10 +2,8 @@ import cv2
 import numpy as np
 
 
-# Start Game
-def start():
-    # allow the camera or video file to warm up
-    out("Start GUI")
+def out(str):
+	print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), str)
 
 
 def detectUserInput():
