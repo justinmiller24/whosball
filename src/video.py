@@ -83,5 +83,5 @@ class videoStream:
             self.stream.stop()
 
         # Stop recording video file
-        if outputFile:
+        if self.outputFile:
             self.writer.release()
