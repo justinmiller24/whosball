@@ -12,6 +12,7 @@
 from __future__ import print_function
 from collections import deque
 import argparse
+import cv2
 import datetime
 import math
 import numpy as np
