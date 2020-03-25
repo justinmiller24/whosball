@@ -45,7 +45,8 @@ class videoStream:
     def getNextFrame(self):
         print("Get Next Frame")
         self.frame = self.stream.read()
-        self.frame = self.frame[1] if args.get("video", False) else self.frame
+        #self.frame = self.frame[1] if args.get("video", False) else self.frame
+        self.frame = self.frame[1] if self.VideoFile is not None else self.frame
 
         if self.frame is not None:
             self.frame = imutils.resize(self.frame, width=600)
