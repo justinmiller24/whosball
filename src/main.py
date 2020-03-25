@@ -158,8 +158,8 @@ while True:
 	detection.detectScore()
 
 	# Determine move, if any, and move linear and rotational motors
-	motors.determineMove()
-	motors.move()
+	motor.determineMove()
+	motor.move()
 
 	velocity = None
 	# Build multi view display and show on screen
