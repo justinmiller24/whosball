@@ -29,14 +29,18 @@ display.out("Starting Main Script")
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-d", "--display", type=int, default=1, help="whether or not to display output")
-ap.add_argument("-p", "--picamera", type=int, default=-1, help="whether or not the Raspberry Pi camera should be used")
+ap.add_argument("-p", "--picamera", type=int, default=0, help="whether or not the Raspberry Pi camera should be used")
 ap.add_argument("-v", "--video", help="path to the (optional) video file")
 ap.add_argument("-o", "--output", help="path to output video file")
 args = vars(ap.parse_args())
 
 # Define HSV bounds for foosball
-ballMinHSV = (174, 155, 205)
-ballMaxHSV = (176, 180, 240)
+#ballMinHSV = (174, 155, 205)
+#ballMaxHSV = (176, 180, 240)
+ballMin1HSV = (0, 20, 20)
+ballMax1HSV = (10, 255, 255)
+ballMin2HSV = (170, 20, 20)
+ballMax2HSV = (180, 255, 255)
 
 # Define Table Size
 table_dim_cm = (56 * 2.54, 29 * 2.54)
@@ -69,18 +73,57 @@ while True:
 
 	# HSV, Grayscale, Edges
 	hsv = vs.getHSVImage()
-	gray3 = vs.getGrayscale()
+	gray = vs.getGrayscale()
+	gray3 = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
 	#edge = cv2.Canny(origImg, 100, 200)
 
 	# Create color mask for foosball and perform erosions and dilation to remove small blobs in mask
-	mask = cv2.inRange(hsv, ballMinHSV, ballMaxHSV)
+	mask1 = cv2.inRange(hsv, ballMin1HSV, ballMax1HSV)
+	mask2 = cv2.inRange(hsv, ballMin2HSV, ballMax2HSV)
+	mask = cv2.bitwise_or(mask1, mask2)
 	mask = cv2.erode(mask, None, iterations=2)
 	mask = cv2.dilate(mask, None, iterations=2)
 	mask3 = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
 
+	# Detect HoughCircles
+	# detect circles in the image
+	#houghImg = np.zeros((h, w, 3), dtype="uint8")
+	#circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1.2, 100)
+	#circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1.0, 45, 75, 40, 20, 40);
+	#hough1 = mask3.copy()
+	#houghGray = cv2.cvtColor(hough1, cv2.COLOR_BGR2GRAY)
+	#circles = cv2.HoughCircles(houghGray, cv2.HOUGH_GRADIENT, 1.0, 45, 75, 40, 20, 40);
+
+	# ensure at least some circles were found
+	#if circles is not None:
+		#display.out("Circles is not None")
+
+		# convert the (x, y) coordinates and radius of the circles to integers
+		#circles = np.round(circles[0, :]).astype("int")
+		#display.out(circles)
+
+		# loop over the (x, y) coordinates and radius of the circles
+		#for (x, y, r) in circles:
+
+			# draw the circle in the output image, then draw a rectangle
+			# corresponding to the center of the circle
+			#cv2.circle(houghImg, (x, y), r, (0, 0, 255), 4)
+			#cv2.rectangle(houghImg, (x - 5, y - 5), (x + 5, y + 5), (0, 128, 255), -1)
+
 	# Find contours in mask and initialize the current center (x, y) of the ball
-	cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+	cnts = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+	# Extract contours depending on OpenCV version
+	#cnts = cnts[0] if len(cnts) == 2 else cnts[1]
 	cnts = imutils.grab_contours(cnts)
+
+	# Iterate through contours and filter by the number of vertices
+	cntsImg = np.zeros((h, w, 3), dtype="uint8")
+	for c in cnts:
+		perimeter = cv2.arcLength(c, True)
+		approx = cv2.approxPolyDP(c, 0.04 * perimeter, True)
+		if len(approx) > 5:
+			cv2.drawContours(cntsImg, [c], -1, (36, 255, 12), -1)
+
 	center = None
 	radius = None
 	distance = None
@@ -167,21 +210,19 @@ while True:
 
 	# Build multi view display and show on screen
 	velocity = None
-	output = display.update((origImg, gray3, mask3, frame), center, radius, distance, degrees, velocity)
-
-	# View output on screen/display
-	if args["display"]:
-		cv2.imshow("Output", output)
+	output = display.update((origImg, cntsImg, mask3, frame), center, radius, distance, degrees, velocity)
 
 	# Write frame to video output file
 	if args["output"]:
 		vs.write(output)
 
-
-	# Handle user input
-	# if the 'q' key is pressed, stop the loop
-	if display.detectUserInput():
-		break
+	# View output on screen/display
+	if args["display"]:
+		cv2.imshow("Output", output)
+		# Handle user input
+		# if the 'q' key is pressed, stop the loop
+		if display.detectUserInput():
+			break
 
 
 # Stop video/camera feed and output writer

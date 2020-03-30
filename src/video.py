@@ -64,9 +64,10 @@ class videoStream:
 
     def getGrayscale(self):
         display.out("Get grayscale image")
-        gray = cv2.cvtColor(self.frame, cv2.COLOR_RGB2GRAY)
-        self.grayscale = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
-        return self.grayscale
+        self.gray = cv2.cvtColor(self.frame, cv2.COLOR_RGB2GRAY)
+        return self.gray
+        #self.grayscale = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
+        #return self.grayscale
 
 
     # Write output frame
