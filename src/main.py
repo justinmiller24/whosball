@@ -28,7 +28,8 @@ display.out("Starting Main Script")
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
-ap.add_argument("-d", "--display", type=int, default=1, help="whether or not to display output")
+ap.add_argument("-d", "--debug", type=int, default=0, help="whether or not to show debug mode")
+ap.add_argument("-s", "--display", type=int, default=1, help="whether or not to display output")
 ap.add_argument("-p", "--picamera", type=int, default=0, help="whether or not the Raspberry Pi camera should be used")
 ap.add_argument("-v", "--video", help="path to the (optional) video file")
 ap.add_argument("-o", "--output", help="path to output video file")
@@ -42,18 +43,19 @@ ballMax1HSV = (10, 255, 255)
 ballMin2HSV = (170, 20, 20)
 ballMax2HSV = (180, 255, 255)
 
+# Globals
 # Define Table Size
 table_dim_cm = (56 * 2.54, 29 * 2.54)
-
+# Debug Mode
+debugMode = args["debug"] > 0
 # Initialize list of tracked points
 pts = deque(maxlen=30)
-
 # Initialize ball position array
 ball_position_history = []
 
 
 # Initialize camera or video stream
-vs = videoStream(args["picamera"] > 0, args["video"], args["output"]).start()
+vs = videoStream(debugMode, args["picamera"] > 0, args["video"], args["output"]).start()
 
 
 # keep looping
@@ -62,7 +64,8 @@ while True:
 	# Read next frame. If no frame exists, then we've reached the end of the video.
 	frame = vs.getNextFrame()
 	if frame is None:
-		display.out("No frame exists, reached end of file")
+		if debugMode:
+			display.out("No frame exists, reached end of file")
 		break
 
 	(h, w) = frame.shape[:2]
@@ -96,11 +99,13 @@ while True:
 
 	# ensure at least some circles were found
 	#if circles is not None:
-		#display.out("Circles is not None")
+		#if debugMode:
+			#display.out("Circles is not None")
 
 		# convert the (x, y) coordinates and radius of the circles to integers
 		#circles = np.round(circles[0, :]).astype("int")
-		#display.out(circles)
+		#if debugMode:
+			#display.out(circles)
 
 		# loop over the (x, y) coordinates and radius of the circles
 		#for (x, y, r) in circles:
@@ -139,14 +144,12 @@ while True:
 		((x, y), radius) = cv2.minEnclosingCircle(c)
 		M = cv2.moments(c)
 		center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
-		#display.out("Center: {}".format(center))
 
 		# Add to list of tracked points
 		ball_position_history.append(center)
 		if len(ball_position_history) > 1:
 
 			# Last ball position
-			#display.out(ball_position_history)
 			lastPosition = ball_position_history[-2:][0]
 			origX = lastPosition[0]
 			origY = lastPosition[1]
@@ -155,8 +158,6 @@ while True:
 			currPosition = ball_position_history[-1:][0]
 			destX = currPosition[0]
 			destY = currPosition[1]
-			#display.out("Last Position: {} Current Position: {}".format(lastPosition, currPosition))
-			#display.out("OrigX: {} OrigY: {} DestX: {} DestY: {}".format(origX, origY, destX, destY))
 
 			# Deltas
 			deltaX = destX - origX

@@ -8,15 +8,16 @@ import time
 class videoStream:
 
     # Initialize video stream instance
-    def __init__(self, usePiCamera=False, videoFile=None, outputFile=None):
+    def __init__(self, debug=False, usePiCamera=False, videoFile=None, outputFile=None):
 
-        # Initialize the camera and stream
-        display.out("Initialize Camera")
-
+        self.debug = debug
         self.usePiCamera = usePiCamera
         self.videoFile = videoFile
         self.outputFile = outputFile
         self.writer = None
+
+        if self.debug:
+            display.out("Initialize Camera")
 
 
     # Start stream
@@ -28,12 +29,14 @@ class videoStream:
             self.stream = VideoStream(usePiCamera=self.usePiCamera).start()
 
         # Allow camera or video file to warm up
-        display.out("Warming up camera or video file")
+        if self.debug:
+            display.out("Warming up camera or video file")
         time.sleep(2.0)
 
         # Record to video output file
         if self.outputFile:
-            display.out("Record to file:", self.outputFile)
+            if self.debug:
+                display.out("Record to file:", self.outputFile)
             mvWidth = 1208
             mvHeight = 756
             fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
@@ -44,7 +47,8 @@ class videoStream:
 
     # Get next frame from camera or video stream and resize
     def getNextFrame(self):
-        display.out("Get Next Frame")
+        if self.debug:
+            display.out("Get Next Frame")
         self.frame = self.stream.read()
         #self.frame = self.frame[1] if args.get("video", False) else self.frame
         self.frame = self.frame[1] if self.videoFile is not None else self.frame
@@ -56,14 +60,16 @@ class videoStream:
 
 
     def getHSVImage(self):
-        display.out("Get HSV image")
+        if self.debug:
+            display.out("Get HSV image")
         self.blurred = cv2.GaussianBlur(self.frame, (11, 11), 0)
         self.hsv = cv2.cvtColor(self.blurred, cv2.COLOR_BGR2HSV)
         return self.hsv
 
 
     def getGrayscale(self):
-        display.out("Get grayscale image")
+        if self.debug:
+            display.out("Get grayscale image")
         self.gray = cv2.cvtColor(self.frame, cv2.COLOR_RGB2GRAY)
         return self.gray
         #self.grayscale = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
