@@ -198,15 +198,15 @@ while True:
 		cv2.line(frame, pts[i - 1], pts[i], (0, 0, 255), thickness)
 
 
-
-	detection.detectPlayers()
+	# Detect players
+	#detection.detectPlayers()
 
 	# Check for score
-	detection.detectScore()
+	#detection.detectScore()
 
 	# Determine move, if any, and move linear and rotational motors
-	motor.determineMove()
-	motor.move()
+	#motor.determineMove()
+	#motor.move()
 
 	# Build multi view display and show on screen
 	velocity = None
