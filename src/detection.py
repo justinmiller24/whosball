@@ -2,7 +2,7 @@ import display
 
 
 def detectBall():
-    display.out("Detect Foosball")
+    #display.out("Detect Foosball")
 
 
 def detectPlayers():
