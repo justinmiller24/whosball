@@ -27,19 +27,19 @@ def update(images, ballLocation, ballRadius, ballDistance, ballDirection, ballSp
 	output = np.zeros((mvHeight, mvWidth, 3), dtype="uint8")
 
 	# Top Left
-	cv2.putText(output, "Cropped", (280, 15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+	cv2.putText(output, "Cropped", (w // 2 - 30, 15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
 	output[20:h+20, 0:w] = images[0]
 
 	# Top Right
-	cv2.putText(output, "Grayscale", (880, 15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+	cv2.putText(output, "Grayscale", (w + w // 2 - 25, 15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
 	output[20:h+20, w+8:w*2+8] = images[1]
 
 	# Bottom Left
-	cv2.putText(output, "Mask", (280, 20+h+3+15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+	cv2.putText(output, "Mask", (w // 2 - 30, 20+h+3+15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
 	output[h+3+20+20:h*2+3+20+20, 0:w] = images[2]
 
 	# Bottom Right
-	cv2.putText(output, "Output", (880, 20+h+3+15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+	cv2.putText(output, "Output", (w + w // 2 - 25, 20+h+3+15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
 	output[h+3+20+20:h*2+3+20+20, w+8:w*2+8] = images[3]
 
 	# Bottom
