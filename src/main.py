@@ -95,7 +95,7 @@ while True:
 	#coords = np.array([(50+0,115+0), (50,115+297), (50+510,115+0), (50+510,115+297)])
 	tL = (73,130)
 	bL = (59,405)
-	tR = (557,137)
+	tR = (557,136)
 	bR = (561,414)
 	coords = np.array([tL, bL, tR, bR])
 
@@ -106,9 +106,10 @@ while True:
 	croppedImg = vs.perspectiveTransform(coords)
 
 	(h2, w2) = croppedImg.shape[:2]
-	display.out("Dimensions:")
-	display.out(h2)
-	display.out(w2)
+	if debugMode:
+		display.out("Dimensions:")
+		display.out(h2)
+		display.out(w2)
 	finalImg = croppedImg.copy()
 
 	# Detect foosball and players
