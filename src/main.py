@@ -4,7 +4,8 @@
 
 # USAGE
 # python main.py
-# python main.py --picamera 1
+# python main.py --debug
+# python main.py --picamera
 # python main.py --video test-video.mp4
 # python main.py --video input-video.mp4 --output output-video.mp4
 
@@ -18,10 +19,7 @@ import math
 import numpy as np
 
 from video import videoStream
-import detection
-import display
-#import foosball
-import motor
+import foosball
 
 
 #def auto_canny(image, sigma=0.33):
@@ -34,14 +32,14 @@ import motor
 	# return the edged image
 	#return edged
 
-display.out("Starting Main Script")
+print("Starting Main Script")
 
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-d", "--debug", help="whether or not to show debug mode", action="store_true")
 ap.add_argument("-s", "--display", type=int, default=1, help="whether or not to display output")
-ap.add_argument("-p", "--picamera", type=int, default=0, help="whether or not the Raspberry Pi camera should be used")
+ap.add_argument("-p", "--picamera", help="whether or not the Raspberry Pi camera should be used", action="store_true")
 ap.add_argument("-v", "--video", help="path to the (optional) video file")
 ap.add_argument("-o", "--output", help="path to output video file")
 args = vars(ap.parse_args())
@@ -57,8 +55,6 @@ ballMax2HSV = (180, 255, 255)
 # Globals
 # Define Table Size
 table_dim_cm = (56 * 2.54, 29 * 2.54)
-# Debug Mode
-debugMode = args["debug"]
 # Initialize list of tracked points
 pts = deque(maxlen=30)
 # Initialize ball position array
@@ -66,7 +62,7 @@ ball_position_history = []
 
 
 # Initialize camera or video stream
-vs = videoStream(debugMode, args["picamera"] > 0, args["video"], args["output"]).start()
+vs = videoStream(args["debug"], args["picamera"], args["video"], args["output"]).start()
 
 # Setup game
 #f = foosball().start()
@@ -77,16 +73,14 @@ while True:
 	# Read next frame. If no frame exists, then we've reached the end of the video.
 	frame = vs.getNextFrame()
 	if frame is None:
-		if debugMode:
-			display.out("No frame exists, reached end of file")
+		if args["debug"]:
+			print("No frame exists, reached end of file")
 		break
 
 	origImg = frame.copy()
 
 	# Grab image dimensions and determine center point
 	(h, w) = origImg.shape[:2]
-	#display.out(h)
-	#display.out(w)
 	(cX, cY) = (w // 2, h // 2)
 
 	# Perspective transform
@@ -106,14 +100,14 @@ while True:
 	croppedImg = vs.perspectiveTransform(coords)
 
 	(h2, w2) = croppedImg.shape[:2]
-	if debugMode:
-		display.out("Dimensions:")
-		display.out(h2)
-		display.out(w2)
+	if args["debug"]:
+		foosball.log("Dimensions:")
+		foosball.log(h2)
+		foosball.log(w2)
 	finalImg = croppedImg.copy()
 
 	# Detect foosball and players
-	detection.detectFoosball()
+	foosball.detectFoosball()
 
 	# HSV, Grayscale, Edges
 	hsv = vs.getHSVImage()
@@ -185,13 +179,13 @@ while True:
 
 	# ensure at least some circles were found
 	#if circles is not None:
-		#if debugMode:
-			#display.out("Circles is not None")
+		#if args["debug"]:
+			#foosball.log("Circles is not None")
 
 		# convert the (x, y) coordinates and radius of the circles to integers
 		#circles = np.round(circles[0, :]).astype("int")
-		#if debugMode:
-			#display.out(circles)
+		#if args["debug"]:
+			#foosball.log(circles)
 
 		# loop over the (x, y) coordinates and radius of the circles
 		#for (x, y, r) in circles:
@@ -286,18 +280,18 @@ while True:
 
 
 	# Detect players
-	#detection.detectPlayers()
+	#foosball.detectPlayers()
 
 	# Check for score
-	#detection.detectScore()
+	#foosball.detectScore()
 
 	# Determine move, if any, and move linear and rotational motors
-	#motor.determineMove()
-	#motor.move()
+	#foosball.determineMotorMovement()
+	#foosball.moveMotors()
 
 	# Build multi view display and show on screen
 	velocity = None
-	output = display.update((croppedImg, gray3, mask3, finalImg), center, radius, distance, degrees, velocity)
+	output = foosball.updateDisplay((croppedImg, gray3, mask3, finalImg), center, radius, distance, degrees, velocity)
 
 	# Write frame to video output file
 	if args["output"]:
@@ -312,7 +306,7 @@ while True:
 		cv2.imshow("Output", output)
 		# Handle user input
 		# if the 'q' key is pressed, stop the loop
-		if display.detectUserInput():
+		if cv2.waitKey(1) & 0xFF == ord("q"):
 			break
 
 

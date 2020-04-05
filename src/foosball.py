@@ -1,3 +1,4 @@
+from adafruit_motorkit import MotorKit
 import cv2
 import datetime
 import imutils
@@ -110,7 +111,7 @@ class foosball:
         self.score = (0, 0)
 
         if self.debug:
-            self.out("Initialize Table")
+            self.log("Initialize Table")
 
         # Variable to determine if a game is current in progress or not
         # This can be toggled at any time to STOP or PAUSE play
@@ -122,7 +123,7 @@ class foosball:
     # Start game
     def start(self):
         if self.debug:
-            self.out("Foosball Start function called")
+            self.log("Foosball Start function called")
 
         #self.playing = True
         return self
@@ -142,7 +143,7 @@ class foosball:
             # Keep process if foosball was not detected
             if self.position is None:
                 if self.debug:
-                    self.out("Foosball position was not detected")
+                    self.log("Foosball position was not detected")
                 continue
 
             # Determine the tracking method to use
@@ -166,80 +167,112 @@ class foosball:
     # Retrieves the next frame from the camera or video feed
     def nextFrame():
         if self.debug:
-            self.out("Next Frame function called")
+            self.log("Next Frame function called")
 
 
-    # image from the camera or video feed, performs object recognition,
-    # and converts this information into the coordinate of the foosball
+    # Take current image, perform object recognition,
+    # and convert this information into the coordinate of the foosball
     def detectFoosball():
         if self.debug:
-            self.out("Detect Foosball function called")
+            self.log("Detect Foosball function called")
 
 
-    # This function reads the
+    # Take current image, perform object recognition,
+    # and convert this information into the coordinates of the RED and BLUE players
     def detectPlayers():
         if self.debug:
-            self.out("Detect RED and BLUE players")
+            self.log("Detect RED and BLUE players")
 
 
+    # Check to see if a score / goal occurred
     def detectScore():
         if self.debug:
-            self.out("Check to see if a score occurred")
+            self.log("Check to see if a score occurred")
 
 
     def detectUserInput():
         if self.debug:
-            self.out("Check for user interrupt")
+            self.log("Check for user interrupt")
         return cv2.waitKey(1) & 0xFF == ord("q")
 
 
+    def determineMotorMovement():
+        if self.debug:
+            self.log("Determine which motors to move")
+
+
+    def moveMotors():
+        if self.debug:
+            self.log("Move motors")
+
+        # Initialise the first hat on the default address
+        # Stepper motors are available as stepper1 and stepper2
+        # stepper1 is made up of the M1 and M2 terminals
+        # stepper2 is made up of the M3 and M4 terminals
+        #self.motors.kit1 = Motorkit().stepper1
+        #self.motors.kit2 = Motorkit().stepper2
+
+        # Initialise the second hat on a different address
+        #self.motors.kit3 = MotorKit(address=0x61).stepper1
+        #self.motors.kit4 = MotorKit(address=0x61).stepper2
+
+        # https://learn.adafruit.com/adafruit-dc-and-stepper-motor-hat-for-raspberry-pi/using-stepper-motors
+        #self.motors.kit1.stepper1.onestep()
+
+
     # Function to update video display
-    def update(images, ballLocation, ballRadius, ballDistance, ballDirection, ballSpeed):
+    def updateDisplay(images, ballLocation, ballRadius, ballDistance, ballDirection, ballSpeed):
 
-    	# Grab dimensions of first image
-    	(h, w) = images[0].shape[:2]
+        if self.debug:
+            self.log("Update multi view display")
 
-    	# Build multiview display
-    	padding = 8
-    	mvHeight = (h * 2) + (20 * 3) + (padding * 2)
-    	mvWidth = w * 2 + padding
-    	output = np.zeros((mvHeight, mvWidth, 3), dtype="uint8")
+        # Grab dimensions of first image
+        (h, w) = images[0].shape[:2]
 
-    	# Top Left
-    	cv2.putText(output, "Original", (280, 15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-    	output[20:h+20, 0:w] = images[0]
+        # Build multiview display
+        #padding = 8
+        #mvHeight = (h * 2) + (20 * 3) + (padding * 2)
+        #mvWidth = w * 2 + padding
+        padding = 8
+        mvHeight = (h * 2) + (20 * 3) + (padding * 2)
+        mvWidth = w * 2 + padding
+        output = np.zeros((mvHeight, mvWidth, 3), dtype="uint8")
 
-    	# Top Right
-    	cv2.putText(output, "Grayscale", (880, 15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-    	output[20:h+20, w+8:w*2+8] = images[1]
+        # Top Left
+        cv2.putText(output, "Cropped", (w // 2 - 35, 15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+        output[20:h+20, 0:w] = images[0]
 
-    	# Bottom Left
-    	cv2.putText(output, "Mask", (280, 20+h+3+15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-    	output[h+3+20+20:h*2+3+20+20, 0:w] = images[2]
+        # Top Right
+        cv2.putText(output, "Grayscale", (w + w // 2 - 30, 15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+        output[20:h+20, w+8:w*2+8] = images[1]
 
-    	# Bottom Right
-    	cv2.putText(output, "Output", (880, 20+h+3+15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-    	output[h+3+20+20:h*2+3+20+20, w+8:w*2+8] = images[3]
+        # Bottom Left
+        cv2.putText(output, "Mask", (w // 2 - 35, 20+h+3+15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+        output[h+3+20+20:h*2+3+20+20, 0:w] = images[2]
 
-    	# Bottom
-    	cDisplay = ("{}".format(ballLocation)) if ballLocation is not None else "-"
-    	rDisplay = ("%2.1f" % ballRadius) if ballRadius is not None else "-"
-    	dDisplay = ("%2.1f" % ballDistance) if ballDistance is not None else "-"
-    	aDisplay = ("%2.1f" % ballDirection) if ballDirection is not None else "-"
-    	vDisplay = "-"
-    	cv2.putText(output, "Center: %s" % cDisplay, (90, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-    	cv2.putText(output, "Radius: %s" % rDisplay, (290, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-    	cv2.putText(output, "Distance: %s" % dDisplay, (420, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-    	cv2.putText(output, "Direction: %s" % aDisplay, (620, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-    	cv2.putText(output, "Velocity: %s" % vDisplay, (820, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+        # Bottom Right
+        cv2.putText(output, "Output", (w + w // 2 - 30, 20+h+3+15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+        output[h+3+20+20:h*2+3+20+20, w+8:w*2+8] = images[3]
 
-    	return output
+        # Bottom
+        cDisplay = ("{}".format(ballLocation)) if ballLocation is not None else "-"
+        rDisplay = ("%2.1f" % ballRadius) if ballRadius is not None else "-"
+        dDisplay = ("%2.1f" % ballDistance) if ballDistance is not None else "-"
+        aDisplay = ("%2.1f" % ballDirection) if ballDirection is not None else "-"
+        vDisplay = "-"
+        cv2.putText(output, "Center: %s" % cDisplay, (90, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+        cv2.putText(output, "Radius: %s" % rDisplay, (290, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+        cv2.putText(output, "Distance: %s" % dDisplay, (420, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+        cv2.putText(output, "Direction: %s" % aDisplay, (620, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+        cv2.putText(output, "Velocity: %s" % vDisplay, (820, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+
+        return output
 
 
-    def out(msg):
+    def log(msg):
         print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), str)
 
 
     def toggleDebugMode():
         self.debug = not self.debug
-        self.out("Debug Mode is now:", self.debug)
+        self.log("Debug Mode is now:", self.debug)
