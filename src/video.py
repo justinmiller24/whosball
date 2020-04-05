@@ -1,7 +1,6 @@
 from imutils.video import VideoStream
 from imutils import perspective
 import cv2
-import display
 import imutils
 import time
 
@@ -18,7 +17,7 @@ class videoStream:
         self.writer = None
 
         if self.debug:
-            display.out("Initialize Camera")
+            self.log("Initialize Camera")
 
 
     # Start stream
@@ -31,13 +30,13 @@ class videoStream:
 
         # Allow camera or video file to warm up
         if self.debug:
-            display.out("Warming up camera or video file")
+            self.log("Warming up camera or video file")
         time.sleep(2.0)
 
         # Record to video output file
         if self.outputFile:
             if self.debug:
-                display.out("Record to file:", self.outputFile)
+                self.log("Record to file:", self.outputFile)
             #mvWidth = 1208
             #mvHeight = 756
             padding = 8
@@ -55,7 +54,7 @@ class videoStream:
     # Get next frame from camera or video stream and resize
     def getNextFrame(self):
         if self.debug:
-            display.out("Get Next Frame")
+            self.log("Get Next Frame")
         self.frame = self.stream.read()
         self.frame = self.frame[1] if self.videoFile is not None else self.frame
 
@@ -103,7 +102,7 @@ class videoStream:
     # Set next frame based on cropped image
     #def setNextFrame(self, image):
         #if self.debug:
-            #display.out("Set Next Frame")
+            #self.log("Set Next Frame")
         #self.frame = image
 
         #return self.frame
@@ -111,7 +110,7 @@ class videoStream:
 
     def getHSVImage(self):
         if self.debug:
-            display.out("Get HSV image")
+            self.log("Get HSV image")
         self.blurred = cv2.GaussianBlur(self.frame, (11, 11), 0)
         self.hsv = cv2.cvtColor(self.blurred, cv2.COLOR_BGR2HSV)
         return self.hsv
@@ -119,7 +118,7 @@ class videoStream:
 
     def getGrayscale(self):
         if self.debug:
-            display.out("Get grayscale image")
+            self.log("Get grayscale image")
         self.gray = cv2.cvtColor(self.frame, cv2.COLOR_RGB2GRAY)
         return self.gray
         #self.grayscale = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
@@ -143,3 +142,6 @@ class videoStream:
         # Stop recording video file
         if self.outputFile:
             self.writer.release()
+
+    def log(msg):
+        print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), str)
