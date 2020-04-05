@@ -16,6 +16,7 @@ class foosball:
 
             # Foosball Table
             'table': {
+                #26.5" x 46.75"
                 'xMax': 116.8,  # Table length
                 'yMax': 68,     # Table width
                 'margin': 1.75, # Minimum distance between foosmen and the wall

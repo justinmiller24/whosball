@@ -18,13 +18,16 @@ def update(images, ballLocation, ballRadius, ballDistance, ballDirection, ballSp
 	(h, w) = images[0].shape[:2]
 
 	# Build multiview display
+	#padding = 8
+	#mvHeight = (h * 2) + (20 * 3) + (padding * 2)
+	#mvWidth = w * 2 + padding
 	padding = 8
 	mvHeight = (h * 2) + (20 * 3) + (padding * 2)
 	mvWidth = w * 2 + padding
 	output = np.zeros((mvHeight, mvWidth, 3), dtype="uint8")
 
 	# Top Left
-	cv2.putText(output, "Original", (280, 15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+	cv2.putText(output, "Cropped", (280, 15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
 	output[20:h+20, 0:w] = images[0]
 
 	# Top Right

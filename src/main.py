@@ -24,6 +24,16 @@ import display
 import motor
 
 
+#def auto_canny(image, sigma=0.33):
+	# compute the median of the single channel pixel intensities
+	#v = np.median(image)
+	# apply automatic Canny edge detection using the computed median
+	#lower = int(max(0, (1.0 - sigma) * v))
+	#upper = int(min(255, (1.0 + sigma) * v))
+	#edged = cv2.Canny(image, lower, upper)
+	# return the edged image
+	#return edged
+
 display.out("Starting Main Script")
 
 
@@ -71,8 +81,35 @@ while True:
 			display.out("No frame exists, reached end of file")
 		break
 
-	(h, w) = frame.shape[:2]
 	origImg = frame.copy()
+
+	# Grab image dimensions and determine center point
+	(h, w) = origImg.shape[:2]
+	#display.out(h)
+	#display.out(w)
+	(cX, cY) = (w // 2, h // 2)
+
+	# Perspective transform
+	#coords = np.array([(50, 125), (50, h-62), (w-65, 125), (w-65, h-62)])
+	#coords = np.array([(0,0), (0,480), (640,0), (640,480)])
+	#coords = np.array([(50+0,115+0), (50,115+297), (50+510,115+0), (50+510,115+297)])
+	tL = (73,130)
+	bL = (59,405)
+	tR = (557,137)
+	bR = (561,414)
+	coords = np.array([tL, bL, tR, bR])
+
+	# Show transformation coordinates on original image
+	for (x, y) in coords:
+		cv2.circle(origImg, (x, y), 5, (0, 255, 0), -1)
+
+	croppedImg = vs.perspectiveTransform(coords)
+
+	(h2, w2) = croppedImg.shape[:2]
+	display.out("Dimensions:")
+	display.out(h2)
+	display.out(w2)
+	finalImg = croppedImg.copy()
 
 	# Detect foosball and players
 	detection.detectFoosball()
@@ -82,6 +119,51 @@ while True:
 	gray = vs.getGrayscale()
 	gray3 = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
 	#edge = cv2.Canny(origImg, 100, 200)
+
+	# Canny edge detection
+	# apply Canny edge detection using a wide threshold, tight
+	# threshold, and automatically determined threshold
+	#blurred = cv2.GaussianBlur(gray, (3, 3), 0)
+	#wide = cv2.Canny(blurred, 10, 200)
+	#tight = cv2.Canny(blurred, 225, 250)
+	#canny = auto_canny(blurred)
+	#canny3 = cv2.cvtColor(canny, cv2.COLOR_GRAY2BGR)
+
+	# Blob detection
+	# Set our filtering parameters
+	# Initialize parameter settiing using cv2.SimpleBlobDetector
+	blobImg = hsv.copy()
+	params = cv2.SimpleBlobDetector_Params()
+
+	# Set Area filtering parameters
+	params.filterByArea = True
+	params.minArea = 100
+
+	# Set Circularity filtering parameters
+	params.filterByCircularity = True
+	params.minCircularity = 0.9
+
+	# Set Convexity filtering parameters
+	params.filterByConvexity = True
+	params.minConvexity = 0.2
+
+	# Set inertia filtering parameters
+	params.filterByInertia = True
+	params.minInertiaRatio = 0.01
+
+	# Create a detector with the parameters
+	detector = cv2.SimpleBlobDetector_create(params)
+
+	# Detect blobs
+	keypoints = detector.detect(blobImg)
+
+	# Draw blobs on our image as red circles
+	blank = np.zeros((1, 1))
+	blobs = cv2.drawKeypoints(blobImg, keypoints, blank, (0, 0, 255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+
+	number_of_blobs = len(keypoints)
+	text = "Number of Circular Blobs: " + str(len(keypoints))
+	cv2.putText(blobs, text, (20, 550), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 100, 255), 2)
 
 	# Create color mask for foosball and perform erosions and dilation to remove small blobs in mask
 	mask1 = cv2.inRange(hsv, ballMin1HSV, ballMax1HSV)
@@ -185,7 +267,7 @@ while True:
 				degrees = degrees_temp
 
 		# Draw centroid
-		cv2.circle(frame, center, 5, (0, 0, 255), -1)
+		cv2.circle(finalImg, center, 5, (0, 0, 255), -1)
 
 	# Update list of tracked points
 	pts.appendleft(center)
@@ -199,7 +281,7 @@ while True:
 		# otherwise, compute the thickness of the line and draw the connecting lines
 		bufferLength = 30
 		thickness = int(np.sqrt(bufferLength / float(i + 1)) * 2.5)
-		cv2.line(frame, pts[i - 1], pts[i], (0, 0, 255), thickness)
+		cv2.line(finalImg, pts[i - 1], pts[i], (0, 0, 255), thickness)
 
 
 	# Detect players
@@ -214,7 +296,7 @@ while True:
 
 	# Build multi view display and show on screen
 	velocity = None
-	output = display.update((origImg, cntsImg, mask3, frame), center, radius, distance, degrees, velocity)
+	output = display.update((croppedImg, gray3, mask3, finalImg), center, radius, distance, degrees, velocity)
 
 	# Write frame to video output file
 	if args["output"]:
@@ -222,6 +304,10 @@ while True:
 
 	# View output on screen/display
 	if args["display"]:
+		cv2.namedWindow("Original")
+		cv2.moveWindow("Original", 1250, 100)
+		cv2.imshow("Original", origImg)
+
 		cv2.imshow("Output", output)
 		# Handle user input
 		# if the 'q' key is pressed, stop the loop
