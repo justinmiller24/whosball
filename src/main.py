@@ -19,7 +19,7 @@ import math
 import numpy as np
 
 from video import videoStream
-import foosball
+from foosball import foosball
 
 
 #def auto_canny(image, sigma=0.33):
@@ -65,7 +65,7 @@ ball_position_history = []
 vs = videoStream(args["debug"], args["picamera"], args["video"], args["output"]).start()
 
 # Setup game
-#f = foosball().start()
+f = foosball(args["debug"]).start()
 
 # keep looping
 while True:
@@ -101,13 +101,13 @@ while True:
 
 	(h2, w2) = croppedImg.shape[:2]
 	if args["debug"]:
-		foosball.log("Dimensions:")
-		foosball.log(h2)
-		foosball.log(w2)
+		f.log("Dimensions:")
+		f.log(h2)
+		f.log(w2)
 	finalImg = croppedImg.copy()
 
 	# Detect foosball and players
-	foosball.detectFoosball()
+	f.detectFoosball()
 
 	# HSV, Grayscale, Edges
 	hsv = vs.getHSVImage()
@@ -180,12 +180,12 @@ while True:
 	# ensure at least some circles were found
 	#if circles is not None:
 		#if args["debug"]:
-			#foosball.log("Circles is not None")
+			#f.log("Circles is not None")
 
 		# convert the (x, y) coordinates and radius of the circles to integers
 		#circles = np.round(circles[0, :]).astype("int")
 		#if args["debug"]:
-			#foosball.log(circles)
+			#f.log(circles)
 
 		# loop over the (x, y) coordinates and radius of the circles
 		#for (x, y, r) in circles:
@@ -280,18 +280,18 @@ while True:
 
 
 	# Detect players
-	#foosball.detectPlayers()
+	#f.detectPlayers()
 
 	# Check for score
-	#foosball.detectScore()
+	#f.detectScore()
 
 	# Determine move, if any, and move linear and rotational motors
-	#foosball.determineMotorMovement()
-	#foosball.moveMotors()
+	#f.determineMotorMovement()
+	#f.moveMotors()
 
 	# Build multi view display and show on screen
 	velocity = None
-	output = foosball.updateDisplay((croppedImg, gray3, mask3, finalImg), center, radius, distance, degrees, velocity)
+	output = f.updateDisplay((croppedImg, gray3, mask3, finalImg), center, radius, distance, degrees, velocity)
 
 	# Write frame to video output file
 	if args["output"]:

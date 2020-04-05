@@ -9,7 +9,7 @@ import time
 class foosball:
 
     # Initialize table
-    def __init__(self, debug=False, usePiCamera=False, videoFile=None, outputFile=None):
+    def __init__(self, debug=False):
 
         # Pre-calculate dimensions for table, foosmen, foosball, rods, etc
         # Store these for faster lookup, to reduce the amount of overhead required while playing
@@ -21,7 +21,7 @@ class foosball:
                 'xMax': 116.8,  # Table length
                 'yMax': 68,     # Table width
                 'margin': 1.75, # Minimum distance between foosmen and the wall
-                'rows': np.array(), # X coordinate of each foosball rod (8 total)
+                'rows': np.empty(8), # X coordinate of each foosball rod (8 total)
             },
 
             # Goal
@@ -31,17 +31,17 @@ class foosball:
 
             # Motors
             'motors': {
-                'limits': np.array(),
+                'limits': np.empty(8),
             },
 
             # Foosmen
             'foosmenWidth': 2.5,    # Foosmen width in "y" direction
-            'foosmen': np.array(
-                {'limits': np.array(), 'players': 3, 'spacing': 18.3},  # Goalie
-                {'limits': np.array(), 'players': 2, 'spacing': 24.5},  # Defense
-                {'limits': np.array(), 'players': 5, 'spacing': 12},    # Midfield
-                {'limits': np.array(), 'players': 3, 'spacing': 18.5},  # Offense
-            ),
+            'foosmen': np.array([
+                [{'limits': np.empty(3), 'players': 3, 'spacing': 18.3}],  # Goalie
+                [{'limits': np.empty(2), 'players': 2, 'spacing': 24.5}],  # Defense
+                [{'limits': np.empty(5), 'players': 5, 'spacing': 12}],    # Midfield
+                [{'limits': np.empty(3), 'players': 3, 'spacing': 18.5}],  # Offense
+            ]),
 
             # Ball
             'ball': {
@@ -51,10 +51,10 @@ class foosball:
 
         # Motor Limits
         # This is the maximum position for the motors in each rod
-        self.dim['motors']['limits'].append(self.dim.table.yMax - (self.dim.foosmen[0].players - 1) * self.dim.foosmen[0].spacing - 2 * self.dim.table.margin)
-        self.dim['motors']['limits'].append(self.dim.table.yMax - (self.dim.foosmen[1].players - 1) * self.dim.foosmen[1].spacing - 2 * self.dim.table.margin)
-        self.dim['motors']['limits'].append(self.dim.table.yMax - (self.dim.foosmen[2].players - 1) * self.dim.foosmen[2].spacing - 2 * self.dim.table.margin)
-        self.dim['motors']['limits'].append(self.dim.table.yMax - (self.dim.foosmen[3].players - 1) * self.dim.foosmen[3].spacing - 2 * self.dim.table.margin)
+        self.dim['motors']['limits'][0] = self.dim['table']['yMax'] - (self.dim['foosmen'][0]['players'] - 1) * self.dim['foosmen'][0]['spacing'] - 2 * self.dim['table']['margin']
+        self.dim['motors']['limits'][1] = self.dim['table']['yMax'] - (self.dim['foosmen'][1]['players'] - 1) * self.dim['foosmen'][1]['spacing'] - 2 * self.dim['table']['margin']
+        self.dim['motors']['limits'][2] = self.dim['table']['yMax'] - (self.dim['foosmen'][2]['players'] - 1) * self.dim['foosmen'][2]['spacing'] - 2 * self.dim['table']['margin']
+        self.dim['motors']['limits'][3] = self.dim['table']['yMax'] - (self.dim['foosmen'][3]['players'] - 1) * self.dim['foosmen'][3]['spacing'] - 2 * self.dim['table']['margin']
 
         # Maximum Position of Foosmen
         # Row 1
@@ -117,8 +117,6 @@ class foosball:
         # This can be toggled at any time to STOP or PAUSE play
         self.playing = False
 
-        return self
-
 
     # Start game
     def start(self):
@@ -130,7 +128,7 @@ class foosball:
 
 
     # Play game
-    def play():
+    def play(self):
 
         self.playing = True
 
@@ -160,48 +158,48 @@ class foosball:
 
     # Linear interpolation between two points (x1, y1) and (x2, y2) and evaluates
     # the function at point xi
-    def interpolate(xi, x2, y2, x1, y1):
+    def interpolate(self, xi, x2, y2, x1, y1):
         return (xi - x1) * (y2 - y1) / (x2 - x1) + y1
 
 
     # Retrieves the next frame from the camera or video feed
-    def nextFrame():
+    def nextFrame(self):
         if self.debug:
             self.log("Next Frame function called")
 
 
     # Take current image, perform object recognition,
     # and convert this information into the coordinate of the foosball
-    def detectFoosball():
+    def detectFoosball(self):
         if self.debug:
             self.log("Detect Foosball function called")
 
 
     # Take current image, perform object recognition,
     # and convert this information into the coordinates of the RED and BLUE players
-    def detectPlayers():
+    def detectPlayers(self):
         if self.debug:
             self.log("Detect RED and BLUE players")
 
 
     # Check to see if a score / goal occurred
-    def detectScore():
+    def detectScore(self):
         if self.debug:
             self.log("Check to see if a score occurred")
 
 
-    def detectUserInput():
+    def detectUserInput(self):
         if self.debug:
             self.log("Check for user interrupt")
         return cv2.waitKey(1) & 0xFF == ord("q")
 
 
-    def determineMotorMovement():
+    def determineMotorMovement(self):
         if self.debug:
             self.log("Determine which motors to move")
 
 
-    def moveMotors():
+    def moveMotors(self):
         if self.debug:
             self.log("Move motors")
 
@@ -221,7 +219,7 @@ class foosball:
 
 
     # Function to update video display
-    def updateDisplay(images, ballLocation, ballRadius, ballDistance, ballDirection, ballSpeed):
+    def updateDisplay(self, images, ballLocation, ballRadius, ballDistance, ballDirection, ballSpeed):
 
         if self.debug:
             self.log("Update multi view display")
@@ -269,10 +267,10 @@ class foosball:
         return output
 
 
-    def log(msg):
-        print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), str)
+    def log(self, msg):
+        print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), msg)
 
 
-    def toggleDebugMode():
+    def toggleDebugMode(self):
         self.debug = not self.debug
         self.log("Debug Mode is now:", self.debug)

@@ -1,6 +1,7 @@
 from imutils.video import VideoStream
 from imutils import perspective
 import cv2
+import datetime
 import imutils
 import time
 
@@ -143,5 +144,5 @@ class videoStream:
         if self.outputFile:
             self.writer.release()
 
-    def log(msg):
-        print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), str)
+    def log(self, msg):
+        print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), msg)
