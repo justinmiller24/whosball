@@ -39,7 +39,7 @@ display.out("Starting Main Script")
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
-ap.add_argument("-d", "--debug", type=int, default=0, help="whether or not to show debug mode")
+ap.add_argument("-d", "--debug", help="whether or not to show debug mode")
 ap.add_argument("-s", "--display", type=int, default=1, help="whether or not to display output")
 ap.add_argument("-p", "--picamera", type=int, default=0, help="whether or not the Raspberry Pi camera should be used")
 ap.add_argument("-v", "--video", help="path to the (optional) video file")
@@ -58,7 +58,7 @@ ballMax2HSV = (180, 255, 255)
 # Define Table Size
 table_dim_cm = (56 * 2.54, 29 * 2.54)
 # Debug Mode
-debugMode = args["debug"] > 0
+debugMode = args["debug"]
 # Initialize list of tracked points
 pts = deque(maxlen=30)
 # Initialize ball position array
