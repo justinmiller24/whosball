@@ -20,6 +20,7 @@ import numpy as np
 from video import videoStream
 import detection
 import display
+#import foosball
 import motor
 
 
@@ -57,6 +58,8 @@ ball_position_history = []
 # Initialize camera or video stream
 vs = videoStream(debugMode, args["picamera"] > 0, args["video"], args["output"]).start()
 
+# Setup game
+#f = foosball().start()
 
 # keep looping
 while True:
@@ -72,7 +75,7 @@ while True:
 	origImg = frame.copy()
 
 	# Detect foosball and players
-	detection.detectBall()
+	detection.detectFoosball()
 
 	# HSV, Grayscale, Edges
 	hsv = vs.getHSVImage()

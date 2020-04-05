@@ -1,7 +1,9 @@
 import display
 
 
-def detectBall():
+# This function reads the image from the camera or video feed, performs object recognition,
+# and converts this information into the coordinate of the foosball
+def detectFoosball():
     #display.out("Detect Foosball")
     return
 
