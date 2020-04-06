@@ -83,20 +83,16 @@ while True:
 	(h, w) = origImg.shape[:2]
 	(cX, cY) = (w // 2, h // 2)
 
-	# Perspective transform
-	#coords = np.array([(50, 125), (50, h-62), (w-65, 125), (w-65, h-62)])
-	#coords = np.array([(0,0), (0,480), (640,0), (640,480)])
-	#coords = np.array([(50+0,115+0), (50,115+297), (50+510,115+0), (50+510,115+297)])
+	# Transform perspective based on key points and
+	# show transformation coordinates on original image
 	tL = (73,130)
 	bL = (59,405)
 	tR = (557,136)
 	bR = (561,414)
 	coords = np.array([tL, bL, tR, bR])
-
 	# Show transformation coordinates on original image
 	for (x, y) in coords:
 		cv2.circle(origImg, (x, y), 5, (0, 255, 0), -1)
-
 	croppedImg = vs.perspectiveTransform(coords)
 
 	(h2, w2) = croppedImg.shape[:2]
