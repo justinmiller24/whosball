@@ -80,8 +80,8 @@ while True:
 	origImg = frame.copy()
 
 	# Grab image dimensions and determine center point
-	(h, w) = origImg.shape[:2]
-	(cX, cY) = (w // 2, h // 2)
+	#(h, w) = origImg.shape[:2]
+	#(cX, cY) = (w // 2, h // 2)
 
 	# Transform perspective based on key points and
 	# show transformation coordinates on original image
@@ -95,11 +95,10 @@ while True:
 		cv2.circle(origImg, (x, y), 5, (0, 255, 0), -1)
 	croppedImg = vs.perspectiveTransform(coords)
 
-	(h2, w2) = croppedImg.shape[:2]
-	if args["debug"]:
-		foosball.log("Dimensions:")
-		foosball.log(h2)
-		foosball.log(w2)
+	#if args["debug"]:
+		#foosball.log("Dimensions:")
+		#foosball.log(h2)
+		#foosball.log(w2)
 	finalImg = croppedImg.copy()
 
 	# Detect foosball and players
@@ -198,6 +197,7 @@ while True:
 	cnts = imutils.grab_contours(cnts)
 
 	# Iterate through contours and filter by the number of vertices
+	(h, w) = croppedImg.shape[:2]
 	cntsImg = np.zeros((h, w, 3), dtype="uint8")
 	for c in cnts:
 		perimeter = cv2.arcLength(c, True)
@@ -300,8 +300,8 @@ while True:
 		cv2.imshow("Original", origImg)
 
 		cv2.imshow("Output", output)
-		# Handle user input
-		# if the 'q' key is pressed, stop the loop
+		
+		# Handle user input - stop the loop if the "q" key is pressed
 		if cv2.waitKey(1) & 0xFF == ord("q"):
 			break
 
