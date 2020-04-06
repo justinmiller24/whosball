@@ -34,41 +34,62 @@ class foosball:
         goalWidth = 18.5
         self.goal = {
             'width': goalWidth,
-            'limits': [0.5 * (self.table['yMax'] - goalWidth), 0.5 * (self.table['yMax'] - goalWidth) + goalWidth)]
+            'limits': [0.5 * (self.table['yMax'] - goalWidth), 0.5 * (self.table['yMax'] - goalWidth) + goalWidth]
         }
-
-        # Motors and Motor Limits
-        self.motors = {'limits': np.empty(4)}
-        # This is the maximum position for the motors in each rod
-        self.motors['limits'][0] = self.table['yMax'] - (self.foosmen[0]['players'] - 1) * self.foosmen[0]['spacing'] - 2 * self.table['margin']
-        self.motors['limits'][1] = self.table['yMax'] - (self.foosmen[1]['players'] - 1) * self.foosmen[1]['spacing'] - 2 * self.table['margin']
-        self.motors['limits'][2] = self.table['yMax'] - (self.foosmen[1]['players'] - 1) * self.foosmen[2]['spacing'] - 2 * self.table['margin']
-        self.motors['limits'][3] = self.table['yMax'] - (self.foosmen[1]['players'] - 1) * self.foosmen[3]['spacing'] - 2 * self.table['margin']
 
         # Foosmen and Maximum Position of Foosmen
-        self.foosmen = {
-            0: [{'limits': np.empty(3), 'players': 3, 'spacing': 18.3}],    # Goalie
-            1: [{'limits': np.empty(2), 'players': 2, 'spacing': 24.5}],    # Defense
-            2: [{'limits': np.empty(5), 'players': 5, 'spacing': 12.0}],    # Midfield
-            3: [{'limits': np.empty(3), 'players': 3, 'spacing': 18.5}],    # Offense
-        }
+        self.foosmen = np.array([
+            {'limits': np.empty(3), 'players': 3, 'spacing': 18.3},    # Goalie
+            {'limits': np.empty(2), 'players': 2, 'spacing': 24.5},    # Defense
+            {'limits': np.empty(5), 'players': 5, 'spacing': 12.0},    # Midfield
+            {'limits': np.empty(3), 'players': 3, 'spacing': 18.5},    # Offense
+        ])
         # Row 0 - Goalie
-        self.foosmen[0]['limits'][0] = [self.table['margin'] + 0 * self.foosmen[0]['spacing'], self.table['yMax'] - (self.table['margin'] + 2 * self.foosmen[0]['spacing'])]
-        self.foosmen[0]['limits'][1] = [self.table['margin'] + 1 * self.foosmen[0]['spacing'], self.table['yMax'] - (self.table['margin'] + 1 * self.foosmen[0]['spacing'])]
-        self.foosmen[0]['limits'][2] = [self.table['margin'] + 2 * self.foosmen[0]['spacing'], self.table['yMax'] - (self.table['margin'] + 0 * self.foosmen[0]['spacing'])]
+        #self.foosmen[0]['limits'][0] = [self.table['margin'] + 0 * self.foosmen[0]['spacing'], self.table['yMax'] - (self.table['margin'] + 2 * self.foosmen[0]['spacing'])]
+        #self.foosmen[0]['limits'][1] = [self.table['margin'] + 1 * self.foosmen[0]['spacing'], self.table['yMax'] - (self.table['margin'] + 1 * self.foosmen[0]['spacing'])]
+        #self.foosmen[0]['limits'][2] = [self.table['margin'] + 2 * self.foosmen[0]['spacing'], self.table['yMax'] - (self.table['margin'] + 0 * self.foosmen[0]['spacing'])]
         # Row 1 - Defense
-        self.foosmen[1]['limits'][0] = [self.table['margin'] + 0 * self.foosmen[1]['spacing'], self.table['yMax'] - (self.table['margin'] + 1 * self.foosmen[1]['spacing'])]
-        self.foosmen[1]['limits'][1] = [self.table['margin'] + 1 * self.foosmen[1]['spacing'], self.table['yMax'] - (self.table['margin'] + 0 * self.foosmen[1]['spacing'])]
+        #self.foosmen[1]['limits'][0] = [self.table['margin'] + 0 * self.foosmen[1]['spacing'], self.table['yMax'] - (self.table['margin'] + 1 * self.foosmen[1]['spacing'])]
+        #self.foosmen[1]['limits'][1] = [self.table['margin'] + 1 * self.foosmen[1]['spacing'], self.table['yMax'] - (self.table['margin'] + 0 * self.foosmen[1]['spacing'])]
         # Row 2 - Midfield
-        self.foosmen[2]['limits'][0] = [self.table['margin'] + 0 * self.foosmen[2]['spacing'], self.table['yMax'] - (self.table['margin'] + 4 * self.foosmen[2]['spacing'])]
-        self.foosmen[2]['limits'][1] = [self.table['margin'] + 1 * self.foosmen[2]['spacing'], self.table['yMax'] - (self.table['margin'] + 3 * self.foosmen[2]['spacing'])]
-        self.foosmen[2]['limits'][2] = [self.table['margin'] + 2 * self.foosmen[2]['spacing'], self.table['yMax'] - (self.table['margin'] + 2 * self.foosmen[2]['spacing'])]
-        self.foosmen[2]['limits'][3] = [self.table['margin'] + 3 * self.foosmen[2]['spacing'], self.table['yMax'] - (self.table['margin'] + 1 * self.foosmen[2]['spacing'])]
-        self.foosmen[2]['limits'][4] = [self.table['margin'] + 4 * self.foosmen[2]['spacing'], self.table['yMax'] - (self.table['margin'] + 0 * self.foosmen[2]['spacing'])]
+        #self.foosmen[2]['limits'][0] = [self.table['margin'] + 0 * self.foosmen[2]['spacing'], self.table['yMax'] - (self.table['margin'] + 4 * self.foosmen[2]['spacing'])]
+        #self.foosmen[2]['limits'][1] = [self.table['margin'] + 1 * self.foosmen[2]['spacing'], self.table['yMax'] - (self.table['margin'] + 3 * self.foosmen[2]['spacing'])]
+        #self.foosmen[2]['limits'][2] = [self.table['margin'] + 2 * self.foosmen[2]['spacing'], self.table['yMax'] - (self.table['margin'] + 2 * self.foosmen[2]['spacing'])]
+        #self.foosmen[2]['limits'][3] = [self.table['margin'] + 3 * self.foosmen[2]['spacing'], self.table['yMax'] - (self.table['margin'] + 1 * self.foosmen[2]['spacing'])]
+        #self.foosmen[2]['limits'][4] = [self.table['margin'] + 4 * self.foosmen[2]['spacing'], self.table['yMax'] - (self.table['margin'] + 0 * self.foosmen[2]['spacing'])]
         # Row 3 - Offense
-        self.foosmen[3]['limits'][0] = [self.table['margin'] + 0 * self.foosmen[3]['spacing'], self.table['yMax'] - (self.table['margin'] + 2 * self.foosmen[3]['spacing'])]
-        self.foosmen[3]['limits'][1] = [self.table['margin'] + 1 * self.foosmen[3]['spacing'], self.table['yMax'] - (self.table['margin'] + 1 * self.foosmen[3]['spacing'])]
-        self.foosmen[3]['limits'][2] = [self.table['margin'] + 2 * self.foosmen[3]['spacing'], self.table['yMax'] - (self.table['margin'] + 0 * self.foosmen[3]['spacing'])]
+        #self.foosmen[3]['limits'][0] = [self.table['margin'] + 0 * self.foosmen[3]['spacing'], self.table['yMax'] - (self.table['margin'] + 2 * self.foosmen[3]['spacing'])]
+        #self.foosmen[3]['limits'][1] = [self.table['margin'] + 1 * self.foosmen[3]['spacing'], self.table['yMax'] - (self.table['margin'] + 1 * self.foosmen[3]['spacing'])]
+        #self.foosmen[3]['limits'][2] = [self.table['margin'] + 2 * self.foosmen[3]['spacing'], self.table['yMax'] - (self.table['margin'] + 0 * self.foosmen[3]['spacing'])]
+
+        # Motors and Motor Limits
+        # This is the maximum position for the motors in each rod
+        #test = {'linearMotor': None, 'rotationalMotor': None, 'linearMotorLimit': None}
+
+        self.motors = np.array([])
+        for i in range(4):
+            self.motors = np.append(self.motors, {
+                'linearMotor': None,
+                'linearMotorLimit': self.table['yMax'] - (self.foosmen[i]['players'] - 1) * self.foosmen[i]['spacing'] - 2 * self.table['margin'],
+                'rotationalMotor': None,
+            })
+
+        # Initialize the 1st hat on the default address (0x60)
+        # Initialize the 2nd hat on the default address (0x61)
+        # Initialize the 3rd hat on the default address (0x63)
+        # Initialize the 4th hat on the default address (0x67)
+
+        # Stepper motors are available as stepper1 and stepper2
+        # stepper1 is made up of the M1 and M2 terminals
+        # stepper2 is made up of the M3 and M4 terminals
+        #self.motors[0]['linearMotor'] = MotorKit().stepper1
+        #self.motors[0]['rotationalMotor'] = MotorKit().stepper2
+        #self.motors[1]['linearMotor'] = MotorKit(address=0x61).stepper1
+        #self.motors[1]['rotationalMotor'] = MotorKit(address=0x61).stepper2
+        #self.motors[2]['linearMotor'] = MotorKit(address=0x63).stepper1
+        #self.motors[2]['rotationalMotor'] = MotorKit(address=0x63).stepper2
+        #self.motors[3]['linearMotor'] = MotorKit(address=0x67).stepper1
+        #self.motors[3]['rotationalMotor'] = MotorKit(address=0x67).stepper2
 
         # Tracking Methods
         self.trackingMethods = ['Offense', 'Defense']
@@ -97,12 +118,6 @@ class foosball:
         # Initialize goal interrupt service routine (ISR)
         # If a goal is detected, this helps us keep track of score and reset for the next ball drop
         #self.goalDetect = False
-
-        # Initialize camera or video feed
-        self.usePiCamera = usePiCamera
-        self.videoFile = videoFile
-        self.outputFile = outputFile
-        self.writer = None
 
         # Initialize score to 0-0
         self.score = (0, 0)
@@ -152,6 +167,13 @@ class foosball:
             self.log("Calculate if takeover is needed")
 
 
+    def getMotor(self, i):
+        if self.debug:
+            self.log("Get Motor [{}]".format(i))
+
+        return self.motors[i]
+
+
     # Linear interpolation between two points (x1, y1) and (x2, y2) and evaluates
     # the function at point xi
     def interpolate(self, xi, x2, y2, x1, y1):
@@ -166,18 +188,6 @@ class foosball:
     def moveMotors(self):
         if self.debug:
             self.log("Move motors")
-
-        # Initialise the first hat on the default address
-        # Stepper motors are available as stepper1 and stepper2
-        # stepper1 is made up of the M1 and M2 terminals
-        # stepper2 is made up of the M3 and M4 terminals
-        #self.motors.kit1 = Motorkit().stepper1
-        #self.motors.kit2 = Motorkit().stepper2
-
-        # Initialise the second hat on a different address
-        #self.motors.kit3 = MotorKit(address=0x61).stepper1
-        #self.motors.kit4 = MotorKit(address=0x61).stepper2
-
         # https://learn.adafruit.com/adafruit-dc-and-stepper-motor-hat-for-raspberry-pi/using-stepper-motors
         #self.motors.kit1.stepper1.onestep()
 
