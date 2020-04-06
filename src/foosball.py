@@ -11,97 +11,94 @@ class foosball:
     # Initialize table
     def __init__(self, debug=False):
 
+        self.debug = debug
+
         # Pre-calculate dimensions for table, foosmen, foosball, rods, etc
         # Store these for faster lookup, to reduce the amount of overhead required while playing
-        self.dim = {
+        self.table = {
 
-            # Foosball Table
-            'table': {
-                #26.5" x 46.75"
-                'xMax': 116.8,  # Table length
-                'yMax': 68,     # Table width
-                'margin': 1.75, # Minimum distance between foosmen and the wall
-                'rows': np.empty(8), # X coordinate of each foosball rod (8 total)
-            },
+            # Foosball Table - 26.5" x 46.75"
+            'xMax': 116.8,        # Table length
+            'yMax': 68,           # Table width
+            'margin': 1.75,       # Min distance between foosmen and the wall
+            'rows': np.empty(8),  # X coordinate of each foosball rod (8 total)
+        }
+        # Row Positions ("x" coordinates)
+        for i in range(8):
+            self.table['rows'][i] = (2 * i + 1) * self.table['xMax'] / 16
+            #self.table['rows'][0] = 1 * self.table['xMax'] / 16     # Row 1
+            #self.table['rows'][1] = 3 * self.table['xMax'] / 16     # Row 2
+            #etc...
 
-            # Goal
-            'goal': {
-                'width': 18.5,
-            },
-
-            # Motors
-            'motors': {
-                'limits': np.empty(8),
-            },
-
-            # Foosmen
-            'foosmenWidth': 2.5,    # Foosmen width in "y" direction
-            'foosmen': np.array([
-                [{'limits': np.empty(3), 'players': 3, 'spacing': 18.3}],  # Goalie
-                [{'limits': np.empty(2), 'players': 2, 'spacing': 24.5}],  # Defense
-                [{'limits': np.empty(5), 'players': 5, 'spacing': 12}],    # Midfield
-                [{'limits': np.empty(3), 'players': 3, 'spacing': 18.5}],  # Offense
-            ]),
-
-            # Ball
-            'ball': {
-                'width': 3.5,  # Foosball width (in "y" direction)
-            },
+        # Goal
+        goalWidth = 18.5
+        self.goal = {
+            'width': goalWidth,
+            'limits': [0.5 * (self.table['yMax'] - goalWidth), 0.5 * (self.table['yMax'] - goalWidth) + goalWidth)]
         }
 
-        # Motor Limits
+        # Motors and Motor Limits
+        self.motors = {'limits': np.empty(4)}
         # This is the maximum position for the motors in each rod
-        self.dim['motors']['limits'][0] = self.dim['table']['yMax'] - (self.dim['foosmen'][0]['players'] - 1) * self.dim['foosmen'][0]['spacing'] - 2 * self.dim['table']['margin']
-        self.dim['motors']['limits'][1] = self.dim['table']['yMax'] - (self.dim['foosmen'][1]['players'] - 1) * self.dim['foosmen'][1]['spacing'] - 2 * self.dim['table']['margin']
-        self.dim['motors']['limits'][2] = self.dim['table']['yMax'] - (self.dim['foosmen'][2]['players'] - 1) * self.dim['foosmen'][2]['spacing'] - 2 * self.dim['table']['margin']
-        self.dim['motors']['limits'][3] = self.dim['table']['yMax'] - (self.dim['foosmen'][3]['players'] - 1) * self.dim['foosmen'][3]['spacing'] - 2 * self.dim['table']['margin']
+        self.motors['limits'][0] = self.table['yMax'] - (self.foosmen[0]['players'] - 1) * self.foosmen[0]['spacing'] - 2 * self.table['margin']
+        self.motors['limits'][1] = self.table['yMax'] - (self.foosmen[1]['players'] - 1) * self.foosmen[1]['spacing'] - 2 * self.table['margin']
+        self.motors['limits'][2] = self.table['yMax'] - (self.foosmen[1]['players'] - 1) * self.foosmen[2]['spacing'] - 2 * self.table['margin']
+        self.motors['limits'][3] = self.table['yMax'] - (self.foosmen[1]['players'] - 1) * self.foosmen[3]['spacing'] - 2 * self.table['margin']
 
-        # Maximum Position of Foosmen
-        # Row 1
-        self.dim['foosmen'][0]['limits'].append([self.dim.table.margin + 0 * self.dim.foosmen[0].spacing, self.dim.table.yMax - (self.dim.table.margin + 2 * self.dim.foosmen[0].spacing)])
-        self.dim['foosmen'][0]['limits'].append([self.dim.table.margin + 1 * self.dim.foosmen[0].spacing, self.dim.table.yMax - (self.dim.table.margin + 1 * self.dim.foosmen[0].spacing)])
-        self.dim['foosmen'][0]['limits'].append([self.dim.table.margin + 2 * self.dim.foosmen[0].spacing, self.dim.table.yMax - (self.dim.table.margin + 0 * self.dim.foosmen[0].spacing)])
-        # Row 2
-        self.dim['foosmen'][1]['limits'].append([self.dim.table.margin + 0 * self.dim.foosmen[1].spacing, self.dim.table.yMax - (self.dim.table.margin + 2 * self.dim.foosmen[1].spacing)])
-        self.dim['foosmen'][1]['limits'].append([self.dim.table.margin + 1 * self.dim.foosmen[1].spacing, self.dim.table.yMax - (self.dim.table.margin + 1 * self.dim.foosmen[1].spacing)])
-        # Row 3
-        self.dim['foosmen'][2]['limits'].append([self.dim.table.margin + 0 * self.dim.foosmen[2].spacing, self.dim.table.yMax - (self.dim.table.margin + 4 * self.dim.foosmen[2].spacing)])
-        self.dim['foosmen'][2]['limits'].append([self.dim.table.margin + 1 * self.dim.foosmen[2].spacing, self.dim.table.yMax - (self.dim.table.margin + 3 * self.dim.foosmen[2].spacing)])
-        self.dim['foosmen'][2]['limits'].append([self.dim.table.margin + 2 * self.dim.foosmen[2].spacing, self.dim.table.yMax - (self.dim.table.margin + 2 * self.dim.foosmen[2].spacing)])
-        self.dim['foosmen'][2]['limits'].append([self.dim.table.margin + 3 * self.dim.foosmen[2].spacing, self.dim.table.yMax - (self.dim.table.margin + 1 * self.dim.foosmen[2].spacing)])
-        self.dim['foosmen'][2]['limits'].append([self.dim.table.margin + 4 * self.dim.foosmen[2].spacing, self.dim.table.yMax - (self.dim.table.margin + 0 * self.dim.foosmen[2].spacing)])
-        # Row 4
-        self.dim['foosmen'][3]['limits'].append([self.dim.table.margin + 0 * self.dim.foosmen[3].spacing, self.dim.table.yMax - (self.dim.table.margin + 2 * self.dim.foosmen[3].spacing)])
-        self.dim['foosmen'][3]['limits'].append([self.dim.table.margin + 1 * self.dim.foosmen[3].spacing, self.dim.table.yMax - (self.dim.table.margin + 1 * self.dim.foosmen[3].spacing)])
-        self.dim['foosmen'][3]['limits'].append([self.dim.table.margin + 2 * self.dim.foosmen[3].spacing, self.dim.table.yMax - (self.dim.table.margin + 0 * self.dim.foosmen[3].spacing)])
-
-        # Goal Posts
-        self.dim['goal']['limits'].append((self.dim.table.yMax - self.dim.goal) / 2, (self.dim.table.yMax - self.dim.goal) / 2 + self.dim.goal)
-
-        # Row Positions ("x" coordinates)
-        self.dim.table['rows'].append(1 * self.dim.table.xMax / 16) # Row 1
-        self.dim.table['rows'].append(3 * self.dim.table.xMax / 16) # Row 2
-        self.dim.table['rows'].append(5 * self.dim.table.xMax / 16) # Row 3
-        self.dim.table['rows'].append(7 * self.dim.table.xMax / 16) # Row 4
-        self.dim.table['rows'].append(9 * self.dim.table.xMax / 16) # Row 5
-        self.dim.table['rows'].append(11 * self.dim.table.xMax / 16) # Row 6
-        self.dim.table['rows'].append(13 * self.dim.table.xMax / 16) # Row 7
-        self.dim.table['rows'].append(15 * self.dim.table.xMax / 16) # Row 8
+        # Foosmen and Maximum Position of Foosmen
+        self.foosmen = {
+            0: [{'limits': np.empty(3), 'players': 3, 'spacing': 18.3}],    # Goalie
+            1: [{'limits': np.empty(2), 'players': 2, 'spacing': 24.5}],    # Defense
+            2: [{'limits': np.empty(5), 'players': 5, 'spacing': 12.0}],    # Midfield
+            3: [{'limits': np.empty(3), 'players': 3, 'spacing': 18.5}],    # Offense
+        }
+        # Row 0 - Goalie
+        self.foosmen[0]['limits'][0] = [self.table['margin'] + 0 * self.foosmen[0]['spacing'], self.table['yMax'] - (self.table['margin'] + 2 * self.foosmen[0]['spacing'])]
+        self.foosmen[0]['limits'][1] = [self.table['margin'] + 1 * self.foosmen[0]['spacing'], self.table['yMax'] - (self.table['margin'] + 1 * self.foosmen[0]['spacing'])]
+        self.foosmen[0]['limits'][2] = [self.table['margin'] + 2 * self.foosmen[0]['spacing'], self.table['yMax'] - (self.table['margin'] + 0 * self.foosmen[0]['spacing'])]
+        # Row 1 - Defense
+        self.foosmen[1]['limits'][0] = [self.table['margin'] + 0 * self.foosmen[1]['spacing'], self.table['yMax'] - (self.table['margin'] + 1 * self.foosmen[1]['spacing'])]
+        self.foosmen[1]['limits'][1] = [self.table['margin'] + 1 * self.foosmen[1]['spacing'], self.table['yMax'] - (self.table['margin'] + 0 * self.foosmen[1]['spacing'])]
+        # Row 2 - Midfield
+        self.foosmen[2]['limits'][0] = [self.table['margin'] + 0 * self.foosmen[2]['spacing'], self.table['yMax'] - (self.table['margin'] + 4 * self.foosmen[2]['spacing'])]
+        self.foosmen[2]['limits'][1] = [self.table['margin'] + 1 * self.foosmen[2]['spacing'], self.table['yMax'] - (self.table['margin'] + 3 * self.foosmen[2]['spacing'])]
+        self.foosmen[2]['limits'][2] = [self.table['margin'] + 2 * self.foosmen[2]['spacing'], self.table['yMax'] - (self.table['margin'] + 2 * self.foosmen[2]['spacing'])]
+        self.foosmen[2]['limits'][3] = [self.table['margin'] + 3 * self.foosmen[2]['spacing'], self.table['yMax'] - (self.table['margin'] + 1 * self.foosmen[2]['spacing'])]
+        self.foosmen[2]['limits'][4] = [self.table['margin'] + 4 * self.foosmen[2]['spacing'], self.table['yMax'] - (self.table['margin'] + 0 * self.foosmen[2]['spacing'])]
+        # Row 3 - Offense
+        self.foosmen[3]['limits'][0] = [self.table['margin'] + 0 * self.foosmen[3]['spacing'], self.table['yMax'] - (self.table['margin'] + 2 * self.foosmen[3]['spacing'])]
+        self.foosmen[3]['limits'][1] = [self.table['margin'] + 1 * self.foosmen[3]['spacing'], self.table['yMax'] - (self.table['margin'] + 1 * self.foosmen[3]['spacing'])]
+        self.foosmen[3]['limits'][2] = [self.table['margin'] + 2 * self.foosmen[3]['spacing'], self.table['yMax'] - (self.table['margin'] + 0 * self.foosmen[3]['spacing'])]
 
         # Tracking Methods
-        self.trackingMethods = ['Simple', 'Defense', 'Trajectory']
+        self.trackingMethods = ['Offense', 'Defense']
+        self.trackingMethod = "Defense"
 
+        # Variable to determine if a game is currently in progress or not
+        # This can be toggled at any time to STOP or PAUSE play
+        self.gameIsActive = False
+        self.ballIsInPlay = False
+
+        if self.debug:
+            self.log("Initialize Table")
+            self.log("Game Is Active: {}".format(self.gameIsActive))
+            self.log("Ball Is In Play: {}".format(self.ballIsInPlay))
+
+
+    # Start game
+    def start(self):
+        if self.debug:
+            self.log("Start function called")
 
         # Initialize motors and all I/O ports
         # This includes calibration of the motors for linear and rotational motion
-        self.motors = None
+        #self.motors = None
 
         # Initialize goal interrupt service routine (ISR)
         # If a goal is detected, this helps us keep track of score and reset for the next ball drop
-        self.goalDetect = False
+        #self.goalDetect = False
 
         # Initialize camera or video feed
-        self.debug = debug
         self.usePiCamera = usePiCamera
         self.videoFile = videoFile
         self.outputFile = outputFile
@@ -110,67 +107,18 @@ class foosball:
         # Initialize score to 0-0
         self.score = (0, 0)
 
-        if self.debug:
-            self.log("Initialize Table")
-
-        # Variable to determine if a game is current in progress or not
-        # This can be toggled at any time to STOP or PAUSE play
-        self.playing = False
-
-
-    # Start game
-    def start(self):
-        if self.debug:
-            self.log("Foosball Start function called")
-
-        #self.playing = True
         return self
 
 
-    # Play game
-    def play(self):
-
-        self.playing = True
-
-        # Break if "playing" variable is not set or is false
-        while self.playing:
-
-            # Detect the position of the foosball
-            self.position = None
-
-            # Keep process if foosball was not detected
-            if self.position is None:
-                if self.debug:
-                    self.log("Foosball position was not detected")
-                continue
-
-            # Determine the tracking method to use
-            self.trackingMethod = "simple"
-
-            # Calculate the foosmen position based on the tracking method
-
-            # Apply takeover to determine in each row should track the ball
-
-            # Calculate the motor positions required to put the tracking foosmen in the desired location
-
-            # Move the motors based on the desired position
-
-
-    # Linear interpolation between two points (x1, y1) and (x2, y2) and evaluates
-    # the function at point xi
-    def interpolate(self, xi, x2, y2, x1, y1):
-        return (xi - x1) * (y2 - y1) / (x2 - x1) + y1
-
-
-    # Retrieves the next frame from the camera or video feed
-    def nextFrame(self):
+    # Check if a goal occurred
+    def checkForGoal(self):
         if self.debug:
-            self.log("Next Frame function called")
+            self.log("Check to see if a score occurred")
 
 
     # Take current image, perform object recognition,
     # and convert this information into the coordinate of the foosball
-    def detectFoosball(self):
+    def detectBall(self):
         if self.debug:
             self.log("Detect Foosball function called")
 
@@ -182,21 +130,37 @@ class foosball:
             self.log("Detect RED and BLUE players")
 
 
-    # Check to see if a score / goal occurred
-    def detectScore(self):
-        if self.debug:
-            self.log("Check to see if a score occurred")
-
-
-    def detectUserInput(self):
-        if self.debug:
-            self.log("Check for user interrupt")
-        return cv2.waitKey(1) & 0xFF == ord("q")
-
-
     def determineMotorMovement(self):
         if self.debug:
             self.log("Determine which motors to move")
+
+
+    def determineTrackingMethod(self):
+        if self.debug:
+            self.log("Determine tracking method")
+
+        self.trackingMethod = "Defense"
+
+        if self.debug:
+            self.log("Tracking method is {}".format(self.trackingMethod))
+
+        return self.trackingMethod
+
+
+    def foosmenTakeover(self):
+        if self.debug:
+            self.log("Calculate if takeover is needed")
+
+
+    # Linear interpolation between two points (x1, y1) and (x2, y2) and evaluates
+    # the function at point xi
+    def interpolate(self, xi, x2, y2, x1, y1):
+        return (xi - x1) * (y2 - y1) / (x2 - x1) + y1
+
+
+    # Print output message to console
+    def log(self, msg):
+        print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), msg)
 
 
     def moveMotors(self):
@@ -218,6 +182,40 @@ class foosball:
         #self.motors.kit1.stepper1.onestep()
 
 
+    # Play game
+    def play(self):
+
+        # Start game
+        self.gameIsActive = True
+        self.ballIsInPlay = False
+
+        # Break if "playing" variable is not set or is false
+        while self.gameIsActive:
+
+            # Detect the position of the foosball
+            self.position = None
+
+            # Keep process if foosball was not detected
+            if self.position is None:
+                if self.debug:
+                    self.log("Foosball position was not detected")
+                continue
+
+            # Determine the tracking method to use
+            self.trackingMethod = self.determineTrackingMethod()
+
+            # Calculate the foosmen position based on the tracking method
+
+            # Apply takeover to determine in each row should track the ball
+            self.foosmenTakeover()
+
+            # Calculate the motor positions required to put the tracking foosmen in the desired location
+            self.determineMotorMovement()
+
+            # Move the motors based on the desired position
+            self.moveMotors()
+
+
     # Function to update video display
     def updateDisplay(self, images, ballLocation, ballRadius, ballDistance, ballDirection, ballSpeed):
 
@@ -228,29 +226,27 @@ class foosball:
         (h, w) = images[0].shape[:2]
 
         # Build multiview display
-        #padding = 8
-        #mvHeight = (h * 2) + (20 * 3) + (padding * 2)
-        #mvWidth = w * 2 + padding
-        padding = 8
-        mvHeight = (h * 2) + (20 * 3) + (padding * 2)
-        mvWidth = w * 2 + padding
+        padW = 8
+        padH = 20
+        mvHeight = (h * 2) + (padH * 3) + (padW * 2)
+        mvWidth = w * 2 + padW
         output = np.zeros((mvHeight, mvWidth, 3), dtype="uint8")
 
         # Top Left
         cv2.putText(output, "Cropped", (w // 2 - 35, 15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-        output[20:h+20, 0:w] = images[0]
+        output[padH:h+padH, 0:w] = images[0]
 
         # Top Right
         cv2.putText(output, "Grayscale", (w + w // 2 - 30, 15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-        output[20:h+20, w+8:w*2+8] = images[1]
+        output[padH:h+padH, w+padW:w*2+padW] = images[1]
 
         # Bottom Left
         cv2.putText(output, "Mask", (w // 2 - 35, 20+h+3+15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-        output[h+3+20+20:h*2+3+20+20, 0:w] = images[2]
+        output[h+3+padH+padH:h*2+3+padH+padH, 0:w] = images[2]
 
         # Bottom Right
         cv2.putText(output, "Output", (w + w // 2 - 30, 20+h+3+15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-        output[h+3+20+20:h*2+3+20+20, w+8:w*2+8] = images[3]
+        output[h+3+padH+padH:h*2+3+padH+padH, w+padW:w*2+padW] = images[3]
 
         # Bottom
         cDisplay = ("{}".format(ballLocation)) if ballLocation is not None else "-"
@@ -265,10 +261,6 @@ class foosball:
         cv2.putText(output, "Velocity: %s" % vDisplay, (820, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
 
         return output
-
-
-    def log(self, msg):
-        print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), msg)
 
 
     def toggleDebugMode(self):
