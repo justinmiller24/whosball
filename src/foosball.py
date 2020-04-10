@@ -281,23 +281,23 @@ class foosball:
             self.foosballDetected = True
             self.ballIsInPlay = True
 
-        	# Find the largest contour in the mask and use this to
-        	# compute the minimum enclosing circle and centroid
-        	c = max(cnts, key=cv2.contourArea)
-        	((x, y), self.radius) = cv2.minEnclosingCircle(c)
-        	M = cv2.moments(c)
-        	self.center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
+            # Find the largest contour in the mask and use this to
+            # compute the minimum enclosing circle and centroid
+            c = max(cnts, key=cv2.contourArea)
+            ((x, y), self.radius) = cv2.minEnclosingCircle(c)
+            M = cv2.moments(c)
+            self.center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
             if self.debug:
                 self.log("Foosball Position: (%s, %s)".format(self.center))
 
-        	# Add to list of tracked points
-        	self.ball_position_history.append(self.center)
+            # Add to list of tracked points
+            self.ball_position_history.append(self.center)
 
             # Calculate motion of foosball
             self.calculateFoosballMotion()
 
-        	# Draw centroid
-        	cv2.circle(self.finalImg, self.center, 5, (0, 0, 255), -1)
+            # Draw centroid
+            cv2.circle(self.finalImg, self.center, 5, (0, 0, 255), -1)
 
             # Update list of tracked points
             if self.display:
