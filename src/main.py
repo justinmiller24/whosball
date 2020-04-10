@@ -53,7 +53,8 @@ while f.gameIsActive:
 		break
 
 	# Save current frame
-	f.setRawFrame(frame)
+	f.rawFrame = frame
+	#f.setRawFrame(frame)
 
 	# Transform perspective based on key points
 	f.transformImagePerspective(origCoords)

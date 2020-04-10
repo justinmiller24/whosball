@@ -401,11 +401,11 @@ class foosball:
 
 
     # Set next frame
-    def setRawFrame(self, frame):
-        if self.debug:
-            self.log("Set next frame")
+    #def setRawFrame(self, frame):
+        #if self.debug:
+            #self.log("Set next frame")
 
-        self.rawFrame = frame
+        #self.rawFrame = frame
 
 
     #def toggleDebugMode(self):
