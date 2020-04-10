@@ -65,75 +65,20 @@ class videoStream:
         return self.frame
 
 
-    # Transform perspective based on 4 input points (coords)
-    def perspectiveTransform(self, coords):
-        origImg = self.frame.copy()
-
-        # Grab image dimensions and determine center point
-        (h, w) = origImg.shape[:2]
-        #(cX, cY) = (w // 2, h // 2)
-
-        # loop over the points and draw them on the cloned image
-        #for (x, y) in pts:
-            #cv2.circle(clone, (x, y), 5, (0, 255, 0), -1)
-
-        # Perspective transform
-        # apply the four point tranform to obtain a "birds eye view" of image
-        self.frame = perspective.four_point_transform(origImg, coords)
-
-        # Resulting frame should be 510px x 297px
-        return self.frame
-
-
-    # Rotate and crop
-    def rotateAndCrop(self):
-
-        # grab the rotation matrix (apply the negative of the angle to rotate clockwise)
-        M = cv2.getRotationMatrix2D((cX, cY), 1, 1.0)
-        # Rotate and crop image
-        rotatedImg = cv2.warpAffine(image, M, (w, h))
-        croppedImg = rotatedImg[125:h-62, 50:w-65]
-        croppedImg = rotatedImg[100:h - 50, 25: w - 25]
-
-        self.frame = croppedImg
-
-        return self.frame
-
-
-    # Set next frame based on cropped image
-    #def setNextFrame(self, image):
-        #if self.debug:
-            #self.log("Set Next Frame")
-        #self.frame = image
-
-        #return self.frame
-
-
-    def getHSVImage(self):
-        if self.debug:
-            self.log("Get HSV image")
-        self.blurred = cv2.GaussianBlur(self.frame, (11, 11), 0)
-        self.hsv = cv2.cvtColor(self.blurred, cv2.COLOR_BGR2HSV)
-        return self.hsv
-
-
-    def getGrayscale(self):
-        if self.debug:
-            self.log("Get grayscale image")
-        self.gray = cv2.cvtColor(self.frame, cv2.COLOR_RGB2GRAY)
-        return self.gray
-        #self.grayscale = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
-        #return self.grayscale
-
-
     # Write output frame
     def write(self, output):
+        if self.debug:
+            self.log("Write output frame function")
+
         if self.writer is not None:
             self.writer.write(output)
 
 
     # Stop stream
     def stop(self):
+        if self.debug:
+            self.log("Stop or release video stream")
+
         # Stop video/camera stream
         if self.videoFile is not None:
             self.stream.release()

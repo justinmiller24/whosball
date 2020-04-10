@@ -52,6 +52,13 @@ ballMax1HSV = (10, 255, 255)
 ballMin2HSV = (170, 20, 20)
 ballMax2HSV = (180, 255, 255)
 
+# Define coordinate bounds for foosball table
+tL = (73,130)
+bL = (59,405)
+tR = (557,136)
+bR = (561,414)
+tableCoords = np.array([tL, bL, tR, bR])
+
 # Globals
 # Define Table Size
 table_dim_cm = (56 * 2.54, 29 * 2.54)
@@ -77,38 +84,25 @@ while True:
 			print("No frame exists, reached end of file")
 		break
 
-	origImg = frame.copy()
+	# Save current frame
+	foosball.setRawFrame(frame)
 
-	# Grab image dimensions and determine center point
-	#(h, w) = origImg.shape[:2]
-	#(cX, cY) = (w // 2, h // 2)
+	# Transform perspective based on key points
+	origImg = foosball.perspectiveTransform(tableCoords)
 
-	# Transform perspective based on key points and
-	# show transformation coordinates on original image
-	tL = (73,130)
-	bL = (59,405)
-	tR = (557,136)
-	bR = (561,414)
-	coords = np.array([tL, bL, tR, bR])
-	# Show transformation coordinates on original image
-	for (x, y) in coords:
-		cv2.circle(origImg, (x, y), 5, (0, 255, 0), -1)
-	croppedImg = vs.perspectiveTransform(coords)
-
-	#if args["debug"]:
-		#foosball.log("Dimensions:")
-		#foosball.log(h2)
-		#foosball.log(w2)
-	finalImg = croppedImg.copy()
+	tempImg = origImg.copy()
 
 	# Detect foosball and players
 	foosball.detectBall()
 
 	# HSV, Grayscale, Edges
-	hsv = vs.getHSVImage()
-	gray = vs.getGrayscale()
+	#hsv = vs.getHSVImage()
+	blurred = cv2.GaussianBlur(tempImg, (11, 11), 0)
+	hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
+	#gray = vs.getGrayscale()
+	gray = cv2.cvtColor(tempImg, cv2.COLOR_RGB2GRAY)
 	gray3 = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
-	#edge = cv2.Canny(origImg, 100, 200)
+	#edge = cv2.Canny(frame, 100, 200)
 
 	# Canny edge detection
 	# apply Canny edge detection using a wide threshold, tight
@@ -122,38 +116,38 @@ while True:
 	# Blob detection
 	# Set our filtering parameters
 	# Initialize parameter settiing using cv2.SimpleBlobDetector
-	blobImg = hsv.copy()
-	params = cv2.SimpleBlobDetector_Params()
+	#blobImg = hsv.copy()
+	#params = cv2.SimpleBlobDetector_Params()
 
 	# Set Area filtering parameters
-	params.filterByArea = True
-	params.minArea = 100
+	#params.filterByArea = True
+	#params.minArea = 100
 
 	# Set Circularity filtering parameters
-	params.filterByCircularity = True
-	params.minCircularity = 0.9
+	#params.filterByCircularity = True
+	#params.minCircularity = 0.9
 
 	# Set Convexity filtering parameters
-	params.filterByConvexity = True
-	params.minConvexity = 0.2
+	#params.filterByConvexity = True
+	#params.minConvexity = 0.2
 
 	# Set inertia filtering parameters
-	params.filterByInertia = True
-	params.minInertiaRatio = 0.01
+	#params.filterByInertia = True
+	#params.minInertiaRatio = 0.01
 
 	# Create a detector with the parameters
-	detector = cv2.SimpleBlobDetector_create(params)
+	#detector = cv2.SimpleBlobDetector_create(params)
 
 	# Detect blobs
-	keypoints = detector.detect(blobImg)
+	#keypoints = detector.detect(blobImg)
 
 	# Draw blobs on our image as red circles
-	blank = np.zeros((1, 1))
-	blobs = cv2.drawKeypoints(blobImg, keypoints, blank, (0, 0, 255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+	#blank = np.zeros((1, 1))
+	#blobs = cv2.drawKeypoints(blobImg, keypoints, blank, (0, 0, 255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
 
-	number_of_blobs = len(keypoints)
-	text = "Number of Circular Blobs: " + str(len(keypoints))
-	cv2.putText(blobs, text, (20, 550), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 100, 255), 2)
+	#number_of_blobs = len(keypoints)
+	#text = "Number of Circular Blobs: " + str(len(keypoints))
+	#cv2.putText(blobs, text, (20, 550), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 100, 255), 2)
 
 	# Create color mask for foosball and perform erosions and dilation to remove small blobs in mask
 	mask1 = cv2.inRange(hsv, ballMin1HSV, ballMax1HSV)
@@ -193,11 +187,10 @@ while True:
 	# Find contours in mask and initialize the current center (x, y) of the ball
 	cnts = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 	# Extract contours depending on OpenCV version
-	#cnts = cnts[0] if len(cnts) == 2 else cnts[1]
 	cnts = imutils.grab_contours(cnts)
 
 	# Iterate through contours and filter by the number of vertices
-	(h, w) = croppedImg.shape[:2]
+	(h, w) = origImg.shape[:2]
 	cntsImg = np.zeros((h, w, 3), dtype="uint8")
 	for c in cnts:
 		perimeter = cv2.arcLength(c, True)
@@ -287,7 +280,7 @@ while True:
 
 	# Build multi view display and show on screen
 	velocity = None
-	output = foosball.updateDisplay((croppedImg, gray3, mask3, finalImg), center, radius, distance, degrees, velocity)
+	output = foosball.updateDisplay((origImg, gray3, mask3, finalImg), center, radius, distance, degrees, velocity)
 
 	# Write frame to video output file
 	if args["output"]:
@@ -295,12 +288,18 @@ while True:
 
 	# View output on screen/display
 	if args["display"]:
-		cv2.namedWindow("Original")
-		cv2.moveWindow("Original", 1250, 100)
-		cv2.imshow("Original", origImg)
 
+		# Display multiview output
 		cv2.imshow("Output", output)
-		
+
+		# Display original (uncropped) image
+		# Show transformation coordinates on original image
+		for (x, y) in tableCoords:
+			cv2.circle(frame, (x, y), 5, (0, 255, 0), -1)
+		cv2.namedWindow("Raw")
+		cv2.moveWindow("Raw", 1250, 100)
+		cv2.imshow("Raw", frame)
+
 		# Handle user input - stop the loop if the "q" key is pressed
 		if cv2.waitKey(1) & 0xFF == ord("q"):
 			break

@@ -185,11 +185,26 @@ class foosball:
         print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), msg)
 
 
+    # Move MotorKit motors
+    # https://learn.adafruit.com/adafruit-dc-and-stepper-motor-hat-for-raspberry-pi/using-stepper-motors
     def moveMotors(self):
         if self.debug:
             self.log("Move motors")
-        # https://learn.adafruit.com/adafruit-dc-and-stepper-motor-hat-for-raspberry-pi/using-stepper-motors
+
         #self.motors.kit1.stepper1.onestep()
+
+
+    # Transform perspective based on 4 input points (coords)
+    def perspectiveTransform(self, coords):
+        origImg = self.rawFrame.copy()
+
+        # Grab image dimensions and apply perspective transform
+        # Apply the four point tranform to obtain a "birds eye view" of image
+        (h, w) = origImg.shape[:2]
+        self.frame = perspective.four_point_transform(origImg, coords)
+
+        # Resulting frame should have an aspect ratio around 510px x 297px
+        return self.frame
 
 
     # Play game
@@ -224,6 +239,29 @@ class foosball:
 
             # Move the motors based on the desired position
             self.moveMotors()
+
+
+    # Rotate and crop
+    #def rotateAndCrop(self):
+
+        # grab the rotation matrix (apply the negative of the angle to rotate clockwise)
+        #M = cv2.getRotationMatrix2D((cX, cY), 1, 1.0)
+        # Rotate and crop image
+        #rotatedImg = cv2.warpAffine(image, M, (w, h))
+        #croppedImg = rotatedImg[125:h-62, 50:w-65]
+        #croppedImg = rotatedImg[100:h - 50, 25: w - 25]
+
+        #self.frame = croppedImg
+
+        #return self.frame
+
+
+    # Set next frame
+    def setRawFrame(self, frame):
+        if self.debug:
+            self.log("Set next frame")
+
+        self.rawFrame = frame
 
 
     # Function to update video display
