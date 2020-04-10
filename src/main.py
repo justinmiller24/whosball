@@ -60,7 +60,7 @@ while f.gameIsActive:
 
 	# Detect position of the foosball and the players
 	#f.detectPlayers()
-	ballPosition = f.detectFoosball()
+	ballPosition = f.detectFoosball(ballMin1HSV, ballMax1HSV, ballMin2HSV, ballMax2HSV)
 
 	# Keep processing if foosball was not detected
 	# This usually means a goal was scored
