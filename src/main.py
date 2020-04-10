@@ -101,15 +101,6 @@ while True:
 	gray = cv2.cvtColor(tempImg, cv2.COLOR_RGB2GRAY)
 	gray3 = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
 
-	# Canny edge detection
-	# apply Canny edge detection using a wide threshold, tight
-	# threshold, and automatically determined threshold
-	#blurred = cv2.GaussianBlur(gray, (3, 3), 0)
-	#wide = cv2.Canny(blurred, 10, 200)
-	#tight = cv2.Canny(blurred, 225, 250)
-	#canny = auto_canny(blurred)
-	#canny3 = cv2.cvtColor(canny, cv2.COLOR_GRAY2BGR)
-
 	# Blob detection
 	# Set our filtering parameters
 	# Initialize parameter settiing using cv2.SimpleBlobDetector
