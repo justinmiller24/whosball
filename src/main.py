@@ -36,67 +36,61 @@ tL = (73,130)
 tR = (557,136)
 bL = (59,405)
 bR = (561,414)
-origCoords = [tL, tR, bL, bR]
 
 # Initialize camera / video and foosball game
-v = videoStream(args["debug"], args["picamera"], args["video"], args["output"]).start()
-f = foosball(args["debug"]).start()
+vs = videoStream(args["debug"], args["picamera"], args["video"], args["output"]).start()
+fb = foosball(args["debug"]).start()
 
 # Main loop
-while f.gameIsActive:
+while fb.gameIsActive:
 
 	# Read next frame. If no frame exists, then we've reached the end of the video.
-	frame = v.getNextFrame()
-	if frame is None:
+	fb.frame = vs.getNextFrame()
+	if fb.frame is None:
 		if args["debug"]:
 			print("No frame exists, reached end of file")
 		break
 
-	# Save current frame
-	f.rawFrame = frame
-	#f.setRawFrame(frame)
-
 	# Transform perspective based on key points
-	f.transformImagePerspective(origCoords)
+	fb.transformImagePerspective([tL, tR, bL, bR])
 
 	# Detect position of the foosball and the players
-	#f.detectPlayers()
-	ballPosition = f.detectFoosball(ballMin1HSV, ballMax1HSV, ballMin2HSV, ballMax2HSV)
+	#fb.detectPlayers()
+	ballPosition = fb.detectFoosball(ballMin1HSV, ballMax1HSV, ballMin2HSV, ballMax2HSV)
 
 	# Keep processing if foosball was not detected
 	# This usually means a goal was scored
 	# If the ball is occluded, we still track the current (projected) location along with a timeout counter
-	if ballPosition is None:
+	if ballPosition is not None:
 		if args["debug"]:
-			print("Foosball position was not detected")
-		continue
+			print("Foosball position was detected!")
 
-	# At this point, the foosball potiion is known
-	# Determine the tracking method to use
-	f.determineTrackingMethod()
+		# At this point, the foosball potiion is known
+		# Determine the tracking method to use
+		fb.determineTrackingMethod()
 
-	# Calculate the target position of the foosmen rows based on the tracking method
+		# Calculate the target position of the foosmen rows based on the tracking method
 
-	# Apply takeover to determine in each row should track the ball
-	#f.foosmenTakeover()
+		# Apply takeover to determine in each row should track the ball
+		#fb.foosmenTakeover()
 
-	# Calculate the motor positions required to put the tracking foosmen in the desired location
-	# Determine the amount of movement needed for each of the linear and rotational motors to move to desired position
-	# Move the motors based on the desired position
-	#f.determineMotorMovement()
-	#f.moveMotors()
+		# Calculate the motor positions required to put the tracking foosmen in the desired location
+		# Determine the amount of movement needed for each of the linear and rotational motors to move to desired position
+		# Move the motors based on the desired position
+		#fb.determineMotorMovement()
+		#fb.moveMotors()
 
 
-	# Check for goal and update score
-	#f.checkForGoal()
+		# Check for goal and update score
+		#fb.checkForGoal()
 
 	# Video processing
 	# Build multi view display and show on screen
-	f.updateDisplay(f.frame, f.mask3, f.contoursImg, f.finalImg)
+	fb.updateDisplay(fb.frame, fb.mask3, fb.contoursImg, fb.finalImg)
 
 	# Write display to video output file
 	if args["output"]:
-		v.write(f.output)
+		vs.write(fb.output)
 
 	# Handle user input
 	# Stop the loop if the "q" key is pressed
@@ -105,7 +99,7 @@ while f.gameIsActive:
 
 
 # Stop video/camera feed and output writer
-v.stop()
+vs.stop()
 
 # close all windows
 cv2.destroyAllWindows()

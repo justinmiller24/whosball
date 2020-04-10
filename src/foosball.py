@@ -400,14 +400,6 @@ class foosball:
         #self.motors.kit1.stepper1.onestep()
 
 
-    # Set next frame
-    #def setRawFrame(self, frame):
-        #if self.debug:
-            #self.log("Set next frame")
-
-        #self.rawFrame = frame
-
-
     #def toggleDebugMode(self):
         #self.debug = not self.debug
         #self.log("Debug Mode is now:", self.debug)
@@ -415,7 +407,7 @@ class foosball:
 
     # Apply homography and transform perspective of image
     def transformImagePerspective(self, coords):
-        origImg = self.rawFrame.copy()
+        origImg = self.frame.copy()
         self.origCoords = np.array(coords, dtype="float32")
 
         # Compute perspective transformation matrix
@@ -439,7 +431,7 @@ class foosball:
 
         # Display original (uncropped) image
         # Show transformation coordinates on original image
-        origImg = self.rawFrame.copy()
+        origImg = self.frame.copy()
         for (x, y) in self.origCoords:
             cv2.circle(origImg, (x, y), 5, (0, 255, 0), -1)
         cv2.namedWindow("Raw")
