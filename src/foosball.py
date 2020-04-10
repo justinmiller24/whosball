@@ -407,7 +407,7 @@ class foosball:
 
     # Apply homography and transform perspective of image
     def transformImagePerspective(self, coords):
-        origImg = self.frame.copy()
+        origImg = self.rawFrame.copy()
         self.origCoords = np.array(coords, dtype="float32")
 
         # Compute perspective transformation matrix
