@@ -203,7 +203,7 @@ class foosball:
         if self.debug:
             self.log("Detect Foosball function called")
 
-        origImg = .copy()
+        origImg = self.frame.copy()
         self.finalImg = self.frame.copy()
 
         # HSV, Grayscale, Edges
