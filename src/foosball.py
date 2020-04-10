@@ -319,7 +319,7 @@ class foosball:
 
             # At this point, we know the ball was in play previously
             # Check for case #2 -- the foosball was in play previously and a goal just occurred
-            if self.goalScored():
+            if self.checkForGoal():
                 self.log("The ball was in play and it looks like a goal occurred!")
 
                 # Determine who scored
@@ -330,6 +330,7 @@ class foosball:
                 return
 
             # At this point, we know the ball is likely occluded
+            self.log("The ball is likely occluded. Determine projected coordinates.")
 
 
     # Take current image, perform object recognition,
