@@ -203,7 +203,7 @@ class foosball:
         if self.debug:
             self.log("Detect Foosball function called")
 
-        origImg = self.frame.copy()
+        origImg = .copy()
         self.finalImg = self.frame.copy()
 
         # HSV, Grayscale, Edges
@@ -278,6 +278,7 @@ class foosball:
 
         # Ensure at least one contour was found
         if len(cnts) > 0:
+
             self.foosballDetected = True
             self.ballIsInPlay = True
 
@@ -287,8 +288,7 @@ class foosball:
             ((x, y), self.radius) = cv2.minEnclosingCircle(c)
             M = cv2.moments(c)
             self.center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
-            if self.debug:
-                self.log("Foosball Position: (%s, %s)".format(self.center))
+            self.log("[STATUS] The ball was detected at location: [%s, %s]".format(self.center))
 
             # Add to list of tracked points
             self.ball_position_history.append(self.center)
@@ -313,14 +313,14 @@ class foosball:
             # Check for case #1 -- the foosball was not in play previously
             # If this is the case, there's probably nothing else to do until the next play starts
             if not self.ballIsInPlay:
-                self.log("The ball was not in play previously, continue with loop...")
+                self.log("[STATUS] The ball was not in play previously, continue with loop...")
                 self.ballIsInPlay = False
                 return
 
             # At this point, we know the ball was in play previously
             # Check for case #2 -- the foosball was in play previously and a goal just occurred
             if self.checkForGoal():
-                self.log("The ball was in play and it looks like a goal occurred!")
+                self.log("[STATUS] The ball was in play and it looks like a goal occurred!")
 
                 # Determine who scored
 
@@ -330,7 +330,7 @@ class foosball:
                 return
 
             # At this point, we know the ball is likely occluded
-            self.log("The ball is likely occluded. Determine projected coordinates.")
+            self.log("[STATUS] The ball is likely occluded. Determine projected coordinates.")
 
 
     # Take current image, perform object recognition,
@@ -431,7 +431,7 @@ class foosball:
 
         # Display original (uncropped) image
         # Show transformation coordinates on original image
-        origImg = self.frame.copy()
+        origImg = self.rawFrame.copy()
         for (x, y) in self.origCoords:
             cv2.circle(origImg, (x, y), 5, (0, 255, 0), -1)
         cv2.namedWindow("Raw")

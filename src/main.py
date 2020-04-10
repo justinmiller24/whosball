@@ -45,8 +45,8 @@ fb = foosball(args["debug"]).start()
 while fb.gameIsActive:
 
 	# Read next frame. If no frame exists, then we've reached the end of the video.
-	fb.frame = vs.getNextFrame()
-	if fb.frame is None:
+	fb.rawFrame = vs.getNextFrame()
+	if fb.rawFrame is None:
 		if args["debug"]:
 			print("No frame exists, reached end of file")
 		break
