@@ -204,6 +204,7 @@ class foosball:
             self.log("Detect Foosball function called")
 
         origImg = self.frame.copy()
+        self.finalImg = self.frame.copy()
 
         # HSV, Grayscale, Edges
         self.blurred = cv2.GaussianBlur(origImg, (11, 11), 0)

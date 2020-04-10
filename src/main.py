@@ -56,7 +56,7 @@ while f.gameIsActive:
 	f.setRawFrame(frame)
 
 	# Transform perspective based on key points
-	origImg = f.transformImagePerspective(origCoords)
+	f.transformImagePerspective(origCoords)
 
 	# Detect position of the foosball and the players
 	#f.detectPlayers()
