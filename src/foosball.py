@@ -11,10 +11,9 @@ import time
 class foosball:
 
     # Initialize table
-    def __init__(self, debug=False, display=True):
+    def __init__(self, debug=False):
 
         self.debug = debug
-        self.display = display
 
         # Pre-calculate dimensions for table, foosmen, foosball, rods, etc
         # Store these for faster lookup, to reduce the amount of overhead required while playing
@@ -300,8 +299,7 @@ class foosball:
             cv2.circle(self.finalImg, self.center, 5, (0, 0, 255), -1)
 
             # Update list of tracked points
-            if self.display:
-                self.updateTrackedPoints()
+            self.updateTrackedPoints()
 
         # Foosball was not detected as a recognized object. This is either because:
         #   1) The foosball was not in play previously
@@ -431,13 +429,13 @@ class foosball:
     # Apply homography and transform perspective of image
     def transformImagePerspective(self, coords):
         origImg = self.rawFrame.copy()
-        origCoords = np.array(coords, dtype="float32")
+        self.origCoords = np.array(coords, dtype="float32")
 
         # Compute perspective transformation matrix
         tableW = self.table['xPixels']
         tableH = self.table['yPixels']
         finalCoords = np.array([(0,0), (tableW-1,0), (0,tableH-1), (tableW-1,tableH-1)], dtype="float32")
-        M = cv2.getPerspectiveTransform(origCoords, finalCoords)
+        M = cv2.getPerspectiveTransform(self.origCoords, finalCoords)
 
         # Apply perspective transformation matrix to image
         # The resulting frame will have an aspect ratio identical to the size (in pixels) of the foosball playing field
@@ -451,6 +449,15 @@ class foosball:
 
         if self.debug:
             self.log("Update multi view display")
+
+        # Display original (uncropped) image
+        # Show transformation coordinates on original image
+        origImg = self.rawFrame.copy()
+        for (x, y) in self.origCoords:
+            cv2.circle(origImg, (x, y), 5, (0, 255, 0), -1)
+        cv2.namedWindow("Raw")
+        cv2.moveWindow("Raw", 1250, 100)
+        cv2.imshow("Raw", origImg)
 
         # Grab dimensions of first image
         (h, w) = images[0].shape[:2]
@@ -490,7 +497,8 @@ class foosball:
         cv2.putText(self.output, "Direction: %s" % aDisplay, (620, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
         cv2.putText(self.output, "Velocity: %s" % vDisplay, (820, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
 
-        return self.output
+        # Show display on screen
+        cv2.imshow("Output", self.output)
 
 
     def toggleDebugMode(self):

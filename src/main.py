@@ -19,7 +19,7 @@ from foosball import foosball
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-d", "--debug", help="whether or not to show debug mode", action="store_true")
-ap.add_argument("-s", "--display", type=int, default=1, help="whether or not to display output")
+#ap.add_argument("-s", "--display", type=int, default=1, help="whether or not to display output")
 ap.add_argument("-p", "--picamera", help="whether or not the Raspberry Pi camera should be used", action="store_true")
 ap.add_argument("-v", "--video", help="path to the (optional) video file")
 ap.add_argument("-o", "--output", help="path to output video file")
@@ -40,7 +40,7 @@ origCoords = [tL, tR, bL, bR]
 
 # Initialize camera / video and foosball game
 v = videoStream(args["debug"], args["picamera"], args["video"], args["output"]).start()
-f = foosball(args["debug"], args["display"]).start()
+f = foosball(args["debug"]).start()
 
 # Main loop
 while f.gameIsActive:
@@ -90,31 +90,17 @@ while f.gameIsActive:
 	#f.checkForGoal()
 
 	# Video processing
-	if (args["display"] > 0 or args["output"]):
+	# Build multi view display and show on screen
+	f.updateDisplay(f.frame, f.mask3, f.contoursImg, f.finalImg)
 
-		# Build multi view display and show on screen
-		f.updateDisplay(f.frame, f.mask3, f.contoursImg, f.finalImg)
+	# Write display to video output file
+	if args["output"]:
+		v.write(f.output)
 
-		# Write display to video output file
-		if args["output"]:
-			v.write(f.output)
-
-		# Show display on screen
-		if args["display"]:
-			cv2.imshow("Output", f.output)
-
-			# Display original (uncropped) image
-			# Show transformation coordinates on original image
-			for (x, y) in tableCoords:
-				cv2.circle(frame, (x, y), 5, (0, 255, 0), -1)
-			cv2.namedWindow("Raw")
-			cv2.moveWindow("Raw", 1250, 100)
-			cv2.imshow("Raw", frame)
-
-			# Handle user input
-			# Stop the loop if the "q" key is pressed
-			if cv2.waitKey(1) & 0xFF == ord("q"):
-				break
+	# Handle user input
+	# Stop the loop if the "q" key is pressed
+	if cv2.waitKey(1) & 0xFF == ord("q"):
+		break
 
 
 # Stop video/camera feed and output writer
