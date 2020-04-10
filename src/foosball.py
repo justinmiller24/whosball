@@ -449,19 +449,19 @@ class foosball:
         self.output = np.zeros((mvHeight, mvWidth, 3), dtype="uint8")
 
         # Top Left
-        cv2.putText(output, "Original", (w // 2 - 35, 15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+        cv2.putText(self.output, "Original", (w // 2 - 35, 15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
         self.output[padH:h+padH, 0:w] = images[0]
 
         # Top Right
-        cv2.putText(output, "Mask", (w + w // 2 - 30, 15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+        cv2.putText(self.output, "Mask", (w + w // 2 - 30, 15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
         self.output[padH:h+padH, w+padW:w*2+padW] = images[1]
 
         # Bottom Left
-        cv2.putText(output, "Contours", (w // 2 - 35, 20+h+3+15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+        cv2.putText(self.output, "Contours", (w // 2 - 35, 20+h+3+15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
         self.output[h+3+padH+padH:h*2+3+padH+padH, 0:w] = images[2]
 
         # Bottom Right
-        cv2.putText(output, "Final", (w + w // 2 - 30, 20+h+3+15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+        cv2.putText(self.output, "Final", (w + w // 2 - 30, 20+h+3+15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
         self.output[h+3+padH+padH:h*2+3+padH+padH, w+padW:w*2+padW] = images[3]
 
         # Bottom
