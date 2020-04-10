@@ -96,13 +96,10 @@ while True:
 	foosball.detectBall()
 
 	# HSV, Grayscale, Edges
-	#hsv = vs.getHSVImage()
 	blurred = cv2.GaussianBlur(tempImg, (11, 11), 0)
 	hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
-	#gray = vs.getGrayscale()
 	gray = cv2.cvtColor(tempImg, cv2.COLOR_RGB2GRAY)
 	gray3 = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
-	#edge = cv2.Canny(frame, 100, 200)
 
 	# Canny edge detection
 	# apply Canny edge detection using a wide threshold, tight
@@ -271,7 +268,7 @@ while True:
 	# Detect players
 	#foosball.detectPlayers()
 
-	# Check for score
+	# Check for goal and update score
 	#foosball.checkForGoal()
 
 	# Determine move, if any, and move linear and rotational motors
