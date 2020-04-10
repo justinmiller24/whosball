@@ -154,33 +154,6 @@ while True:
 	mask = cv2.dilate(mask, None, iterations=2)
 	mask3 = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
 
-	# Detect HoughCircles
-	# detect circles in the image
-	#houghImg = np.zeros((h, w, 3), dtype="uint8")
-	#circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1.2, 100)
-	#circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1.0, 45, 75, 40, 20, 40);
-	#hough1 = mask3.copy()
-	#houghGray = cv2.cvtColor(hough1, cv2.COLOR_BGR2GRAY)
-	#circles = cv2.HoughCircles(houghGray, cv2.HOUGH_GRADIENT, 1.0, 45, 75, 40, 20, 40);
-
-	# ensure at least some circles were found
-	#if circles is not None:
-		#if args["debug"]:
-			#foosball.log("Circles is not None")
-
-		# convert the (x, y) coordinates and radius of the circles to integers
-		#circles = np.round(circles[0, :]).astype("int")
-		#if args["debug"]:
-			#foosball.log(circles)
-
-		# loop over the (x, y) coordinates and radius of the circles
-		#for (x, y, r) in circles:
-
-			# draw the circle in the output image, then draw a rectangle
-			# corresponding to the center of the circle
-			#cv2.circle(houghImg, (x, y), r, (0, 0, 255), 4)
-			#cv2.rectangle(houghImg, (x - 5, y - 5), (x + 5, y + 5), (0, 128, 255), -1)
-
 	# Find contours in mask and initialize the current center (x, y) of the ball
 	cnts = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 	# Extract contours depending on OpenCV version
