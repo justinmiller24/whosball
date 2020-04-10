@@ -86,7 +86,7 @@ while fb.gameIsActive:
 
 	# Video processing
 	# Build multi view display and show on screen
-	fb.updateDisplay(fb.frame, fb.mask3, fb.contoursImg, fb.finalImg)
+	fb.updateDisplay([fb.frame, fb.mask3, fb.contoursImg, fb.finalImg])
 
 	# Write display to video output file
 	if args["output"]:
