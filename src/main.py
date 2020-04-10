@@ -90,7 +90,7 @@ while f.gameIsActive:
 	#f.checkForGoal()
 
 	# Video processing
-	if (args["display"] or args["output"]):
+	if (args["display"] > 0 or args["output"]):
 
 		# Build multi view display and show on screen
 		f.updateDisplay(f.frame, f.mask3, f.contoursImg, f.finalImg)
