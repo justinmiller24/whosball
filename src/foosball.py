@@ -288,7 +288,7 @@ class foosball:
             ((x, y), self.radius) = cv2.minEnclosingCircle(c)
             M = cv2.moments(c)
             self.center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
-            self.log("[STATUS] The ball was detected at location: [%s, %s]".format(self.center))
+            self.log("[STATUS] The ball was detected at location: [{}, {}]".format(self.center))
 
             # Add to list of tracked points
             self.ball_position_history.append(self.center)
