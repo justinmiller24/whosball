@@ -1,7 +1,6 @@
 from adafruit_motorkit import MotorKit
 import cv2
 import datetime
-import imutils
 import numpy as np
 import time
 
@@ -18,8 +17,11 @@ class foosball:
         self.table = {
 
             # Foosball Table - 26.5" x 46.75"
-            'xMax': 116.8,        # Table length
-            'yMax': 68,           # Table width
+            # Resulting frame should have an aspect ratio around 510px x 297px
+            'xPixels': 510,         # Image width (table length) in pixels
+            'yPixels': 297,         # Image height (table width) in pixels
+            'xMax': 116.8,        # Table length (in cm)
+            'yMax': 68,           # Table width (in cm)
             'margin': 1.75,       # Min distance between foosmen and the wall
             'rows': np.empty(8),  # X coordinate of each foosball rod (8 total)
         }
@@ -194,16 +196,20 @@ class foosball:
         #self.motors.kit1.stepper1.onestep()
 
 
-    # Transform perspective based on 4 input points (coords)
-    def perspectiveTransform(self, coords):
+    # Apply homography and transform perspective of image
+    def transformImagePerspective(self, origCoords):
         origImg = self.rawFrame.copy()
 
-        # Grab image dimensions and apply perspective transform
-        # Apply the four point tranform to obtain a "birds eye view" of image
-        (h, w) = origImg.shape[:2]
-        self.frame = perspective.four_point_transform(origImg, coords)
+        # Compute perspective transformation matrix
+        tableW = self.table['xPixels']
+        tableH = self.table['yPixels']
+        finalCoords = np.array([(0,0), (tableW-1,0), (0,tableH-1), (tableW-1,tableH-1)], dtype="float32")
+        M = cv2.getPerspectiveTransform(origCoords, finalCoords)
 
-        # Resulting frame should have an aspect ratio around 510px x 297px
+        # Apply perspective transformation matrix to image
+        # The resulting frame will have an aspect ratio identical to the size (in pixels) of the foosball playing field
+        self.frame = cv2.warpPerspective(origImg, M, (tableW, tableH))
+
         return self.frame
 
 
@@ -239,21 +245,6 @@ class foosball:
 
             # Move the motors based on the desired position
             self.moveMotors()
-
-
-    # Rotate and crop
-    #def rotateAndCrop(self):
-
-        # grab the rotation matrix (apply the negative of the angle to rotate clockwise)
-        #M = cv2.getRotationMatrix2D((cX, cY), 1, 1.0)
-        # Rotate and crop image
-        #rotatedImg = cv2.warpAffine(image, M, (w, h))
-        #croppedImg = rotatedImg[125:h-62, 50:w-65]
-        #croppedImg = rotatedImg[100:h - 50, 25: w - 25]
-
-        #self.frame = croppedImg
-
-        #return self.frame
 
 
     # Set next frame

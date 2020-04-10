@@ -42,12 +42,12 @@ ballMax1HSV = (10, 255, 255)
 ballMin2HSV = (170, 20, 20)
 ballMax2HSV = (180, 255, 255)
 
-# Define coordinate bounds for foosball table
+# Define coordinates for foosball table in top-left, top-right, bottom-left, and bottom-right order
 tL = (73,130)
-bL = (59,405)
 tR = (557,136)
+bL = (59,405)
 bR = (561,414)
-tableCoords = np.array([tL, bL, tR, bR])
+origCoords = np.array([tL, tR, bL, bR], dtype="float32")
 
 # Globals
 # Define Table Size
@@ -78,7 +78,7 @@ while True:
 	foosball.setRawFrame(frame)
 
 	# Transform perspective based on key points
-	origImg = foosball.perspectiveTransform(tableCoords)
+	origImg = foosball.transformImagePerspective(origCoords)
 
 	tempImg = origImg.copy()
 

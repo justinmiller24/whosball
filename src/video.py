@@ -1,8 +1,6 @@
 from imutils.video import VideoStream
-from imutils import perspective
 import cv2
 import datetime
-import imutils
 import time
 
 
