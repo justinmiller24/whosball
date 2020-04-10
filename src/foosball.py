@@ -406,24 +406,9 @@ class foosball:
         self.rawFrame = frame
 
 
-    # Show trailing list of tracked points
-    def updateTrackedPoints(self):
-        if self.debug:
-            self.log("Update tracked points")
-
-        # Add latest point to list of tracked points
-        self.pts.appendleft(self.center)
-
-        # loop over the set of tracked points
-        for i in range(1, len(self.pts)):
-
-        	# if either of the tracked points are None, ignore them
-        	if self.pts[i - 1] is None or self.pts[i] is None:
-        		continue
-
-        	# otherwise, compute the thickness of the line and draw the connecting lines
-        	thickness = int(np.sqrt(30 / float(i + 1)) * 2.5)
-        	cv2.line(self.finalImg, self.pts[i - 1], self.pts[i], (0, 0, 255), thickness)
+    #def toggleDebugMode(self):
+        #self.debug = not self.debug
+        #self.log("Debug Mode is now:", self.debug)
 
 
     # Apply homography and transform perspective of image
@@ -501,6 +486,21 @@ class foosball:
         cv2.imshow("Output", self.output)
 
 
-    def toggleDebugMode(self):
-        self.debug = not self.debug
-        self.log("Debug Mode is now:", self.debug)
+    # Show trailing list of tracked points
+    def updateTrackedPoints(self):
+        if self.debug:
+            self.log("Update tracked points")
+
+        # Add latest point to list of tracked points
+        self.pts.appendleft(self.center)
+
+        # loop over the set of tracked points
+        for i in range(1, len(self.pts)):
+
+        	# if either of the tracked points are None, ignore them
+        	if self.pts[i - 1] is None or self.pts[i] is None:
+        		continue
+
+        	# otherwise, compute the thickness of the line and draw the connecting lines
+        	thickness = int(np.sqrt(30 / float(i + 1)) * 2.5)
+        	cv2.line(self.finalImg, self.pts[i - 1], self.pts[i], (0, 0, 255), thickness)
