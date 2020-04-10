@@ -6,23 +6,14 @@
 # python main.py
 # python main.py --debug
 # python main.py --picamera
-# python main.py --video test-video.mp4
+# python main.py --video input-video.mp4
 # python main.py --video input-video.mp4 --output output-video.mp4
 
 # import the necessary packages
-from __future__ import print_function
-from collections import deque
 import argparse
 import cv2
-import imutils
-import math
-import numpy as np
-
 from video import videoStream
 from foosball import foosball
-
-
-print("Starting Main Script")
 
 
 # construct the argument parse and parse the arguments
@@ -35,8 +26,6 @@ ap.add_argument("-o", "--output", help="path to output video file")
 args = vars(ap.parse_args())
 
 # Define HSV bounds for foosball
-#ballMinHSV = (174, 155, 205)
-#ballMaxHSV = (176, 180, 240)
 ballMin1HSV = (0, 20, 20)
 ballMax1HSV = (10, 255, 255)
 ballMin2HSV = (170, 20, 20)
@@ -47,217 +36,89 @@ tL = (73,130)
 tR = (557,136)
 bL = (59,405)
 bR = (561,414)
-origCoords = np.array([tL, tR, bL, bR], dtype="float32")
+origCoords = [tL, tR, bL, bR]
 
-# Globals
-# Define Table Size
-table_dim_cm = (56 * 2.54, 29 * 2.54)
-# Initialize list of tracked points
-pts = deque(maxlen=30)
-# Initialize ball position array
-ball_position_history = []
+# Initialize camera / video and foosball game
+v = videoStream(args["debug"], args["picamera"], args["video"], args["output"]).start()
+f = foosball(args["debug"], args["display"]).start()
 
-
-# Initialize camera or video stream
-vs = videoStream(args["debug"], args["picamera"], args["video"], args["output"]).start()
-
-# Setup game
-foosball = foosball(args["debug"]).start()
-
-# keep looping
-while True:
+# Main loop
+while f.gameIsActive:
 
 	# Read next frame. If no frame exists, then we've reached the end of the video.
-	frame = vs.getNextFrame()
+	frame = v.getNextFrame()
 	if frame is None:
 		if args["debug"]:
 			print("No frame exists, reached end of file")
 		break
 
 	# Save current frame
-	foosball.setRawFrame(frame)
+	f.setRawFrame(frame)
 
 	# Transform perspective based on key points
-	origImg = foosball.transformImagePerspective(origCoords)
+	origImg = f.transformImagePerspective(origCoords)
 
-	tempImg = origImg.copy()
+	# Detect position of the foosball and the players
+	#f.detectPlayers()
+	ballPosition = f.detectFoosball()
 
-	# Detect foosball and players
-	foosball.detectBall()
+	# Keep processing if foosball was not detected
+	# This usually means a goal was scored
+	# If the ball is occluded, we still track the current (projected) location along with a timeout counter
+	if ballPosition is None:
+		if args["debug"]:
+			print("Foosball position was not detected")
+		continue
 
-	# HSV, Grayscale, Edges
-	blurred = cv2.GaussianBlur(tempImg, (11, 11), 0)
-	hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
-	gray = cv2.cvtColor(tempImg, cv2.COLOR_RGB2GRAY)
-	gray3 = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
+	# At this point, the foosball potiion is known
+	# Determine the tracking method to use
+	f.determineTrackingMethod()
 
-	# Blob detection
-	# Set our filtering parameters
-	# Initialize parameter settiing using cv2.SimpleBlobDetector
-	#blobImg = hsv.copy()
-	#params = cv2.SimpleBlobDetector_Params()
+	# Calculate the target position of the foosmen rows based on the tracking method
 
-	# Set Area filtering parameters
-	#params.filterByArea = True
-	#params.minArea = 100
+	# Apply takeover to determine in each row should track the ball
+	#f.foosmenTakeover()
 
-	# Set Circularity filtering parameters
-	#params.filterByCircularity = True
-	#params.minCircularity = 0.9
+	# Calculate the motor positions required to put the tracking foosmen in the desired location
+	# Determine the amount of movement needed for each of the linear and rotational motors to move to desired position
+	# Move the motors based on the desired position
+	#f.determineMotorMovement()
+	#f.moveMotors()
 
-	# Set Convexity filtering parameters
-	#params.filterByConvexity = True
-	#params.minConvexity = 0.2
-
-	# Set inertia filtering parameters
-	#params.filterByInertia = True
-	#params.minInertiaRatio = 0.01
-
-	# Create a detector with the parameters
-	#detector = cv2.SimpleBlobDetector_create(params)
-
-	# Detect blobs
-	#keypoints = detector.detect(blobImg)
-
-	# Draw blobs on our image as red circles
-	#blank = np.zeros((1, 1))
-	#blobs = cv2.drawKeypoints(blobImg, keypoints, blank, (0, 0, 255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
-
-	#number_of_blobs = len(keypoints)
-	#text = "Number of Circular Blobs: " + str(len(keypoints))
-	#cv2.putText(blobs, text, (20, 550), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 100, 255), 2)
-
-	# Create color mask for foosball and perform erosions and dilation to remove small blobs in mask
-	mask1 = cv2.inRange(hsv, ballMin1HSV, ballMax1HSV)
-	mask2 = cv2.inRange(hsv, ballMin2HSV, ballMax2HSV)
-	mask = cv2.bitwise_or(mask1, mask2)
-	mask = cv2.erode(mask, None, iterations=2)
-	mask = cv2.dilate(mask, None, iterations=2)
-	mask3 = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
-
-	# Find contours in mask and initialize the current center (x, y) of the ball
-	cnts = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-	# Extract contours depending on OpenCV version
-	cnts = imutils.grab_contours(cnts)
-
-	# Iterate through contours and filter by the number of vertices
-	(h, w) = origImg.shape[:2]
-	cntsImg = np.zeros((h, w, 3), dtype="uint8")
-	for c in cnts:
-		perimeter = cv2.arcLength(c, True)
-		approx = cv2.approxPolyDP(c, 0.04 * perimeter, True)
-		if len(approx) > 5:
-			cv2.drawContours(cntsImg, [c], -1, (36, 255, 12), -1)
-
-	center = None
-	radius = None
-	distance = None
-	degrees = None
-	velocity = None
-
-	# Ensure at least one contour was found
-	if len(cnts) > 0:
-
-		# Find the largest contour in the mask and use this to
-		# compute the minimum enclosing circle and centroid
-		c = max(cnts, key=cv2.contourArea)
-		((x, y), radius) = cv2.minEnclosingCircle(c)
-		M = cv2.moments(c)
-		center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
-
-		# Add to list of tracked points
-		ball_position_history.append(center)
-		if len(ball_position_history) > 1:
-
-			# Last ball position
-			lastPosition = ball_position_history[-2:][0]
-			origX = lastPosition[0]
-			origY = lastPosition[1]
-
-			# Current ball position
-			currPosition = ball_position_history[-1:][0]
-			destX = currPosition[0]
-			destY = currPosition[1]
-
-			# Deltas
-			deltaX = destX - origX
-			deltaY = destY - origY
-
-			# Distance
-			distancePX = math.sqrt(deltaX * deltaX + deltaY * deltaY)
-			#distanceCM = distancePX / ratio_pxcm
-			#distanceM = distanceCM / 100
-			distance = distancePX
-
-			# Velocity
-			#velocity = distance / frame_time
-
-			# Direction
-			# Calculate number degrees between two points
-			# Calculate arc tangent (in radians) and convert to degrees
-			degrees_temp = math.atan2(deltaX, deltaY) / math.pi * 180
-			if degrees_temp < 0:
-				degrees = 360 + degrees_temp
-			else:
-				degrees = degrees_temp
-
-		# Draw centroid
-		cv2.circle(finalImg, center, 5, (0, 0, 255), -1)
-
-	# Update list of tracked points
-	pts.appendleft(center)
-
-	# loop over the set of tracked points
-	for i in range(1, len(pts)):
-		# if either of the tracked points are None, ignore them
-		if pts[i - 1] is None or pts[i] is None:
-			continue
-
-		# otherwise, compute the thickness of the line and draw the connecting lines
-		bufferLength = 30
-		thickness = int(np.sqrt(bufferLength / float(i + 1)) * 2.5)
-		cv2.line(finalImg, pts[i - 1], pts[i], (0, 0, 255), thickness)
-
-
-	# Detect players
-	#foosball.detectPlayers()
 
 	# Check for goal and update score
-	#foosball.checkForGoal()
+	#f.checkForGoal()
 
-	# Determine move, if any, and move linear and rotational motors
-	#foosball.determineMotorMovement()
-	#foosball.moveMotors()
+	# Video processing
+	if (args["display"] or args["output"]):
 
-	# Build multi view display and show on screen
-	velocity = None
-	output = foosball.updateDisplay((origImg, gray3, mask3, finalImg), center, radius, distance, degrees, velocity)
+		# Build multi view display and show on screen
+		f.updateDisplay(f.frame, f.mask3, f.contoursImg, f.finalImg)
 
-	# Write frame to video output file
-	if args["output"]:
-		vs.write(output)
+		# Write display to video output file
+		if args["output"]:
+			v.write(f.output)
 
-	# View output on screen/display
-	if args["display"]:
+		# Show display on screen
+		if args["display"]:
+			cv2.imshow("Output", f.output)
 
-		# Display multiview output
-		cv2.imshow("Output", output)
+			# Display original (uncropped) image
+			# Show transformation coordinates on original image
+			for (x, y) in tableCoords:
+				cv2.circle(frame, (x, y), 5, (0, 255, 0), -1)
+			cv2.namedWindow("Raw")
+			cv2.moveWindow("Raw", 1250, 100)
+			cv2.imshow("Raw", frame)
 
-		# Display original (uncropped) image
-		# Show transformation coordinates on original image
-		for (x, y) in tableCoords:
-			cv2.circle(frame, (x, y), 5, (0, 255, 0), -1)
-		cv2.namedWindow("Raw")
-		cv2.moveWindow("Raw", 1250, 100)
-		cv2.imshow("Raw", frame)
-
-		# Handle user input - stop the loop if the "q" key is pressed
+		# Handle user input
+		# Stop the loop if the "q" key is pressed
 		if cv2.waitKey(1) & 0xFF == ord("q"):
 			break
 
 
 # Stop video/camera feed and output writer
-vs.stop()
+v.stop()
 
 # close all windows
 cv2.destroyAllWindows()

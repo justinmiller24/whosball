@@ -1,6 +1,9 @@
 from adafruit_motorkit import MotorKit
+from collections import deque
 import cv2
 import datetime
+import imutils
+import math
 import numpy as np
 import time
 
@@ -8,9 +11,10 @@ import time
 class foosball:
 
     # Initialize table
-    def __init__(self, debug=False):
+    def __init__(self, debug=False, display=True):
 
         self.debug = debug
+        self.display = display
 
         # Pre-calculate dimensions for table, foosmen, foosball, rods, etc
         # Store these for faster lookup, to reduce the amount of overhead required while playing
@@ -121,10 +125,64 @@ class foosball:
         # If a goal is detected, this helps us keep track of score and reset for the next ball drop
         #self.goalDetect = False
 
+        # Start game
+        self.gameIsActive = True
+        self.ballIsInPlay = False
+
+        # Track history of ball position
+        # Initialize ball position array
+        self.ball_position_history = []
+        # Initialize list of tracked points
+        self.pts = deque(maxlen=30)
+
         # Initialize score to 0-0
         self.score = (0, 0)
 
         return self
+
+
+    # Calculate motion of foosball based on history
+    def calculateFoosballMotion(self):
+        if self.debug:
+            self.log("Calculate foosball motion function")
+
+        # Make sure we have at least two points to perform motion calculations
+        if len(self.ball_position_history) < 2:
+            if self.debug:
+                self.log("Cannot calculate motion -- need at least two points")
+                return
+
+        # Last ball position
+        lastPosition = self.ball_position_history[-2:][0]
+        origX = lastPosition[0]
+        origY = lastPosition[1]
+
+        # Current ball position
+        currPosition = self.ball_position_history[-1:][0]
+        destX = currPosition[0]
+        destY = currPosition[1]
+
+        # Deltas
+        deltaX = destX - origX
+        deltaY = destY - origY
+
+        # Distance
+        distancePX = math.sqrt(deltaX * deltaX + deltaY * deltaY)
+        #self.distanceCM = self.distancePX / ratio_pxcm
+        #self.distanceM = self.distanceCM / 100
+        self.distance = distancePX
+
+        # Velocity
+        #self.velocity = self.distance / frame_time
+
+        # Direction
+        # Calculate number degrees between two points
+        # Calculate arc tangent (in radians) and convert to degrees
+        degrees_temp = math.atan2(deltaX, deltaY) / math.pi * 180
+        if degrees_temp < 0:
+            self.degrees = 360 + degrees_temp
+        else:
+            self.degrees = degrees_temp
 
 
     # Check if a goal occurred
@@ -132,12 +190,147 @@ class foosball:
         if self.debug:
             self.log("Check to see if a score occurred")
 
+        goalScored = False
+        if goalScored:
+            self.log("Goal Scored!")
+            self.ballIsInPlay = False
+
+        return goalScored
+
 
     # Take current image, perform object recognition,
     # and convert this information into the coordinate of the foosball
-    def detectBall(self):
+    def detectFoosball(self, ballMin1HSV, ballMax1HSV, ballMin2HSV, ballMax2HSV):
         if self.debug:
             self.log("Detect Foosball function called")
+
+        origImg = self.frame.copy()
+
+        # HSV, Grayscale, Edges
+        self.blurred = cv2.GaussianBlur(origImg, (11, 11), 0)
+        self.hsv = cv2.cvtColor(self.blurred, cv2.COLOR_BGR2HSV)
+        #gray = cv2.cvtColor(origImg, cv2.COLOR_RGB2GRAY)
+        #self.gray3 = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
+
+        # Blob detection
+        # Set our filtering parameters
+        # Initialize parameter settiing using cv2.SimpleBlobDetector
+        #blobImg = self.hsv.copy()
+        #params = cv2.SimpleBlobDetector_Params()
+
+        # Set Area filtering parameters
+        #params.filterByArea = True
+        #params.minArea = 100
+
+        # Set Circularity filtering parameters
+        #params.filterByCircularity = True
+        #params.minCircularity = 0.9
+
+        # Set Convexity filtering parameters
+        #params.filterByConvexity = True
+        #params.minConvexity = 0.2
+
+        # Set inertia filtering parameters
+        #params.filterByInertia = True
+        #params.minInertiaRatio = 0.01
+
+        # Create a detector with the parameters
+        #detector = cv2.SimpleBlobDetector_create(params)
+
+        # Detect blobs
+        #keypoints = detector.detect(blobImg)
+
+        # Draw blobs on our image as red circles
+        #blank = np.zeros((1, 1))
+        #blobs = cv2.drawKeypoints(blobImg, keypoints, blank, (0, 0, 255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+
+        #number_of_blobs = len(keypoints)
+        #text = "Number of Circular Blobs: " + str(len(keypoints))
+        #cv2.putText(blobImg, text, (20, 550), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 100, 255), 2)
+
+        # Create color mask for foosball and perform erosions and dilation to remove small blobs in mask
+        mask1 = cv2.inRange(self.hsv, ballMin1HSV, ballMax1HSV)
+        mask2 = cv2.inRange(self.hsv, ballMin2HSV, ballMax2HSV)
+        mask = cv2.bitwise_or(mask1, mask2)
+        mask = cv2.erode(mask, None, iterations=2)
+        mask = cv2.dilate(mask, None, iterations=2)
+        self.mask3 = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
+
+        # Find contours in mask and initialize the current center (x, y) of the ball
+        cnts = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        # Extract contours depending on OpenCV version
+        cnts = imutils.grab_contours(cnts)
+
+        # Iterate through contours and filter by the number of vertices
+        (h, w) = origImg.shape[:2]
+        self.contoursImg = np.zeros((h, w, 3), dtype="uint8")
+        for c in cnts:
+        	perimeter = cv2.arcLength(c, True)
+        	approx = cv2.approxPolyDP(c, 0.04 * perimeter, True)
+        	if len(approx) > 5:
+        		cv2.drawContours(self.contoursImg, [c], -1, (36, 255, 12), -1)
+
+        self.center = None
+        self.radius = None
+        self.distance = None
+        self.degrees = None
+        #self.velocity = None
+
+        # Ensure at least one contour was found
+        if len(cnts) > 0:
+            self.foosballDetected = True
+            self.ballIsInPlay = True
+
+        	# Find the largest contour in the mask and use this to
+        	# compute the minimum enclosing circle and centroid
+        	c = max(cnts, key=cv2.contourArea)
+        	((x, y), self.radius) = cv2.minEnclosingCircle(c)
+        	M = cv2.moments(c)
+        	self.center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
+            if self.debug:
+                self.log("Foosball Position: (%s, %s)".format(self.center))
+
+        	# Add to list of tracked points
+        	self.ball_position_history.append(self.center)
+
+            # Calculate motion of foosball
+            self.calculateFoosballMotion()
+
+        	# Draw centroid
+        	cv2.circle(self.finalImg, self.center, 5, (0, 0, 255), -1)
+
+            # Update list of tracked points
+            if self.display:
+                self.updateTrackedPoints()
+
+        # Foosball was not detected as a recognized object. This is either because:
+        #   1) The foosball was not in play previously
+        #   2) The foosball was in play and a goal just occurred
+        #   3) The foosball is still in play but is occluded
+        #   4) Our object detection algorithm is not working correctly
+        else:
+            self.foosballDetected = False
+
+            # Check for case #1 -- the foosball was not in play previously
+            # If this is the case, there's probably nothing else to do until the next play starts
+            if not self.ballIsInPlay:
+                self.log("The ball was not in play previously, continue with loop...")
+                self.ballIsInPlay = False
+                return
+
+            # At this point, we know the ball was in play previously
+            # Check for case #2 -- the foosball was in play previously and a goal just occurred
+            if self.goalScored():
+                self.log("The ball was in play and it looks like a goal occurred!")
+
+                # Determine who scored
+
+                # Update score
+
+                self.ballIsInPlay = False
+                return
+
+            # At this point, we know the ball is likely occluded
 
 
     # Take current image, perform object recognition,
@@ -169,11 +362,22 @@ class foosball:
             self.log("Calculate if takeover is needed")
 
 
+    # Check if foosball game is in progress
+    #def gameIsInProgress(self):
+        #return self.gameIsActive
+
+
+    # Get motor with position "i"
     def getMotor(self, i):
         if self.debug:
             self.log("Get Motor [{}]".format(i))
 
         return self.motors[i]
+
+
+    # Get current game score
+    def getScore(self):
+        return self.score
 
 
     # Linear interpolation between two points (x1, y1) and (x2, y2) and evaluates
@@ -196,9 +400,38 @@ class foosball:
         #self.motors.kit1.stepper1.onestep()
 
 
+    # Set next frame
+    def setRawFrame(self, frame):
+        if self.debug:
+            self.log("Set next frame")
+
+        self.rawFrame = frame
+
+
+    # Show trailing list of tracked points
+    def updateTrackedPoints(self):
+        if self.debug:
+            self.log("Update tracked points")
+
+        # Add latest point to list of tracked points
+        self.pts.appendleft(self.center)
+
+        # loop over the set of tracked points
+        for i in range(1, len(self.pts)):
+
+        	# if either of the tracked points are None, ignore them
+        	if self.pts[i - 1] is None or self.pts[i] is None:
+        		continue
+
+        	# otherwise, compute the thickness of the line and draw the connecting lines
+        	thickness = int(np.sqrt(30 / float(i + 1)) * 2.5)
+        	cv2.line(self.finalImg, self.pts[i - 1], self.pts[i], (0, 0, 255), thickness)
+
+
     # Apply homography and transform perspective of image
-    def transformImagePerspective(self, origCoords):
+    def transformImagePerspective(self, coords):
         origImg = self.rawFrame.copy()
+        origCoords = np.array(coords, dtype="float32")
 
         # Compute perspective transformation matrix
         tableW = self.table['xPixels']
@@ -213,50 +446,8 @@ class foosball:
         return self.frame
 
 
-    # Play game
-    def play(self):
-
-        # Start game
-        self.gameIsActive = True
-        self.ballIsInPlay = False
-
-        # Break if "playing" variable is not set or is false
-        while self.gameIsActive:
-
-            # Detect the position of the foosball
-            self.position = None
-
-            # Keep process if foosball was not detected
-            if self.position is None:
-                if self.debug:
-                    self.log("Foosball position was not detected")
-                continue
-
-            # Determine the tracking method to use
-            self.trackingMethod = self.determineTrackingMethod()
-
-            # Calculate the foosmen position based on the tracking method
-
-            # Apply takeover to determine in each row should track the ball
-            self.foosmenTakeover()
-
-            # Calculate the motor positions required to put the tracking foosmen in the desired location
-            self.determineMotorMovement()
-
-            # Move the motors based on the desired position
-            self.moveMotors()
-
-
-    # Set next frame
-    def setRawFrame(self, frame):
-        if self.debug:
-            self.log("Set next frame")
-
-        self.rawFrame = frame
-
-
     # Function to update video display
-    def updateDisplay(self, images, ballLocation, ballRadius, ballDistance, ballDirection, ballSpeed):
+    def updateDisplay(self, images):
 
         if self.debug:
             self.log("Update multi view display")
@@ -269,37 +460,37 @@ class foosball:
         padH = 20
         mvHeight = (h * 2) + (padH * 3) + (padW * 2)
         mvWidth = w * 2 + padW
-        output = np.zeros((mvHeight, mvWidth, 3), dtype="uint8")
+        self.output = np.zeros((mvHeight, mvWidth, 3), dtype="uint8")
 
         # Top Left
-        cv2.putText(output, "Cropped", (w // 2 - 35, 15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-        output[padH:h+padH, 0:w] = images[0]
+        cv2.putText(output, "Original", (w // 2 - 35, 15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+        self.output[padH:h+padH, 0:w] = images[0]
 
         # Top Right
-        cv2.putText(output, "Grayscale", (w + w // 2 - 30, 15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-        output[padH:h+padH, w+padW:w*2+padW] = images[1]
+        cv2.putText(output, "Mask", (w + w // 2 - 30, 15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+        self.output[padH:h+padH, w+padW:w*2+padW] = images[1]
 
         # Bottom Left
-        cv2.putText(output, "Mask", (w // 2 - 35, 20+h+3+15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-        output[h+3+padH+padH:h*2+3+padH+padH, 0:w] = images[2]
+        cv2.putText(output, "Contours", (w // 2 - 35, 20+h+3+15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+        self.output[h+3+padH+padH:h*2+3+padH+padH, 0:w] = images[2]
 
         # Bottom Right
-        cv2.putText(output, "Output", (w + w // 2 - 30, 20+h+3+15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-        output[h+3+padH+padH:h*2+3+padH+padH, w+padW:w*2+padW] = images[3]
+        cv2.putText(output, "Final", (w + w // 2 - 30, 20+h+3+15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+        self.output[h+3+padH+padH:h*2+3+padH+padH, w+padW:w*2+padW] = images[3]
 
         # Bottom
-        cDisplay = ("{}".format(ballLocation)) if ballLocation is not None else "-"
-        rDisplay = ("%2.1f" % ballRadius) if ballRadius is not None else "-"
-        dDisplay = ("%2.1f" % ballDistance) if ballDistance is not None else "-"
-        aDisplay = ("%2.1f" % ballDirection) if ballDirection is not None else "-"
+        cDisplay = ("{}".format(self.center)) if self.center is not None else "-"
+        rDisplay = ("%2.1f" % self.radius) if self.radius is not None else "-"
+        dDisplay = ("%2.1f" % self.distance) if self.distance is not None else "-"
+        aDisplay = ("%2.1f" % self.degrees) if self.degrees is not None else "-"
         vDisplay = "-"
-        cv2.putText(output, "Center: %s" % cDisplay, (90, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-        cv2.putText(output, "Radius: %s" % rDisplay, (290, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-        cv2.putText(output, "Distance: %s" % dDisplay, (420, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-        cv2.putText(output, "Direction: %s" % aDisplay, (620, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-        cv2.putText(output, "Velocity: %s" % vDisplay, (820, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+        cv2.putText(self.output, "Center: %s" % cDisplay, (90, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+        cv2.putText(self.output, "Radius: %s" % rDisplay, (290, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+        cv2.putText(self.output, "Distance: %s" % dDisplay, (420, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+        cv2.putText(self.output, "Direction: %s" % aDisplay, (620, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+        cv2.putText(self.output, "Velocity: %s" % vDisplay, (820, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
 
-        return output
+        return self.output
 
 
     def toggleDebugMode(self):
