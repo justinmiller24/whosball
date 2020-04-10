@@ -111,10 +111,10 @@ while f.gameIsActive:
 			cv2.moveWindow("Raw", 1250, 100)
 			cv2.imshow("Raw", frame)
 
-		# Handle user input
-		# Stop the loop if the "q" key is pressed
-		if cv2.waitKey(1) & 0xFF == ord("q"):
-			break
+			# Handle user input
+			# Stop the loop if the "q" key is pressed
+			if cv2.waitKey(1) & 0xFF == ord("q"):
+				break
 
 
 # Stop video/camera feed and output writer
