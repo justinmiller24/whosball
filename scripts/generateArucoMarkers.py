@@ -20,7 +20,7 @@ import matplotlib.pyplot as plt
 ap = argparse.ArgumentParser()
 ap.add_argument("-r", "--rows", type=int, default=3, help="Number of rows to generate")
 ap.add_argument("-c", "--columns", type=int, default=4, help="Number of columns to generate")
-ap.add_argument("-s", "--save", help="Save output to file")
+ap.add_argument("-s", "--save", help="Save output to file", action="store_true")
 args = vars(ap.parse_args())
 
 arucoDict = aruco.Dictionary_get(aruco.DICT_6X6_250)
