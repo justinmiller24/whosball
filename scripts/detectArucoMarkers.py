@@ -55,11 +55,11 @@ while(True):
     # "markerIds" is the list of ids of each of the detected markers in markerCorners.
     # Note that the returned markerCorners and markerIds vectors have the same size.
     corners, ids, rejectedImgPoints = aruco.detectMarkers(gray, arucoDict, parameters=arucoParameters)
-    print(corners)
+    print([corners, ids, rejectedImgPoints])
 
-    if len(ids) > 0:
-        #gray = aruco.drawDetectedMarkers(gray, corners)
-        frameMarkers = aruco.drawDetectedMarkers(frame.copy(), corners, ids)
+    #if len(ids) > 0:
+    #gray = aruco.drawDetectedMarkers(gray, corners)
+    frameMarkers = aruco.drawDetectedMarkers(frame.copy(), corners, ids)
 
     # Display the resulting frame
     cv2.imshow('frame', frameMarkers)
