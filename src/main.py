@@ -31,12 +31,6 @@ ballMax1HSV = (10, 255, 255)
 ballMin2HSV = (170, 20, 20)
 ballMax2HSV = (180, 255, 255)
 
-# Define coordinates for foosball table in top-left, top-right, bottom-left, and bottom-right order
-tL = (73,130)
-tR = (557,136)
-bL = (59,405)
-bR = (561,414)
-
 # Initialize camera / video and foosball game
 vs = videoStream(args["debug"], args["picamera"], args["video"], args["output"]).start()
 fb = foosball(args["debug"]).start()
@@ -51,8 +45,8 @@ while fb.gameIsActive:
 			print("No frame exists, reached end of file")
 		break
 
-	# Transform perspective based on key points
-	fb.transformImagePerspective([tL, tR, bL, bR])
+    # Use ArUco markers to identify table boundaries and crop image
+	fb.detectTable()
 
 	# Detect position of the foosball and the players
 	#fb.detectPlayers()

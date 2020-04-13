@@ -1,6 +1,7 @@
 from adafruit_motorkit import MotorKit
 from collections import deque
 import cv2
+import cv2.aruco as aruco
 import datetime
 import imutils
 import math
@@ -123,6 +124,14 @@ class foosball:
         # Initialize goal interrupt service routine (ISR)
         # If a goal is detected, this helps us keep track of score and reset for the next ball drop
         #self.goalDetect = False
+
+        # Initialize table coordinates
+        # Define coordinates for foosball table in top-left, top-right, bottom-left, and bottom-right order
+        tL = (73,130)
+        tR = (557,136)
+        bR = (561,414)
+        bL = (59,405)
+        self.tableCoords = [tL, tR, bR, bL]
 
         # Start game
         self.gameIsActive = True
@@ -340,6 +349,97 @@ class foosball:
             self.log("Detect RED and BLUE players")
 
 
+    # Detect ArUco markers and transform perspective
+    # This effectively crops the frame to just show the foosball table
+    def detectTable(self):
+        origImg = self.rawFrame.copy()
+
+        # Detect markers
+        # `corners` is the list of corners returned in clockwise order: top left, top right, bottom right, bottom left
+        # `ids` is a list of marker IDs of each of the detected markers
+        gray = cv2.cvtColor(origImg, cv2.COLOR_BGR2GRAY)
+        arucoDict = aruco.Dictionary_get(aruco.DICT_4X4_50)
+        arucoParameters =  aruco.DetectorParameters_create()
+        corners, ids, rejectedImgPoints = aruco.detectMarkers(gray, arucoDict, parameters=arucoParameters)
+        #print(ids)
+
+        # Display detected markers
+        if ids is not None:
+            if self.debug:
+                self.log("ArUco markers detected!")
+                self.log(ids)
+            #output = aruco.drawDetectedMarkers(output, corners, ids)
+
+            # Default to existing coordinates
+            tL, tR, bR, bL = self.tableCoords
+
+            # Top Left
+            if ids[0]:
+                marker = np.squeeze(corners[0])
+                x, y = marker[0]
+                tL = (x, y)
+                if self.debug:
+                    self.log("ArUco Marker exists in Top Left")
+                    self.log(tL)
+
+            # Top Right
+            if ids[1]:
+                marker = np.squeeze(corners[1])
+                x, y = marker[1]
+                tR = (x, y)
+                if self.debug:
+                    self.log("ArUco Marker exists in Top Right")
+                    self.log(tR)
+
+            # Bottom Right
+            if ids[2]:
+                marker = np.squeeze(corners[2])
+                x, y = marker[2]
+                bR = (x, y)
+                if self.debug:
+                    self.log("ArUco Marker exists in Bottom Right")
+                    self.log(bR)
+
+            # Bottom Left
+            if ids[3]:
+                marker = np.squeeze(corners[3])
+                x, y = marker[3]
+                bL = (x, y)
+                if self.debug:
+                    self.log("ArUco Marker exists in Bottom Left")
+                    self.log(bL)
+
+            self.tableCoords = [tL, tR, bR, bL]
+            if self.debug:
+                self.log("Table boundaries (tL, tR, bR, bL):")
+                self.log(self.tableCoords)
+            #for i in range(0, len(ids)):
+                #id = str(ids[i][0])
+
+                #marker = np.squeeze(corners[i])
+
+                #x0, y0 = marker[0]
+                #x2, y2 = marker[2]
+                #x = int((x0 + x2)/2)
+                #y = int((y0 + y2)/2)
+
+                #result.add((id, x, y))
+        else:
+            if self.debug:
+                self.log("No ArUco markers detected, default to table coordinates")
+
+        # Compute perspective transformation matrix and apply to original image
+        # The resulting frame will have an aspect ratio identical to the size (in pixels) of the foosball playing field
+        tableW = self.table['xPixels']
+        tableH = self.table['yPixels']
+        origCoords = np.array(self.tableCoords, dtype="float32")
+        finalCoords = np.array([(0,0), (tableW-1,0), (tableW-1,tableH-1), (0,tableH-1)], dtype="float32")
+        M = cv2.getPerspectiveTransform(origCoords, finalCoords)
+        self.frame = cv2.warpPerspective(origImg, M, (tableW, tableH))
+
+        return self.frame
+
+
     def determineMotorMovement(self):
         if self.debug:
             self.log("Determine which motors to move")
@@ -403,24 +503,6 @@ class foosball:
     #def toggleDebugMode(self):
         #self.debug = not self.debug
         #self.log("Debug Mode is now:", self.debug)
-
-
-    # Apply homography and transform perspective of image
-    def transformImagePerspective(self, coords):
-        origImg = self.rawFrame.copy()
-        self.origCoords = np.array(coords, dtype="float32")
-
-        # Compute perspective transformation matrix
-        tableW = self.table['xPixels']
-        tableH = self.table['yPixels']
-        finalCoords = np.array([(0,0), (tableW-1,0), (0,tableH-1), (tableW-1,tableH-1)], dtype="float32")
-        M = cv2.getPerspectiveTransform(self.origCoords, finalCoords)
-
-        # Apply perspective transformation matrix to image
-        # The resulting frame will have an aspect ratio identical to the size (in pixels) of the foosball playing field
-        self.frame = cv2.warpPerspective(origImg, M, (tableW, tableH))
-
-        return self.frame
 
 
     # Function to update video display
