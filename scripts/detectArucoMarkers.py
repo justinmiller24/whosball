@@ -44,7 +44,7 @@ while(True):
     # Capture frame-by-frame
     ret, frame = cap.read()
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    arucoDict = aruco.Dictionary_get(aruco.DICT_6X6_250)
+    arucoDict = aruco.Dictionary_get(aruco.DICT_4X4_50)
     arucoParameters =  aruco.DetectorParameters_create()
 
     #lists of ids and the corners beloning to each id
