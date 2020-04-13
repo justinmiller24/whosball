@@ -14,7 +14,7 @@ import cv2.aruco as aruco
 import numpy as np
 
 
-def findMarkers(frame, arucoDictionary, arucoParameters):
+def findMarkerCenters(frame, arucoDictionary, arucoParameters):
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     corners, ids, rejectedImgPoints = cv2.aruco.detectMarkers(gray, arucoDictionary, parameters=arucoParameters)
 
@@ -41,28 +41,25 @@ cap = cv2.VideoCapture(0)
 
 while(True):
 
-    # Capture frame-by-frame
+    # Capture video frame by frame
     ret, frame = cap.read()
+    output = frame.copy()
+
+    # Detect markers
+    # `corners` is the list of corners returned in clockwise order: top left, top right, bottom right, bottom left
+    # `ids` is a list of marker IDs of each of the detected markers
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     arucoDict = aruco.Dictionary_get(aruco.DICT_4X4_50)
     arucoParameters =  aruco.DetectorParameters_create()
-
-    #lists of ids and the corners beloning to each id
-
-    # "markerCorners" is the list of corners of the detected markers.
-    # For each marker, its four corners are returned in their original order (which is clockwise starting with top left).
-    # So, the first corner is the top left corner, followed by the top right, bottom right and bottom left.
-    # "markerIds" is the list of ids of each of the detected markers in markerCorners.
-    # Note that the returned markerCorners and markerIds vectors have the same size.
     corners, ids, rejectedImgPoints = aruco.detectMarkers(gray, arucoDict, parameters=arucoParameters)
-    print([corners, ids, rejectedImgPoints])
+    #print(ids)
 
-    #if len(ids) > 0:
-    #gray = aruco.drawDetectedMarkers(gray, corners)
-    frameMarkers = aruco.drawDetectedMarkers(frame.copy(), corners, ids)
+    # Display detected markers
+    if ids is not None:
+        output = aruco.drawDetectedMarkers(output, corners, ids)
 
     # Display the resulting frame
-    cv2.imshow('frame', frameMarkers)
+    cv2.imshow('Output', output)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
