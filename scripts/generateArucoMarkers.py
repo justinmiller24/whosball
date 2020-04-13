@@ -23,7 +23,7 @@ ap.add_argument("-c", "--columns", type=int, default=4, help="Number of columns 
 ap.add_argument("-s", "--save", help="Save output to file", action="store_true")
 args = vars(ap.parse_args())
 
-arucoDict = aruco.Dictionary_get(aruco.DICT_6X6_250)
+arucoDict = aruco.Dictionary_get(aruco.DICT_4X4_50)
 print(arucoDict)
 
 fig = plt.figure()
