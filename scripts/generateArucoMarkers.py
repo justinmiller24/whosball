@@ -27,11 +27,11 @@ arucoDict = aruco.Dictionary_get(aruco.DICT_6X6_250)
 print(arucoDict)
 
 fig = plt.figure()
-for i in range(1, args["columns"] * args["rows"] + 1):
-	ax = fig.add_subplot(args["rows"], args["columns"], i)
+for i in range(0, args["columns"] * args["rows"]):
+	ax = fig.add_subplot(args["rows"], args["columns"], i + 1)
 	# Draw ArUco marker
 	# The second parameter is the ID number, the third parameter is the total image size
-	img = aruco.drawMarker(arucoDict, i, 700)
+	img = aruco.drawMarker(arucoDict, i, 200)
 	plt.imshow(img, cmap = mpl.cm.gray, interpolation = "nearest")
 	ax.axis("off")
 
