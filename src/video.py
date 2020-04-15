@@ -13,28 +13,17 @@ class videoStream:
 
         self.videoFile = videoFile
 
-        # Initialize the video file and stream
+        # Video file
         if self.videoFile is not None:
             self.stream = cv2.VideoCapture(self.videoFile)
 
-        # Initialize the camera and stream
+        # Camera stream
         else:
-            #self.stream = VideoStream(usePiCamera=self.usePiCamera).start()
-
-            # initialize the camera and stream
             self.camera = PiCamera()
             self.camera.resolution = resolution
             self.camera.framerate = framerate
             self.rawCapture = PiRGBArray(self.camera, size=resolution)
             self.stream = self.camera.capture_continuous(self.rawCapture, format="bgr", use_video_port=True)
-
-        # Record to video output file
-        #if self.outputFile:
-            #padding = 8
-            #mvHeight = (360 * 2) + (20 * 3) + (padding * 2)
-            #mvWidth = 640 * 2 + padding
-            #fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
-            #self.writer = cv2.VideoWriter(self.outputFile, fourcc, 30, (mvWidth, mvHeight), True)
 
         # initialize the frame and the variable used to indicate
         # if the thread should be stopped
@@ -69,9 +58,6 @@ class videoStream:
                     self.rawCapture.close()
                     self.camera.close()
 
-                # Stop recording video file
-                #if self.outputFile:
-                    #self.writer.release()
                 return
 
 
@@ -87,9 +73,3 @@ class videoStream:
     def stop(self):
         # indicate that the thread should be stopped
         self.stopped = True
-
-
-        # Write output frame
-        #def write(self, output):
-        #if self.writer is not None:
-            #self.writer.write(output)
