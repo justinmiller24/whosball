@@ -82,6 +82,8 @@ while fb.gameIsActive:
 		fb.detectTable()
 		print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), "Detect CAMERA table end")
 
+	print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), "Main loop stuff begin")
+
 	# Update FPS counter
 	numFrames += 1
 
@@ -131,6 +133,8 @@ while fb.gameIsActive:
 	# Stop the loop if the "q" key is pressed
 	if cv2.waitKey(1) & 0xFF == ord("q"):
 		break
+
+	print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), "Main loop stuff end")
 
 
 # Stop timer and display FPS information
