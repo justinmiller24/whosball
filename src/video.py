@@ -4,7 +4,7 @@ from picamera import PiCamera
 from threading import Thread
 
 
-class videoStream:
+class PiVideoStream:
 
     # Initialize
     #def __init__(self, debug=False, resolution=(640, 480), framerate=32, videoFile=None, outputFile=None):

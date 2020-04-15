@@ -15,7 +15,7 @@ import cv2
 import time
 from imutils.video import FPS
 from foosball import foosball
-from video import videoStream
+from video import PiVideoStream
 
 
 # construct the argument parse and parse the arguments
