@@ -5,9 +5,8 @@
 # USAGE
 # python main.py
 # python main.py --debug
-# python main.py --picamera
-# python main.py --video input-video.mp4
-# python main.py --video input-video.mp4 --output output-video.mp4
+# python main.py --video input.mp4
+# python main.py --video input.mp4 --output output.mp4
 
 # import the necessary packages
 import argparse
@@ -55,13 +54,18 @@ numFrames = 0
 
 # Main loop
 while fb.gameIsActive:
+	print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), "Start main loop")
+	print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), "Read frame begin")
 
 	# Read next frame
 	if args["video"]:
 		ret, frame = vs.read()
 		if ret == True:
 			fb.rawFrame = frame
+			print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), "Read VIDEO frame end")
+			print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), "Resize VIDEO frame begin")
 			fb.frame = cv2.resize(frame, (640, 480), interpolation=cv2.INTER_AREA)
+			print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), "Resize VIDEO frame end")
 		else:
 			if args["debug"]:
 				print("No frame exists, reached EOF")
@@ -70,8 +74,11 @@ while fb.gameIsActive:
 	# Live camera stream
 	else:
 		fb.rawFrame = vs.read()
+		print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), "Read CAMERA frame end")
 	    # Use ArUco markers to identify table boundaries and crop image
+		print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), "Detect CAMERA table begin")
 		fb.detectTable()
+		print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), "Detect CAMERA table end")
 
 	# Update FPS counter
 	numFrames += 1
