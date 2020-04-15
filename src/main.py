@@ -12,7 +12,8 @@
 # import the necessary packages
 import argparse
 import cv2
-from video import videoStream
+import time
+from videoStream import videoStream
 from foosball import foosball
 
 
@@ -32,18 +33,22 @@ ballMin2HSV = (170, 20, 20)
 ballMax2HSV = (180, 255, 255)
 
 # Initialize camera / video and foosball game
-vs = videoStream(args["debug"], args["picamera"], args["video"], args["output"]).start()
+#vs = videoStream(args["debug"], args["picamera"], args["video"], args["output"]).start()
+resolution = (640, 480)
+framerate = 32
+vs = videoStream(args["debug"], resolution, framerate).start()
+time.sleep(2.0)
 fb = foosball(args["debug"]).start()
 
 # Main loop
 while fb.gameIsActive:
 
 	# Read next frame. If no frame exists, then we've reached the end of the video.
-	fb.rawFrame = vs.getNextFrame()
-	if fb.rawFrame is None:
-		if args["debug"]:
-			print("No frame exists, reached end of file")
-		break
+	fb.rawFrame = vs.read()
+	#if fb.rawFrame is None:
+		#if args["debug"]:
+			#print("No frame exists, reached end of file")
+		#break
 
     # Use ArUco markers to identify table boundaries and crop image
 	fb.detectTable()
@@ -95,5 +100,5 @@ while fb.gameIsActive:
 # Stop video/camera feed and output writer
 vs.stop()
 
-# close all windows
+# Close all windows
 cv2.destroyAllWindows()
