@@ -188,15 +188,11 @@ class foosball:
 
 
     # Calculate motion of foosball based on history
-    def calculateFoosballMotion(self):
-        if self.debug:
-            self.log("Calculate foosball motion begin")
+    def _calculateFoosballMotion(self):
 
         # Make sure we have at least two points to perform motion calculations
         if len(self.ball_position_history) < 2:
-            if self.debug:
-                self.log("Cannot calculate motion -- need at least two points")
-                return
+            return
 
         # Last ball position
         lastPosition = self.ball_position_history[-2:][0]
@@ -230,9 +226,6 @@ class foosball:
             self.degrees = 360 + degrees_temp
         else:
             self.degrees = degrees_temp
-
-        if self.debug:
-            self.log("Calculate foosball motion end")
 
 
     # Check if a goal occurred
@@ -348,13 +341,13 @@ class foosball:
             self.ball_position_history.append(self.center)
 
             # Calculate motion of foosball
-            self.calculateFoosballMotion()
+            self._calculateFoosballMotion()
 
             # Draw centroid
             cv2.circle(self.finalImg, self.center, 5, (0, 0, 255), -1)
 
             # Update list of tracked points
-            self.updateTrackedPoints()
+            self._updateTrackedPoints()
 
         # Foosball was not detected as a recognized object. This is either because:
         #   1) The foosball was not in play previously
@@ -477,7 +470,7 @@ class foosball:
                 #result.add((id, x, y))
         else:
             if self.debug:
-                self.log("No ArUco markers detected, default to table coordinates")
+                self.log("No ArUco markers detected, use defaults")
 
         # Compute perspective transformation matrix and apply to original image
         # The resulting frame will have an aspect ratio identical to the size (in pixels) of the foosball playing field
@@ -621,9 +614,7 @@ class foosball:
 
 
     # Show trailing list of tracked points
-    def updateTrackedPoints(self):
-        if self.debug:
-            self.log("Update tracked points begin")
+    def _updateTrackedPoints(self):
 
         # Add latest point to list of tracked points
         self.pts.appendleft(self.center)
@@ -638,6 +629,3 @@ class foosball:
         	# otherwise, compute the thickness of the line and draw the connecting lines
         	thickness = int(np.sqrt(30 / float(i + 1)) * 2.5)
         	cv2.line(self.finalImg, self.pts[i - 1], self.pts[i], (0, 0, 255), thickness)
-
-        if self.debug:
-            self.log("Update tracked points end")
