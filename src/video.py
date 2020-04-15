@@ -36,14 +36,9 @@ class videoStream:
         if self.outputFile:
             if self.debug:
                 self.log("Record to file:", self.outputFile)
-            #mvWidth = 1208
-            #mvHeight = 756
             padding = 8
-            mvHeight = (297 * 2) + (20 * 3) + (8 * 2)
-            mvWidth = 510 * 2 + 8
-            #mvWidth = 1028
-            #mvHeight =
-            #mvHeight = (h * 2) + (20 * 3) + (padding * 2)
+            mvHeight = (360 * 2) + (20 * 3) + (padding * 2)
+            mvWidth = 640 * 2 + padding
             fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
             self.writer = cv2.VideoWriter(self.outputFile, fourcc, 30, (mvWidth, mvHeight), True)
 
