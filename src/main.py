@@ -22,9 +22,9 @@ from video import videoStream
 ap = argparse.ArgumentParser()
 ap.add_argument("-d", "--debug", help="whether or not to show debug mode", action="store_true")
 #ap.add_argument("-s", "--display", type=int, default=1, help="whether or not to display output")
-ap.add_argument("-p", "--picamera", help="whether or not the Raspberry Pi camera should be used", action="store_true")
+#ap.add_argument("-p", "--picamera", help="whether or not the Raspberry Pi camera should be used", action="store_true")
 ap.add_argument("-v", "--video", help="path to the (optional) video file")
-ap.add_argument("-o", "--output", help="path to output video file")
+#ap.add_argument("-o", "--output", help="path to output video file")
 args = vars(ap.parse_args())
 
 # Define HSV bounds for foosball
@@ -34,8 +34,8 @@ ballMin2HSV = (170, 20, 20)
 ballMax2HSV = (180, 255, 255)
 
 # Initialize camera / video and foosball game
-#vs = videoStream(args["debug"], args["picamera"], args["video"], args["output"]).start()
-vs = videoStream().start()
+#vs = videoStream(args["video"], args["output"]).start()
+vs = videoStream(args["video"]).start()
 time.sleep(2.0)
 fps = FPS().start()
 fb = foosball(args["debug"]).start()

@@ -2,29 +2,31 @@
 from picamera.array import PiRGBArray
 from picamera import PiCamera
 from threading import Thread
+import cv2
 
 
 class videoStream:
 
     # Initialize
     #def __init__(self, debug=False, resolution=(640, 480), framerate=32, videoFile=None, outputFile=None):
-    def __init__(self, resolution=(640, 480), framerate=32):
+    def __init__(self, videoFile=None, resolution=(640, 480), framerate=32):
 
-        #self.videoFile = videoFile
-        #self.outputFile = outputFile
-        #self.writer = None
+        self.videoFile = videoFile
 
-        #if self.videoFile is not None:
-            #self.stream = cv2.VideoCapture(self.videoFile)
-        #else:
+        # Initialize the video file and stream
+        if self.videoFile is not None:
+            self.stream = cv2.VideoCapture(self.videoFile)
+
+        # Initialize the camera and stream
+        else:
             #self.stream = VideoStream(usePiCamera=self.usePiCamera).start()
 
-        # initialize the camera and stream
-        self.camera = PiCamera()
-        self.camera.resolution = resolution
-        self.camera.framerate = framerate
-        self.rawCapture = PiRGBArray(self.camera, size=resolution)
-        self.stream = self.camera.capture_continuous(self.rawCapture, format="bgr", use_video_port=True)
+            # initialize the camera and stream
+            self.camera = PiCamera()
+            self.camera.resolution = resolution
+            self.camera.framerate = framerate
+            self.rawCapture = PiRGBArray(self.camera, size=resolution)
+            self.stream = self.camera.capture_continuous(self.rawCapture, format="bgr", use_video_port=True)
 
         # Record to video output file
         #if self.outputFile:
@@ -58,14 +60,14 @@ class videoStream:
             # if the thread indicator variable is set, stop the thread
             # and resource camera resources
             if self.stopped:
-                self.stream.close()
-                self.rawCapture.close()
-                self.camera.close()
-                # Stop video/camera stream
-                #if self.videoFile is not None:
-                    #self.stream.release()
-                #else:
+
+                if self.videoFile is not None:
+                    self.stream.release()
+                else:
                     #self.stream.stop()
+                    self.stream.close()
+                    self.rawCapture.close()
+                    self.camera.close()
 
                 # Stop recording video file
                 #if self.outputFile:
