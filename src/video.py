@@ -67,10 +67,10 @@ class videoStream:
                 #else:
                     #self.stream.stop()
 
-            # Stop recording video file
-            #if self.outputFile:
-                #self.writer.release()
-            return
+                # Stop recording video file
+                #if self.outputFile:
+                    #self.writer.release()
+                return
 
 
     # Return the frame most recently used

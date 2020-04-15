@@ -35,8 +35,8 @@ ballMax2HSV = (180, 255, 255)
 
 # Initialize camera / video and foosball game
 #vs = videoStream(args["debug"], args["picamera"], args["video"], args["output"]).start()
-#resolution = (320, 240)
-#framerate = 32
+#resolution = (640, 480)
+#framerate = 30
 vs = videoStream().start()
 time.sleep(2.0)
 fps = FPS().start()
