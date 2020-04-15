@@ -32,7 +32,11 @@ ballMin2HSV = (170, 20, 20)
 ballMax2HSV = (180, 255, 255)
 
 # Initialize camera / video and foosball game
-vs = videoStream(args["video"]).start()
+if args["video"]:
+	vs = cv2.VideoCapture(args["video"])
+else:
+	vs = videoStream().start()
+
 time.sleep(2.0)
 fps = FPS().start()
 fb = foosball(args["debug"]).start()
@@ -49,15 +53,19 @@ if args["output"]:
 while fb.gameIsActive:
 
 	# Read next frame
-	fb.rawFrame = vs.read()
+	if args["video"]:
+		ret, frame = vs.read()
+		if ret == True:
+			fb.rawFrame = frame
+		else:
+			if args["debug"]:
+				print("No frame exists, reached EOF")
+			break
+	else:
+		fb.rawFrame = vs.read()
 
 	# Update FPS counter
 	fps.update()
-
-	#if fb.rawFrame is None:
-		#if args["debug"]:
-			#print("No frame exists, reached end of file")
-		#break
 
     # Use ArUco markers to identify table boundaries and crop image
 	fb.detectTable()
@@ -116,7 +124,10 @@ if writer is not None:
 	writer.release()
 
 # Stop video/camera feed and output writer
-vs.stop()
+if args["video"]:
+	vs.release()
+else:
+	vs.stop()
 
 # Close all windows
 cv2.destroyAllWindows()

@@ -9,21 +9,13 @@ class videoStream:
 
     # Initialize
     #def __init__(self, debug=False, resolution=(640, 480), framerate=32, videoFile=None, outputFile=None):
-    def __init__(self, videoFile=None, resolution=(640, 480), framerate=32):
+    def __init__(self, resolution=(640, 480), framerate=32):
 
-        self.videoFile = videoFile
-
-        # Video file
-        if self.videoFile is not None:
-            self.stream = cv2.VideoCapture(self.videoFile)
-
-        # Camera stream
-        else:
-            self.camera = PiCamera()
-            self.camera.resolution = resolution
-            self.camera.framerate = framerate
-            self.rawCapture = PiRGBArray(self.camera, size=resolution)
-            self.stream = self.camera.capture_continuous(self.rawCapture, format="bgr", use_video_port=True)
+        self.camera = PiCamera()
+        self.camera.resolution = resolution
+        self.camera.framerate = framerate
+        self.rawCapture = PiRGBArray(self.camera, size=resolution)
+        self.stream = self.camera.capture_continuous(self.rawCapture, format="bgr", use_video_port=True)
 
         # initialize the frame and the variable used to indicate
         # if the thread should be stopped
@@ -49,24 +41,15 @@ class videoStream:
             # if the thread indicator variable is set, stop the thread
             # and resource camera resources
             if self.stopped:
-
-                if self.videoFile is not None:
-                    self.stream.release()
-                else:
-                    #self.stream.stop()
-                    self.stream.close()
-                    self.rawCapture.close()
-                    self.camera.close()
+                self.stream.close()
+                self.rawCapture.close()
+                self.camera.close()
 
                 return
 
 
     # Return the frame most recently used
     def read(self):
-        #self.frame = self.stream.read()
-        #self.frame = self.frame[1] if self.videoFile is not None else self.frame
-        #if self.frame is not None:
-            #self.frame = imutils.resize(self.frame, width=600)
         return self.frame
 
 
