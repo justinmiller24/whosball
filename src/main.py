@@ -65,7 +65,7 @@ while fb.gameIsActive:
 		if ret == True:
 			fb.rawFrame = frame
 			print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), "Resize VIDEO frame begin")
-			fb.frame = cv2.resize(frame, (640, 480), interpolation=cv2.INTER_AREA)
+			fb.frame = cv2.resize(frame, (320, 240), interpolation=cv2.INTER_AREA)
 			print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), "Resize VIDEO frame end")
 		else:
 			if args["debug"]:
