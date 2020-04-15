@@ -54,7 +54,7 @@ class foosball:
 
             # Each foosmen rod has a bumper on each end that measures 1 1/4" in width
             # This creates a "space" and is the minimum between each end foosmen and the wall
-            'rodMargin' 17,             # Foosmen rod bumper (rounded down, in pixels)
+            'rodMargin': 17,            # Foosmen rod bumper (rounded down, in pixels)
 
             # The rods are centered on the table, so we calculate the x coordinate of each rod
             # The rods take up a total width of (rodSpacing * (numRods - 1) + rodWidth)
