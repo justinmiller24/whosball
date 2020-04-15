@@ -164,7 +164,8 @@ class foosball:
         bR = (561,414)
         bL = (59,405)
         self.tableCoords = [tL, tR, bR, bL]
-
+        self.origCoords = None
+        
         # Start game
         self.gameIsActive = True
         self.ballIsInPlay = False
@@ -547,8 +548,9 @@ class foosball:
         # Display original (uncropped) image
         # Show transformation coordinates on original image
         origImg = self.rawFrame.copy()
-        for (x, y) in self.origCoords:
-            cv2.circle(origImg, (x, y), 5, (0, 255, 0), -1)
+        if self.origCoords is not None:
+            for (x, y) in self.origCoords:
+                cv2.circle(origImg, (x, y), 5, (0, 255, 0), -1)
         cv2.namedWindow("Raw")
         cv2.moveWindow("Raw", 1250, 100)
         cv2.imshow("Raw", origImg)
