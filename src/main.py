@@ -40,10 +40,10 @@ fb = foosball(args["debug"]).start()
 # Record video output to file
 writer = None
 if args["output"]:
-    #height = (360 * 2) + (20 * 3) + (8 * 2)
-    #width = 640 * 2 + 8
-    fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
-    writer = cv2.VideoWriter(self.outputFile, fourcc, 30, (1288, 796), True)
+	#height = (360 * 2) + (20 * 3) + (8 * 2)
+	#width = 640 * 2 + 8
+	fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
+	writer = cv2.VideoWriter(self.outputFile, fourcc, 30, (1288, 796), True)
 
 # Main loop
 while fb.gameIsActive:
@@ -97,7 +97,7 @@ while fb.gameIsActive:
 	fb.updateDisplay([fb.frame, fb.mask3, fb.contoursImg, fb.finalImg])
 
 	# Write frame to output file
-    if writer is not None:
+	if writer is not None:
 		writer.write(fb.output)
 
 	# Handle user input
@@ -113,7 +113,7 @@ print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
 
 # Stop recording video file
 if writer is not None:
-    writer.release()
+	writer.release()
 
 # Stop video/camera feed and output writer
 vs.stop()
