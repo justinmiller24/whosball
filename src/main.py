@@ -15,7 +15,7 @@ import cv2
 import time
 from imutils.video import FPS
 from foosball import foosball
-from video import PiVideoStream
+from video import videoStream
 
 
 # construct the argument parse and parse the arguments
@@ -37,7 +37,7 @@ ballMax2HSV = (180, 255, 255)
 #vs = videoStream(args["debug"], args["picamera"], args["video"], args["output"]).start()
 resolution = (640, 480)
 framerate = 32
-vs = videoStream(args["debug"], resolution, framerate).start()
+vs = videoStream(resolution, framerate).start()
 time.sleep(2.0)
 fps = FPS().start()
 fb = foosball(args["debug"]).start()

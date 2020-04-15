@@ -4,13 +4,12 @@ from picamera import PiCamera
 from threading import Thread
 
 
-class PiVideoStream:
+class videoStream:
 
     # Initialize
     #def __init__(self, debug=False, resolution=(640, 480), framerate=32, videoFile=None, outputFile=None):
-    def __init__(self, debug=False, resolution=(640, 480), framerate=32):
+    def __init__(self, resolution=(320, 240), framerate=32):
 
-        self.debug = debug
         #self.videoFile = videoFile
         #self.outputFile = outputFile
         #self.writer = None
