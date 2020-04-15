@@ -16,69 +16,101 @@ class foosball:
 
         self.debug = debug
 
-        # Pre-calculate dimensions for table, foosmen, foosball, rods, etc
-        # Store these for faster lookup, to reduce the amount of overhead required while playing
-        self.table = {
+        # Pre-calculate and store dimensions for faster lookup during game play
+        # Attributes prefixed with an underscore (_) are needed for calculation only
+        self.dim = {
 
-            # Foosball Table - 26.5" x 46.75"
-            # Resulting frame should have an aspect ratio around 510px x 297px
-            'xPixels': 510,         # Image width (table length) in pixels
-            'yPixels': 297,         # Image height (table width) in pixels
-            'xMax': 116.8,        # Table length (in cm)
-            'yMax': 68,           # Table width (in cm)
-            'margin': 1.75,       # Min distance between foosmen and the wall
-            'rows': np.empty(8),  # X coordinate of each foosball rod (8 total)
+            # The foosball table measures 46.75" (length) x 26.5" (width)
+            # This is 118.745cm (width) x 67.31cm (height), based on our camera
+            '_maxWidth': 118.75,        # Table length (in cm)
+            '_maxHeight': 67.31,        # Table width (in cm)
+
+            # This is an aspect ratio of 1.76 which is about 16x9
+            # We will convert all frames to 640px x 360px for processing
+            'xPixels': 640,             # Max width (in pixels)
+            'yPixels': 360,             # Max height (in pixels)
+
+            # The number of pixels per cm is constant (640 px / 118.745 cm)
+            # This means 5.39 pixels represents 1 cm of actual distance on the table
+            'pxPerCm': 5.39,            # Pixels per cm (ratio)
+
+            # The width of each goal is about 6 3/4" at the point where a foosball would pass
+            '_goalWidth': 92.41,        # Goal width (in pixels)
+
+            # Each "goal boundary" is calculated from the middle of the table +/- 1/2 of the goal width
+            # ie, the lower bound = pxPerCm * ((maxHeight - goalWidth) / 2)
+            # ie, the upper bound = pxPerCm * (maxHeight - ((maxHeight - goalWidth) / 2))
+            'goalLower': 133.79,        # Lower boundary of goal (in pixels)
+            'goalUpper': 226.20,        # Upper boundary of goal (in pixels)
+
+            # The foosball measures 1 3/8" in diameter
+            'foosballWidth': 18,        # Foosball width and height (rounded down, in pixels)
+
+            # There are 8 foosball rods, each one measures 5/8" in diameter
+            # The total distance across all 8 rods is 40 7/16"
+            # This means the distance between two rods is 40 7/16" / (8 - 1) * 2.54 * pxPerCm
+            '_rodWidth': 8.55,          # Foosball rod width (in pixels)
+            '_rodSpacing': 79.09,       # Foosball rod spacing (in pixels)
+
+            # Each foosmen rod has a bumper on each end that measures 1 1/4" in width
+            # This creates a "space" and is the minimum between each end foosmen and the wall
+            'rodMargin' 17,             # Foosmen rod bumper (rounded down, in pixels)
+
+            # The rods are centered on the table, so we calculate the x coordinate of each rod
+            # The rods take up a total width of (rodSpacing * (numRods - 1) + rodWidth)
+            # So there is (tableWidth - totalRodWidth) / 2 width between each goal and the end rod
+            # Total rod spacing = (640px - (79.09 * 7 + 8.55)) / 2 = 38.91px (on each end)
+            # The first rod is located at 38.91px + (rodWidth / 2) = 43.185px
+            # Each additional rod is located an additional "rodSpacing" (79.09px) apart
+            'rodPosition': np.array([43.19, 122.28, 201.37, 280.46, 359.55, 438.64, 517.73, 596.82], dtype="float32"),
+
+            # The foosmen are centered on each rod, but each rod (row) has a different number of men
+            # There are 13 total foosmen, each with a unique ID from left to right and top to bottom
+            # Each foosmen kicks the ball with feet that measure 1" in width
+            'foosmenWidth': 14,             # Foosmen width (rounded up, in pixels)
+
+            # The first row (goalie) has 3 men, spaced 7 1/8" apart, and 8 1/2" of linear movement
+            # The second row (defense) has 2 men, spaced 9 5/8" apart, and 13 3/8" of linear movement
+            # The third row (midfield) has 5 men, spaced 5" apart, and 4 1/4" of linear movement
+            # The fourth row (offense) has 3 men, spaced 7 1/8" apart, and 8 1/2" of linear movement
+            '_row0': (97.54, 116.37),       # Spacing, linear movement (in pixels)
+            '_row1': (131.77, 183.11),      # Spacing, linear movement (in pixels)
+            '_row2': (68.45, 58.18),        # Spacing, linear movement (in pixels)
+            '_row3': (97.54, 116.37),       # Spacing, linear movement (in pixels)
+
+            # Calculate the lower and upper bounds for each foosmen
+            'foosmen': np.array([
+                # Goalie
+                (17, 148),              # Min/max coordinates (in pixels)
+                (115, 246),             # Min/max coordinates (in pixels)
+                (212, 343),             # Min/max coordinates (in pixels)
+                # Defense
+                (17, 211),              # Min/max coordinates (in pixels)
+                (149, 343),             # Min/max coordinates (in pixels)
+                # Midfield
+                (17, 69),               # Min/max coordinates (in pixels)
+                (85, 137),              # Min/max coordinates (in pixels)
+                (154, 206),             # Min/max coordinates (in pixels)
+                (222, 274),             # Min/max coordinates (in pixels)
+                (291, 343),             # Min/max coordinates (in pixels)
+                # Offense
+                (17, 148),              # Min/max coordinates (in pixels)
+                (115, 246),             # Min/max coordinates (in pixels)
+                (212, 343),             # Min/max coordinates (in pixels)
+            ])
         }
-        # Row Positions ("x" coordinates)
-        for i in range(8):
-            self.table['rows'][i] = (2 * i + 1) * self.table['xMax'] / 16
-            #self.table['rows'][0] = 1 * self.table['xMax'] / 16     # Row 1
-            #self.table['rows'][1] = 3 * self.table['xMax'] / 16     # Row 2
-            #etc...
-
-        # Goal
-        goalWidth = 18.5
-        self.goal = {
-            'width': goalWidth,
-            'limits': [0.5 * (self.table['yMax'] - goalWidth), 0.5 * (self.table['yMax'] - goalWidth) + goalWidth]
-        }
-
-        # Foosmen and Maximum Position of Foosmen
-        self.foosmen = np.array([
-            {'limits': np.empty(3), 'players': 3, 'spacing': 18.3},    # Goalie
-            {'limits': np.empty(2), 'players': 2, 'spacing': 24.5},    # Defense
-            {'limits': np.empty(5), 'players': 5, 'spacing': 12.0},    # Midfield
-            {'limits': np.empty(3), 'players': 3, 'spacing': 18.5},    # Offense
-        ])
-        # Row 0 - Goalie
-        #self.foosmen[0]['limits'][0] = [self.table['margin'] + 0 * self.foosmen[0]['spacing'], self.table['yMax'] - (self.table['margin'] + 2 * self.foosmen[0]['spacing'])]
-        #self.foosmen[0]['limits'][1] = [self.table['margin'] + 1 * self.foosmen[0]['spacing'], self.table['yMax'] - (self.table['margin'] + 1 * self.foosmen[0]['spacing'])]
-        #self.foosmen[0]['limits'][2] = [self.table['margin'] + 2 * self.foosmen[0]['spacing'], self.table['yMax'] - (self.table['margin'] + 0 * self.foosmen[0]['spacing'])]
-        # Row 1 - Defense
-        #self.foosmen[1]['limits'][0] = [self.table['margin'] + 0 * self.foosmen[1]['spacing'], self.table['yMax'] - (self.table['margin'] + 1 * self.foosmen[1]['spacing'])]
-        #self.foosmen[1]['limits'][1] = [self.table['margin'] + 1 * self.foosmen[1]['spacing'], self.table['yMax'] - (self.table['margin'] + 0 * self.foosmen[1]['spacing'])]
-        # Row 2 - Midfield
-        #self.foosmen[2]['limits'][0] = [self.table['margin'] + 0 * self.foosmen[2]['spacing'], self.table['yMax'] - (self.table['margin'] + 4 * self.foosmen[2]['spacing'])]
-        #self.foosmen[2]['limits'][1] = [self.table['margin'] + 1 * self.foosmen[2]['spacing'], self.table['yMax'] - (self.table['margin'] + 3 * self.foosmen[2]['spacing'])]
-        #self.foosmen[2]['limits'][2] = [self.table['margin'] + 2 * self.foosmen[2]['spacing'], self.table['yMax'] - (self.table['margin'] + 2 * self.foosmen[2]['spacing'])]
-        #self.foosmen[2]['limits'][3] = [self.table['margin'] + 3 * self.foosmen[2]['spacing'], self.table['yMax'] - (self.table['margin'] + 1 * self.foosmen[2]['spacing'])]
-        #self.foosmen[2]['limits'][4] = [self.table['margin'] + 4 * self.foosmen[2]['spacing'], self.table['yMax'] - (self.table['margin'] + 0 * self.foosmen[2]['spacing'])]
-        # Row 3 - Offense
-        #self.foosmen[3]['limits'][0] = [self.table['margin'] + 0 * self.foosmen[3]['spacing'], self.table['yMax'] - (self.table['margin'] + 2 * self.foosmen[3]['spacing'])]
-        #self.foosmen[3]['limits'][1] = [self.table['margin'] + 1 * self.foosmen[3]['spacing'], self.table['yMax'] - (self.table['margin'] + 1 * self.foosmen[3]['spacing'])]
-        #self.foosmen[3]['limits'][2] = [self.table['margin'] + 2 * self.foosmen[3]['spacing'], self.table['yMax'] - (self.table['margin'] + 0 * self.foosmen[3]['spacing'])]
 
         # Motors and Motor Limits
         # This is the maximum position for the motors in each rod
         #test = {'linearMotor': None, 'rotationalMotor': None, 'linearMotorLimit': None}
 
         self.motors = np.array([])
-        for i in range(4):
-            self.motors = np.append(self.motors, {
-                'linearMotor': None,
-                'linearMotorLimit': self.table['yMax'] - (self.foosmen[i]['players'] - 1) * self.foosmen[i]['spacing'] - 2 * self.table['margin'],
-                'rotationalMotor': None,
-            })
+        #for i in range(4):
+            #self.motors = np.append(self.motors, {
+                #'linearMotor': None,
+                #'linearMotorLimit': self.dim['_maxHeight'] - (self.foosmen[i]['players'] - 1) * self.foosmen[i]['spacing'] - 2 * self.table['margin'],
+                #'rotationalMotor': None,
+            #})
 
         # Initialize the 1st hat on the default address (0x60)
         # Initialize the 2nd hat on the default address (0x61)
@@ -430,12 +462,12 @@ class foosball:
 
         # Compute perspective transformation matrix and apply to original image
         # The resulting frame will have an aspect ratio identical to the size (in pixels) of the foosball playing field
-        tableW = self.table['xPixels']
-        tableH = self.table['yPixels']
+        w = self.dim['tableWidth']
+        h = self.dim['tableHeight']
         origCoords = np.array(self.tableCoords, dtype="float32")
-        finalCoords = np.array([(0,0), (tableW-1,0), (tableW-1,tableH-1), (0,tableH-1)], dtype="float32")
+        finalCoords = np.array([(0,0), (w-1,0), (w-1,h-1), (0,h-1)], dtype="float32")
         M = cv2.getPerspectiveTransform(origCoords, finalCoords)
-        self.frame = cv2.warpPerspective(origImg, M, (tableW, tableH))
+        self.frame = cv2.warpPerspective(origImg, M, (w, h))
 
         return self.frame
 
