@@ -404,45 +404,45 @@ class foosball:
             #output = aruco.drawDetectedMarkers(output, corners, ids)
 
             # Default to existing coordinates
-            tL, tR, bR, bL = self.tableCoords
+            #tL, tR, bR, bL = self.tableCoords
 
             # Top Left
-            if ids[0]:
-                marker = np.squeeze(corners[0])
-                x, y = marker[0]
-                tL = (x, y)
-                if self.debug:
-                    self.log("ArUco Marker exists in Top Left")
-                    self.log(tL)
+            #if ids[0]:
+                #marker = np.squeeze(corners[0])
+                #x, y = marker[0]
+                #tL = (x, y)
+                #if self.debug:
+                    #self.log("ArUco Marker exists in Top Left")
+                    #self.log(tL)
 
             # Top Right
-            if ids[1]:
-                marker = np.squeeze(corners[1])
-                x, y = marker[1]
-                tR = (x, y)
-                if self.debug:
-                    self.log("ArUco Marker exists in Top Right")
-                    self.log(tR)
+            #if ids[1]:
+                #marker = np.squeeze(corners[1])
+                #x, y = marker[1]
+                #tR = (x, y)
+                #if self.debug:
+                    #self.log("ArUco Marker exists in Top Right")
+                    #self.log(tR)
 
             # Bottom Right
-            if ids[2]:
-                marker = np.squeeze(corners[2])
-                x, y = marker[2]
-                bR = (x, y)
-                if self.debug:
-                    self.log("ArUco Marker exists in Bottom Right")
-                    self.log(bR)
+            #if ids[2]:
+                #marker = np.squeeze(corners[2])
+                #x, y = marker[2]
+                #bR = (x, y)
+                #if self.debug:
+                    #self.log("ArUco Marker exists in Bottom Right")
+                    #self.log(bR)
 
             # Bottom Left
-            if ids[3]:
-                marker = np.squeeze(corners[3])
-                x, y = marker[3]
-                bL = (x, y)
-                if self.debug:
-                    self.log("ArUco Marker exists in Bottom Left")
-                    self.log(bL)
+            #if ids[3]:
+                #marker = np.squeeze(corners[3])
+                #x, y = marker[3]
+                #bL = (x, y)
+                #if self.debug:
+                    #self.log("ArUco Marker exists in Bottom Left")
+                    #self.log(bL)
 
-            self.tableCoords = [tL, tR, bR, bL]
+            #self.tableCoords = [tL, tR, bR, bL]
             if self.debug:
                 self.log("Table boundaries (tL, tR, bR, bL):")
                 self.log(self.tableCoords)
