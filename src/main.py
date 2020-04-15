@@ -64,6 +64,9 @@ while fb.gameIsActive:
 	else:
 		fb.rawFrame = vs.read()
 
+	# Resize to 640 x 480
+	fb.rawFrame = cv2.resize(fb.rawFrame, (640, 480), interpolation=cv2.INTER_AREA)
+
 	# Update FPS counter
 	fps.update()
 

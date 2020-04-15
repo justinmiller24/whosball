@@ -2,13 +2,11 @@
 from picamera.array import PiRGBArray
 from picamera import PiCamera
 from threading import Thread
-import cv2
 
 
 class videoStream:
 
     # Initialize
-    #def __init__(self, debug=False, resolution=(640, 480), framerate=32, videoFile=None, outputFile=None):
     def __init__(self, resolution=(640, 480), framerate=32):
 
         self.camera = PiCamera()
