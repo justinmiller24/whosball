@@ -462,8 +462,8 @@ class foosball:
 
         # Compute perspective transformation matrix and apply to original image
         # The resulting frame will have an aspect ratio identical to the size (in pixels) of the foosball playing field
-        w = self.dim['tableWidth']
-        h = self.dim['tableHeight']
+        w = self.dim['xPixels']
+        h = self.dim['yPixels']
         origCoords = np.array(self.tableCoords, dtype="float32")
         finalCoords = np.array([(0,0), (w-1,0), (w-1,h-1), (0,h-1)], dtype="float32")
         M = cv2.getPerspectiveTransform(origCoords, finalCoords)
