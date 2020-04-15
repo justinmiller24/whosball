@@ -99,6 +99,8 @@ class foosball:
                 (212, 343),             # Min/max coordinates (in pixels)
             ])
         }
+        if self.debug:
+            self.log(self.dim)
 
         # Motors and Motor Limits
         # This is the maximum position for the motors in each rod
@@ -147,7 +149,7 @@ class foosball:
     # Start game
     def start(self):
         if self.debug:
-            self.log("Start function called")
+            self.log("Start function begin")
 
         # Initialize motors and all I/O ports
         # This includes calibration of the motors for linear and rotational motion
@@ -165,7 +167,7 @@ class foosball:
         bL = (59,405)
         self.tableCoords = [tL, tR, bR, bL]
         self.origCoords = None
-        
+
         # Start game
         self.gameIsActive = True
         self.ballIsInPlay = False
@@ -179,13 +181,16 @@ class foosball:
         # Initialize score to 0-0
         self.score = (0, 0)
 
+        if self.debug:
+            self.log("Start function end")
+
         return self
 
 
     # Calculate motion of foosball based on history
     def calculateFoosballMotion(self):
         if self.debug:
-            self.log("Calculate foosball motion function")
+            self.log("Calculate foosball motion begin")
 
         # Make sure we have at least two points to perform motion calculations
         if len(self.ball_position_history) < 2:
@@ -226,16 +231,22 @@ class foosball:
         else:
             self.degrees = degrees_temp
 
+        if self.debug:
+            self.log("Calculate foosball motion end")
+
 
     # Check if a goal occurred
     def checkForGoal(self):
         if self.debug:
-            self.log("Check to see if a score occurred")
+            self.log("Check for goal begin")
 
         goalScored = False
         if goalScored:
             self.log("Goal Scored!")
             self.ballIsInPlay = False
+
+        if self.debug:
+            self.log("Check for goal end")
 
         return goalScored
 
@@ -244,7 +255,7 @@ class foosball:
     # and convert this information into the coordinate of the foosball
     def detectFoosball(self, ballMin1HSV, ballMax1HSV, ballMin2HSV, ballMax2HSV):
         if self.debug:
-            self.log("Detect Foosball function called")
+            self.log("Detect Foosball begin")
 
         origImg = self.frame.copy()
         self.finalImg = self.frame.copy()
@@ -375,17 +386,23 @@ class foosball:
             # At this point, we know the ball is likely occluded
             self.log("[STATUS] The ball is likely occluded. Determine projected coordinates.")
 
+        if self.debug:
+            self.log("Detect Foosball end")
+
 
     # Take current image, perform object recognition,
     # and convert this information into the coordinates of the RED and BLUE players
     def detectPlayers(self):
         if self.debug:
-            self.log("Detect RED and BLUE players")
+            self.log("Detect players begin")
 
 
     # Detect ArUco markers and transform perspective
     # This effectively crops the frame to just show the foosball table
     def detectTable(self):
+        if self.debug:
+            self.log("Detect table begin")
+
         origImg = self.rawFrame.copy()
 
         # Detect markers
@@ -471,34 +488,35 @@ class foosball:
         M = cv2.getPerspectiveTransform(self.origCoords, finalCoords)
         self.frame = cv2.warpPerspective(origImg, M, (w, h))
 
+        if self.debug:
+            self.log("Detect table end")
+
         return self.frame
 
 
     def determineMotorMovement(self):
         if self.debug:
-            self.log("Determine which motors to move")
+            self.log("Determine motor movement begin")
 
 
     def determineTrackingMethod(self):
         if self.debug:
-            self.log("Determine tracking method")
+            self.log("Determine tracking method begin")
 
         self.trackingMethod = "Defense"
 
         if self.debug:
             self.log("Tracking method is {}".format(self.trackingMethod))
 
+        if self.debug:
+            self.log("Determine tracking method end")
+
         return self.trackingMethod
 
 
     def foosmenTakeover(self):
         if self.debug:
-            self.log("Calculate if takeover is needed")
-
-
-    # Check if foosball game is in progress
-    #def gameIsInProgress(self):
-        #return self.gameIsActive
+            self.log("Foosmen takeover begin")
 
 
     # Get motor with position "i"
@@ -509,15 +527,18 @@ class foosball:
         return self.motors[i]
 
 
-    # Get current game score
-    def getScore(self):
-        return self.score
-
-
     # Linear interpolation between two points (x1, y1) and (x2, y2) and evaluates
     # the function at point xi
     def interpolate(self, xi, x2, y2, x1, y1):
-        return (xi - x1) * (y2 - y1) / (x2 - x1) + y1
+        if self.debug:
+            self.log("Interpolate begin")
+
+        ret = (xi - x1) * (y2 - y1) / (x2 - x1) + y1
+
+        if self.debug:
+            self.log("Interpolate end")
+
+        return ret
 
 
     # Print output message to console
@@ -529,7 +550,7 @@ class foosball:
     # https://learn.adafruit.com/adafruit-dc-and-stepper-motor-hat-for-raspberry-pi/using-stepper-motors
     def moveMotors(self):
         if self.debug:
-            self.log("Move motors")
+            self.log("Move motors begin")
 
         #self.motors.kit1.stepper1.onestep()
 
@@ -541,9 +562,8 @@ class foosball:
 
     # Function to update video display
     def updateDisplay(self, images):
-
         if self.debug:
-            self.log("Update multi view display")
+            self.log("Update display begin")
 
         # Display original (uncropped) image
         # Show transformation coordinates on original image
@@ -596,11 +616,14 @@ class foosball:
         # Show display on screen
         cv2.imshow("Output", self.output)
 
+        if self.debug:
+            self.log("Update display end")
+
 
     # Show trailing list of tracked points
     def updateTrackedPoints(self):
         if self.debug:
-            self.log("Update tracked points")
+            self.log("Update tracked points begin")
 
         # Add latest point to list of tracked points
         self.pts.appendleft(self.center)
@@ -615,3 +638,6 @@ class foosball:
         	# otherwise, compute the thickness of the line and draw the connecting lines
         	thickness = int(np.sqrt(30 / float(i + 1)) * 2.5)
         	cv2.line(self.finalImg, self.pts[i - 1], self.pts[i], (0, 0, 255), thickness)
+
+        if self.debug:
+            self.log("Update tracked points end")
