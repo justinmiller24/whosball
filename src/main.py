@@ -31,14 +31,14 @@ ballMax1HSV = (10, 255, 255)
 ballMin2HSV = (170, 20, 20)
 ballMax2HSV = (180, 255, 255)
 
-# Initialize camera / video and foosball game
+# Initialize camera / video and allow time for camera to warm up
 if args["video"]:
 	vs = cv2.VideoCapture(args["video"])
 else:
 	vs = videoStream().start()
+	time.sleep(2.0)
 
-time.sleep(2.0)
-fps = FPS().start()
+# Initialize foosball game
 fb = foosball(args["debug"]).start()
 
 # Record video output to file
@@ -48,6 +48,9 @@ if args["output"]:
 	#width = 640 * 2 + 8
 	fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
 	writer = cv2.VideoWriter(self.outputFile, fourcc, 30, (1288, 796), True)
+
+# Start FPS timer
+fps = FPS().start()
 
 # Main loop
 while fb.gameIsActive:
@@ -104,7 +107,7 @@ while fb.gameIsActive:
 
 	# Video processing
 	# Build multi view display and show on screen
-	fb.updateDisplay([fb.frame, fb.mask3, fb.contoursImg, fb.finalImg])
+	#fb.updateDisplay([fb.frame, fb.mask3, fb.contoursImg, fb.finalImg])
 
 	# Write frame to output file
 	if writer is not None:
