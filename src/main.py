@@ -55,14 +55,15 @@ numFrames = 0
 # Main loop
 while fb.gameIsActive:
 	print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), "Start main loop")
-	print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), "Read frame begin")
+
 
 	# Read next frame
 	if args["video"]:
+		print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), "Read VIDEO frame begin")
 		ret, frame = vs.read()
+		print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), "Read VIDEO frame end")
 		if ret == True:
 			fb.rawFrame = frame
-			print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), "Read VIDEO frame end")
 			print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), "Resize VIDEO frame begin")
 			fb.frame = cv2.resize(frame, (640, 480), interpolation=cv2.INTER_AREA)
 			print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), "Resize VIDEO frame end")
@@ -73,6 +74,7 @@ while fb.gameIsActive:
 
 	# Live camera stream
 	else:
+		print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), "Read CAMERA frame begin")
 		fb.rawFrame = vs.read()
 		print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), "Read CAMERA frame end")
 	    # Use ArUco markers to identify table boundaries and crop image
