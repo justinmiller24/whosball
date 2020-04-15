@@ -12,8 +12,8 @@
 # import the necessary packages
 import argparse
 import cv2
+import datetime
 import time
-from imutils.video import FPS
 from foosball import foosball
 from video import videoStream
 
@@ -50,7 +50,8 @@ if args["output"]:
 	writer = cv2.VideoWriter(self.outputFile, fourcc, 30, (1288, 796), True)
 
 # Start FPS timer
-fps = FPS().start()
+startTime = datetime.datetime.now()
+numFrames = 0
 
 # Main loop
 while fb.gameIsActive:
@@ -73,7 +74,7 @@ while fb.gameIsActive:
 		fb.detectTable()
 
 	# Update FPS counter
-	fps.update()
+	numFrames += 1
 
 	# Detect position of the foosball and the players
 	#fb.detectPlayers()
@@ -107,11 +108,15 @@ while fb.gameIsActive:
 
 	# Video processing
 	# Build multi view display and show on screen
-	#fb.updateDisplay([fb.frame, fb.mask3, fb.contoursImg, fb.finalImg])
+	fb.updateDisplay([fb.frame, fb.mask3, fb.contoursImg, fb.finalImg])
 
 	# Write frame to output file
 	if writer is not None:
 		writer.write(fb.output)
+
+	# Calculate number of seconds that have elapsed and display FPS
+	ts = (datetime.datetime.now() - startTime).total_seconds()
+	print("[INFO] Avg FPS: {:.2f}".format(numFrames / ts))
 
 	# Handle user input
 	# Stop the loop if the "q" key is pressed
@@ -119,10 +124,10 @@ while fb.gameIsActive:
 		break
 
 
-# Stop the timer and display FPS information
-fps.stop()
-print("[INFO] elasped time: {:.2f}".format(fps.elapsed()))
-print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
+# Stop timer and display FPS information
+ts = (datetime.datetime.now() - startTime).total_seconds()
+print("[INFO] elasped time: {:.2f}".format(ts))
+print("[INFO] Avg FPS: {:.2f}".format(numFrames / ts))
 
 # Stop recording video file
 if writer is not None:
