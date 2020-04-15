@@ -208,12 +208,13 @@ class foosball:
 
         # Distance
         distancePX = math.sqrt(deltaX * deltaX + deltaY * deltaY)
-        #self.distanceCM = self.distancePX / ratio_pxcm
-        #self.distanceM = self.distanceCM / 100
-        self.distance = distancePX
+        distanceCM = distancePX / self.dim["pxPerCm"]
+        distanceM = distanceCM / 100
+        self.distance = distanceCM
 
-        # Velocity
-        #self.velocity = self.distance / frame_time
+        # Velocity - assumes 30fps
+        #self.velocity = distanceM / frame_time
+        self.velocity = distanceM / 30
 
         # Direction
         # Calculate number degrees between two points
@@ -315,7 +316,7 @@ class foosball:
         self.radius = None
         self.distance = None
         self.degrees = None
-        #self.velocity = None
+        self.velocity = None
 
         # Ensure at least one contour was found
         if len(cnts) > 0:
@@ -581,9 +582,9 @@ class foosball:
         # Bottom
         cDisplay = ("{}".format(self.center)) if self.center is not None else "-"
         rDisplay = ("%2.1f" % self.radius) if self.radius is not None else "-"
-        dDisplay = ("%2.1f" % self.distance) if self.distance is not None else "-"
+        dDisplay = ("%2.1f cm" % self.distance) if self.distance is not None else "-"
         aDisplay = ("%2.1f" % self.degrees) if self.degrees is not None else "-"
-        vDisplay = "-"
+        vDisplay = ("%2.1f m/s" % self.velocity) if self.velocity is not None else "-"
         cv2.putText(self.output, "Center: %s" % cDisplay, (90, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
         cv2.putText(self.output, "Radius: %s" % rDisplay, (290, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
         cv2.putText(self.output, "Distance: %s" % dDisplay, (420, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
