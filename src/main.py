@@ -57,21 +57,20 @@ while fb.gameIsActive:
 		ret, frame = vs.read()
 		if ret == True:
 			fb.rawFrame = frame
+			fb.frame = cv2.resize(frame, (640, 480), interpolation=cv2.INTER_AREA)
 		else:
 			if args["debug"]:
 				print("No frame exists, reached EOF")
 			break
+
+	# Live camera stream
 	else:
 		fb.rawFrame = vs.read()
-
-	# Resize to 640 x 480
-	fb.rawFrame = cv2.resize(fb.rawFrame, (640, 480), interpolation=cv2.INTER_AREA)
+	    # Use ArUco markers to identify table boundaries and crop image
+		fb.detectTable()
 
 	# Update FPS counter
 	fps.update()
-
-    # Use ArUco markers to identify table boundaries and crop image
-	fb.detectTable()
 
 	# Detect position of the foosball and the players
 	#fb.detectPlayers()
