@@ -13,8 +13,9 @@
 import argparse
 import cv2
 import time
-from videoStream import videoStream
+from imutils.video import FPS
 from foosball import foosball
+from video import videoStream
 
 
 # construct the argument parse and parse the arguments
@@ -38,13 +39,18 @@ resolution = (640, 480)
 framerate = 32
 vs = videoStream(args["debug"], resolution, framerate).start()
 time.sleep(2.0)
+fps = FPS().start()
 fb = foosball(args["debug"]).start()
 
 # Main loop
 while fb.gameIsActive:
 
-	# Read next frame. If no frame exists, then we've reached the end of the video.
+	# Read next frame
 	fb.rawFrame = vs.read()
+
+	# Update FPS counter
+	fps.update()
+
 	#if fb.rawFrame is None:
 		#if args["debug"]:
 			#print("No frame exists, reached end of file")
@@ -96,6 +102,11 @@ while fb.gameIsActive:
 	if cv2.waitKey(1) & 0xFF == ord("q"):
 		break
 
+
+# Stop the timer and display FPS information
+fps.stop()
+print("[INFO] elasped time: {:.2f}".format(fps.elapsed()))
+print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
 
 # Stop video/camera feed and output writer
 vs.stop()
