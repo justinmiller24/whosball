@@ -13,13 +13,18 @@ import cv2
 import numpy as np
 
 
+w = 320
+h = 240
 #cv::Mat mask = cv::Mat::zeros( size, CV_8UC1 );
-mask = np.zeros((640, 480))
 #bitwise_not(mask, mask);
-mask = cv2.bitwise_not(mask)
+mask = np.ones((w, h))
+#mask = cv2.bitwise_not(mask)
 
-mask[cv2.Range(0, mask.rows), cv2.Range(0, 9 * mask.cols / 240 )] = 0
-mask[cv2.Range(0, mask.rows / 3), cv2.Range( 9 * mask.cols / 240 , 33 * mask.cols / 240)] = 0
+#mask[cv2.Range(0, mask.rows), cv2.Range(0, 9 * mask.cols / 240 )] = 0
+mask[.,[0:9]] = 0
+#mask[cv2.Range(0, mask.rows / 3), cv2.Range( 9 * mask.cols / 240 , 33 * mask.cols / 240)] = 0
+mask[[0:(w//3)],[9:33]] = 0
+
 mask[cv2.Range(41 * mask.rows / 60, mask.rows), cv2.Range( 9 * mask.cols / 240,  33 * mask.cols / 240)] = 0
 mask[cv2.Range(0, mask.rows), cv2.Range(33 * mask.cols / 240, mask.cols / 6)] = 0
 mask[cv2.Range(0, mask.rows), cv2.Range(mask.cols / 4, 9 * mask.cols / 24)] = 0
