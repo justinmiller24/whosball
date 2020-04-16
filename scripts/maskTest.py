@@ -10,10 +10,11 @@
 from picamera.array import PiRGBArray
 from picamera import PiCamera
 import cv2
+import numpy as np
 
 
 #cv::Mat mask = cv::Mat::zeros( size, CV_8UC1 );
-mask = cv2.zeros(camera.resolution, cv2.CV_8UC1)
+mask = np.zeros(camera.resolution, cv2.CV_8UC1)
 #bitwise_not(mask, mask);
 mask = cv2.bitwise_not(mask)
 
