@@ -14,7 +14,7 @@ import numpy as np
 
 
 #cv::Mat mask = cv::Mat::zeros( size, CV_8UC1 );
-mask = np.zeros((640, 480), cv2.CV_8UC1)
+mask = np.zeros((640, 480))
 #bitwise_not(mask, mask);
 mask = cv2.bitwise_not(mask)
 
