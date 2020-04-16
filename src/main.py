@@ -57,6 +57,7 @@ numFrames = 0
 
 # Main loop
 while fb.gameIsActive:
+	print()
 	fb.log("Start main loop")
 
 	fb.log("Read Frame Begin")
@@ -136,9 +137,11 @@ while fb.gameIsActive:
 
 	# Handle user input
 	# Stop the loop if the "q" key is pressed
+	fb.log("Wait key begin")
 	if cv2.waitKey(1) & 0xFF == ord("q"):
 		break
-
+	fb.log("Wait key end")
+	
 	fb.log("Misc stuff end")
 
 
