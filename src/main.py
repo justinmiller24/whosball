@@ -16,10 +16,13 @@ import time
 from foosball import foosball
 from video import videoStream
 
+print("Start Main Script")
+
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-d", "--debug", help="whether or not to show debug mode", action="store_true")
+ap.add_argument("-n", "--noDisplay", help="whether or not to show video output to screen", action="store_true")
 ap.add_argument("-v", "--video", help="path to the (optional) video file")
 ap.add_argument("-o", "--output", help="path to output video file")
 args = vars(ap.parse_args())
@@ -54,19 +57,20 @@ numFrames = 0
 
 # Main loop
 while fb.gameIsActive:
-	print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), "Start main loop")
+	fb.log("Start main loop")
 
+	fb.log("Read Frame Begin")
 
 	# Read next frame
 	if args["video"]:
-		print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), "Read VIDEO frame begin")
+		fb.log("Read VIDEO frame begin")
 		ret, frame = vs.read()
-		print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), "Read VIDEO frame end")
+		fb.log("Read VIDEO frame end")
 		if ret == True:
 			fb.rawFrame = frame
-			print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), "Resize VIDEO frame begin")
+			fb.log("Resize VIDEO frame begin")
 			fb.frame = cv2.resize(frame, (320, 240), interpolation=cv2.INTER_AREA)
-			print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), "Resize VIDEO frame end")
+			fb.log("Resize VIDEO frame end")
 		else:
 			if args["debug"]:
 				print("No frame exists, reached EOF")
@@ -74,15 +78,16 @@ while fb.gameIsActive:
 
 	# Live camera stream
 	else:
-		print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), "Read CAMERA frame begin")
+		fb.log("Read CAMERA frame begin")
 		fb.rawFrame = vs.read()
-		print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), "Read CAMERA frame end")
+		fb.log("Read CAMERA frame end")
 	    # Use ArUco markers to identify table boundaries and crop image
-		print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), "Detect CAMERA table begin")
+		fb.log("Detect CAMERA table begin")
 		fb.detectTable()
-		print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), "Detect CAMERA table end")
+		fb.log("Detect CAMERA table end")
 
-	print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), "Main loop stuff begin")
+	fb.log("Read Frame End")
+	fb.log("Misc stuff begin")
 
 	# Update FPS counter
 	numFrames += 1
@@ -96,7 +101,7 @@ while fb.gameIsActive:
 	# If the ball is occluded, we still track the current (projected) location along with a timeout counter
 	if ballPosition is not None:
 		if args["debug"]:
-			print("Foosball position was detected!")
+			fb.log("Foosball position was detected!")
 
 		# At this point, the foosball potiion is known
 		# Determine the tracking method to use
@@ -127,14 +132,14 @@ while fb.gameIsActive:
 
 	# Calculate number of seconds that have elapsed and display FPS
 	ts = (datetime.datetime.now() - startTime).total_seconds()
-	print("[INFO] Avg FPS: {:.2f}".format(numFrames / ts))
+	fb.log("[INFO] Avg FPS: {:.2f}".format(numFrames / ts))
 
 	# Handle user input
 	# Stop the loop if the "q" key is pressed
 	if cv2.waitKey(1) & 0xFF == ord("q"):
 		break
 
-	print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), "Main loop stuff end")
+	fb.log("Misc stuff end")
 
 
 # Stop timer and display FPS information
@@ -154,3 +159,5 @@ else:
 
 # Close all windows
 cv2.destroyAllWindows()
+
+print("End Main Script")
