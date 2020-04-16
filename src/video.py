@@ -24,7 +24,9 @@ class videoStream:
     # Start stream
     def start(self):
         # start the thread to read frames from the video stream
-        Thread(target=self.update, args=()).start()
+        t = Thread(target=self.update, args=())
+        t.daemon = True
+        t.start()
         return self
 
 
@@ -42,7 +44,6 @@ class videoStream:
                 self.stream.close()
                 self.rawCapture.close()
                 self.camera.close()
-
                 return
 
 
