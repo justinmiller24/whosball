@@ -138,7 +138,7 @@ while fb.gameIsActive:
 	# Handle user input
 	# Stop the loop if the "q" key is pressed
 	fb.log("Wait key begin")
-	if numFrames %= 10
+	if numFrames % 10 == 0:
 		fb.log("Every 10th frame")
 		if cv2.waitKey(1) & 0xFF == ord("q"):
 			break
