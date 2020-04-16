@@ -140,6 +140,7 @@ while fb.gameIsActive:
 
 # Stop timer and display FPS information
 ts = (datetime.datetime.now() - startTime).total_seconds()
+print()
 print("[INFO] elasped time: {:.2f}".format(ts))
 print("[INFO] Avg FPS: {:.2f}".format(numFrames / ts))
 
