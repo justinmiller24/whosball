@@ -58,9 +58,9 @@ numFrames = 0
 # Main loop
 while fb.gameIsActive:
 	print()
-	fb.log("Start main loop")
+	fb.log("Main loop begin")
 
-	fb.log("Read Frame Begin")
+	fb.log("Read Frame begin")
 
 	# Read next frame
 	if args["video"]:
@@ -79,16 +79,11 @@ while fb.gameIsActive:
 
 	# Live camera stream
 	else:
-		fb.log("Read CAMERA frame begin")
 		fb.rawFrame = vs.read()
-		fb.log("Read CAMERA frame end")
 	    # Use ArUco markers to identify table boundaries and crop image
-		fb.log("Detect CAMERA table begin")
 		fb.detectTable()
-		fb.log("Detect CAMERA table end")
 
-	fb.log("Read Frame End")
-	fb.log("Misc stuff begin")
+	fb.log("Read Frame end")
 
 	# Update FPS counter
 	numFrames += 1
@@ -124,27 +119,23 @@ while fb.gameIsActive:
 		#fb.checkForGoal()
 
 	# Video processing
-	# Build multi view display and show on screen
+	# Build multi view display, show on screen, and handle user input
+	# Stop loop if the "q" key is pressed
+	fb.log("Update display and wait key begin")
 	fb.updateDisplay([fb.frame, fb.mask3, fb.contoursImg, fb.finalImg])
+	if cv2.waitKey(1) & 0xFF == ord("q"):
+		break
+	fb.log("Update display and wait key end")
 
 	# Write frame to output file
 	if writer is not None:
 		writer.write(fb.output)
 
 	# Calculate number of seconds that have elapsed and display FPS
-	ts = (datetime.datetime.now() - startTime).total_seconds()
-	fb.log("[INFO] Avg FPS: {:.2f}".format(numFrames / ts))
+	#ts = (datetime.datetime.now() - startTime).total_seconds()
+	#fb.log("[INFO] Avg FPS: {:.2f}".format(numFrames / ts))
 
-	# Handle user input
-	# Stop the loop if the "q" key is pressed
-	fb.log("Wait key begin")
-	#if numFrames % 20 == 0:
-		#fb.log("Every 20th frame")
-	#if cv2.waitKey(1) & 0xFF == ord("q"):
-		#break
-	fb.log("Wait key end")
-
-	fb.log("Misc stuff end")
+	fb.log("Main loop end")
 
 
 # Stop timer and display FPS information
