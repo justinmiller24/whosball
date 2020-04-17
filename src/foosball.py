@@ -74,8 +74,8 @@ class foosball:
             # There are 13 total foosmen, each with a unique ID from left to right and top to bottom
             # Each foosmen kicks the ball with feet that measure 1" in width
             'foosmenWidth': 14,                     # Foosmen width (rounded up, in pixels)
-            'foosmenHSVLower': (80, 20, 20),        # HSV range for foosmen
-            'foosmenHSVUpper': (100, 255, 255),     # HSV range for foosmen
+            'foosmenHSVLower': (85, 50, 50),        # HSV range for foosmen
+            'foosmenHSVUpper': (110, 150, 150),     # HSV range for foosmen
 
             # The first row (goalie) has 3 men, spaced 7 1/8" apart, and 8 1/2" of linear movement
             # The second row (defense) has 2 men, spaced 9 5/8" apart, and 13 3/8" of linear movement
