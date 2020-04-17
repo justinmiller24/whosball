@@ -38,8 +38,9 @@ if args["output"]:
 	fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
 	writer = cv2.VideoWriter(args["output"], fourcc, 30, (w, h), True)
 
-print("Pause Before Main Loop Begins...")
-time.sleep(2.0)
+if args["debug"]:
+	print("Pause Before Main Loop Begins...")
+	time.sleep(2.0)
 
 # Main loop
 while fb.gameIsActive:
