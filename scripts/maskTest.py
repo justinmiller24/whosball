@@ -54,6 +54,8 @@ mask[0:w,180:240] = 0
 
 
 # Show display until a key is pressed
+print(mask)
+
 mask3 = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
 cv2.imshow("Mask", mask3)
 cv2.waitKey(0)
