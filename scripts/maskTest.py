@@ -22,7 +22,8 @@ h = 240
 #hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
 
 
-mask = np.ones((w,h,3), np.uint8)
+mask = np.ones((h, w, 3), dtype="uint8")
+#mask = np.ones((w,h,3), np.uint8)
 #mask = cv2.bitwise_not(mask)
 
 #mask[cv2.Range(0, mask.rows), cv2.Range(0, 9 * mask.cols / 240 )] = 0
