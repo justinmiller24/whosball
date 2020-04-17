@@ -22,45 +22,45 @@ class foosball:
 
             # The foosball table measures 46.75" (length) x 26.5" (width)
             # This is 118.745cm (width) x 67.31cm (height), based on our camera
-            '_maxWidth': 118.75,        # Table length (in cm)
-            '_maxHeight': 67.31,        # Table width (in cm)
+            '_maxWidth': 118.75,                    # Table length (in cm)
+            '_maxHeight': 67.31,                    # Table width (in cm)
 
             # This is an aspect ratio of 1.76 which is about 16x9
             # We will convert all frames to 640px x 360px for processing
-            #'xPixels': 640,             # Max width (in pixels)
-            'xPixels': 320,             # Max width (in pixels)
-            #'yPixels': 360,             # Max height (in pixels)
-            'yPixels': 180,             # Max height (in pixels)
+            #'xPixels': 640,                         # Max width (in pixels)
+            'xPixels': 320,                         # Max width (in pixels)
+            #'yPixels': 360,                         # Max height (in pixels)
+            'yPixels': 180,                         # Max height (in pixels)
 
             # The number of pixels per cm is constant (640 px / 118.745 cm)
             # This means 5.39 pixels represents 1 cm of actual distance on the table
-            'pxPerCm': 5.39,            # Pixels per cm (ratio)
+            'pxPerCm': 5.39,                        # Pixels per cm (ratio)
 
             # The width of each goal is about 6 3/4" at the point where a foosball would pass
-            '_goalWidth': 92.41,        # Goal width (in pixels)
+            '_goalWidth': 92.41,                    # Goal width (in pixels)
 
             # Each "goal boundary" is calculated from the middle of the table +/- 1/2 of the goal width
             # ie, the lower bound = pxPerCm * ((maxHeight - goalWidth) / 2)
             # ie, the upper bound = pxPerCm * (maxHeight - ((maxHeight - goalWidth) / 2))
-            'goalLower': 133.79,        # Lower boundary of goal (in pixels)
-            'goalUpper': 226.20,        # Upper boundary of goal (in pixels)
+            'goalLower': 133.79,                    # Lower boundary of goal (in pixels)
+            'goalUpper': 226.20,                    # Upper boundary of goal (in pixels)
 
             # The foosball measures 1 3/8" in diameter
-            'foosballWidth': 18,        # Foosball width and height (rounded down, in pixels)
-            'foosballMin1HSV': (0, 20, 20),     # HSV value range for foosball
-            'foosballMax1HSV': (10, 255, 255),  # HSV value range for foosball
-            'foosballMin2HSV': (170, 20, 20),   # HSV value range for foosball
-            'foosballMax2HSV': (180, 255, 255), # HSV value range for foosball
+            'foosballWidth': 18,                    # Foosball width and height (rounded down, in pixels)
+            'foosballMin1HSV': (0, 20, 20),         # HSV value range for foosball
+            'foosballMax1HSV': (10, 255, 255),      # HSV value range for foosball
+            'foosballMin2HSV': (170, 20, 20),       # HSV value range for foosball
+            'foosballMax2HSV': (180, 255, 255),     # HSV value range for foosball
 
             # There are 8 foosball rods, each one measures 5/8" in diameter
             # The total distance across all 8 rods is 40 7/16"
             # This means the distance between two rods is 40 7/16" / (8 - 1) * 2.54 * pxPerCm
-            '_rodWidth': 8.55,          # Foosball rod width (in pixels)
-            '_rodSpacing': 79.09,       # Foosball rod spacing (in pixels)
+            '_rodWidth': 8.55,                      # Foosball rod width (in pixels)
+            '_rodSpacing': 79.09,                   # Foosball rod spacing (in pixels)
 
             # Each foosmen rod has a bumper on each end that measures 1 1/4" in width
             # This creates a "space" and is the minimum between each end foosmen and the wall
-            'rodMargin': 17,            # Foosmen rod bumper (rounded down, in pixels)
+            'rodMargin': 17,                        # Foosmen rod bumper (rounded down, in pixels)
 
             # The rods are centered on the table, so we calculate the x coordinate of each rod
             # The rods take up a total width of (rodSpacing * (numRods - 1) + rodWidth)
@@ -73,36 +73,38 @@ class foosball:
             # The foosmen are centered on each rod, but each rod (row) has a different number of men
             # There are 13 total foosmen, each with a unique ID from left to right and top to bottom
             # Each foosmen kicks the ball with feet that measure 1" in width
-            'foosmenWidth': 14,             # Foosmen width (rounded up, in pixels)
+            'foosmenWidth': 14,                     # Foosmen width (rounded up, in pixels)
+            'foosmenHSVLower': (90, 50, 50),        # HSV range for foosmen
+            'foosmenHSVUpper': (130, 255, 255),     # HSV range for foosmen
 
             # The first row (goalie) has 3 men, spaced 7 1/8" apart, and 8 1/2" of linear movement
             # The second row (defense) has 2 men, spaced 9 5/8" apart, and 13 3/8" of linear movement
             # The third row (midfield) has 5 men, spaced 5" apart, and 4 1/4" of linear movement
             # The fourth row (offense) has 3 men, spaced 7 1/8" apart, and 8 1/2" of linear movement
-            '_row0': (97.54, 116.37),       # Spacing, linear movement (in pixels)
-            '_row1': (131.77, 183.11),      # Spacing, linear movement (in pixels)
-            '_row2': (68.45, 58.18),        # Spacing, linear movement (in pixels)
-            '_row3': (97.54, 116.37),       # Spacing, linear movement (in pixels)
+            '_row0': (97.54, 116.37),               # Spacing, linear movement (in pixels)
+            '_row1': (131.77, 183.11),              # Spacing, linear movement (in pixels)
+            '_row2': (68.45, 58.18),                # Spacing, linear movement (in pixels)
+            '_row3': (97.54, 116.37),               # Spacing, linear movement (in pixels)
 
             # Calculate the lower and upper bounds for each foosmen
             'foosmen': np.array([
                 # Goalie
-                (17, 148),              # Min/max coordinates (in pixels)
-                (115, 246),             # Min/max coordinates (in pixels)
-                (212, 343),             # Min/max coordinates (in pixels)
+                (17, 148),                          # Min/max coordinates (in pixels)
+                (115, 246),                         # Min/max coordinates (in pixels)
+                (212, 343),                         # Min/max coordinates (in pixels)
                 # Defense
-                (17, 211),              # Min/max coordinates (in pixels)
-                (149, 343),             # Min/max coordinates (in pixels)
+                (17, 211),                          # Min/max coordinates (in pixels)
+                (149, 343),                         # Min/max coordinates (in pixels)
                 # Midfield
-                (17, 69),               # Min/max coordinates (in pixels)
-                (85, 137),              # Min/max coordinates (in pixels)
-                (154, 206),             # Min/max coordinates (in pixels)
-                (222, 274),             # Min/max coordinates (in pixels)
-                (291, 343),             # Min/max coordinates (in pixels)
+                (17, 69),                           # Min/max coordinates (in pixels)
+                (85, 137),                          # Min/max coordinates (in pixels)
+                (154, 206),                         # Min/max coordinates (in pixels)
+                (222, 274),                         # Min/max coordinates (in pixels)
+                (291, 343),                         # Min/max coordinates (in pixels)
                 # Offense
-                (17, 148),              # Min/max coordinates (in pixels)
-                (115, 246),             # Min/max coordinates (in pixels)
-                (212, 343),             # Min/max coordinates (in pixels)
+                (17, 148),                          # Min/max coordinates (in pixels)
+                (115, 246),                         # Min/max coordinates (in pixels)
+                (212, 343),                         # Min/max coordinates (in pixels)
             ])
         }
         if self.debug:
@@ -414,6 +416,25 @@ class foosball:
     def detectPlayers(self):
         if self.debug:
             self.log("Detect players begin")
+
+        origImg = self.frame.copy()
+
+        # Create mask based on HSV range for foosmen
+        blurred = cv2.GaussianBlur(origImg, (11, 11), 0)
+        hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
+
+        # Create color mask for foosmen and perform erosions and dilation to remove small blobs in mask
+        mask = cv2.inRange(hsv, self.dim["foosmenHSVLower"], self.dim["foosmenHSVUpper"])
+        mask = cv2.erode(mask, None, iterations=2)
+        mask = cv2.dilate(mask, None, iterations=2)
+        self.foosmenMask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
+
+        # Find contours in mask and initialize the current center (x, y) of the ball
+        cnts = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        # Extract contours depending on OpenCV version
+        cnts = imutils.grab_contours(cnts)
+
+        if self.debug:
             self.log("Detect players end")
 
 
@@ -587,8 +608,8 @@ class foosball:
         # Calculate updated FPS
         self.numFrames += 1
         self.currentTime = datetime.datetime.now()
-        self.elapsedTime = (fb.currentTime - fb.startTime).total_seconds()
-        self.fps = fb.numFrames / fb.elapsedTime
+        self.elapsedTime = (self.currentTime - self.startTime).total_seconds()
+        self.fps = self.numFrames / self.elapsedTime
 
         if self.debug:
             self.log("Read frame end")
