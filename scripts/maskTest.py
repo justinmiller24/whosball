@@ -17,7 +17,12 @@ w = 320
 h = 240
 #cv::Mat mask = cv::Mat::zeros( size, CV_8UC1 );
 #bitwise_not(mask, mask);
-mask = np.ones((w, h), dtype="bool")
+#whiteFrame = 255 * np.ones((w,h,3), np.uint8)
+#blurred = cv2.GaussianBlur(whiteFrame, (11, 11), 0)
+#hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
+
+
+mask = np.ones((w,h,3), np.uint8)
 #mask = cv2.bitwise_not(mask)
 
 #mask[cv2.Range(0, mask.rows), cv2.Range(0, 9 * mask.cols / 240 )] = 0
@@ -37,6 +42,14 @@ mask[0:w,116:146] = 0
 
 #mask[cv2.Range(0, mask.rows), cv2.Range(3 * mask.cols / 4, mask.cols)] = 0
 mask[0:w,180:240] = 0
+
+
+mask1 = cv2.inRange(self.hsv, self.dim["foosballMin1HSV"], self.dim["foosballMax1HSV"])
+mask2 = cv2.inRange(self.hsv, self.dim["foosballMin2HSV"], self.dim["foosballMax2HSV"])
+mask = cv2.bitwise_or(mask1, mask2)
+mask = cv2.erode(mask, None, iterations=2)
+mask = cv2.dilate(mask, None, iterations=2)
+self.mask3 = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
 
 
 # Show display until a key is pressed
