@@ -28,26 +28,26 @@ mask = np.zeros((h, w, 3), dtype="uint8")
 
 #mask[cv2.Range(0, mask.rows), cv2.Range(0, 9 * mask.cols / 240 )] = 0
 #mask[0:w,0:9] = 0
-mask = cv2.rectangle(mask, (0,0), (9,h), (255,255,255), -1)
+cv2.rectangle(mask, (0,0), (9,h), (255,255,255), -1)
 
 #mask[cv2.Range(0, mask.rows / 3), cv2.Range( 9 * mask.cols / 240 , 33 * mask.cols / 240)] = 0
 #mask[cv2.Range(41 * mask.rows / 60, mask.rows), cv2.Range( 9 * mask.cols / 240,  33 * mask.cols / 240)] = 0
 
 #mask[cv2.Range(0, mask.rows), cv2.Range(33 * mask.cols / 240, mask.cols / 6)] = 0
 #mask[0:w,33:40] = 0
-mask = cv2.rectangle(mask, (33,0), (40,h), (255,255,255), -1)
+cv2.rectangle(mask, (33,0), (40,h), (255,255,255), -1)
 
 #mask[cv2.Range(0, mask.rows), cv2.Range(mask.cols / 4, 9 * mask.cols / 24)] = 0
 #mask[0:w,60:90] = 0
-mask = cv2.rectangle(mask, (60,0), (90,h), (255,255,255), -1)
+cv2.rectangle(mask, (60,0), (90,h), (255,255,255), -1)
 
 #mask[cv2.Range(0, mask.rows), cv2.Range(29 * mask.cols / 60, 73 * mask.cols / 120)] = 0
 #mask[0:w,116:146] = 0
-mask = cv2.rectangle(mask, (116,0), (146,h), (255,255,255), -1)
+cv2.rectangle(mask, (116,0), (146,h), (255,255,255), -1)
 
 #mask[cv2.Range(0, mask.rows), cv2.Range(3 * mask.cols / 4, mask.cols)] = 0
 #mask[0:w,180:240] = 0
-mask = cv2.rectangle(mask, (180,0), (240,h), (255,255,255), -1)
+cv2.rectangle(mask, (180,0), (240,h), (255,255,255), -1)
 
 
 #mask1 = cv2.inRange(self.hsv, self.dim["foosballMin1HSV"], self.dim["foosballMax1HSV"])
@@ -59,7 +59,7 @@ mask = cv2.rectangle(mask, (180,0), (240,h), (255,255,255), -1)
 
 
 # Show display until a key is pressed
-print(mask)
+#print(mask)
 
 mask3 = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
 cv2.imshow("Mask", mask3)
