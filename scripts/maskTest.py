@@ -44,12 +44,12 @@ mask[0:w,116:146] = 0
 mask[0:w,180:240] = 0
 
 
-mask1 = cv2.inRange(self.hsv, self.dim["foosballMin1HSV"], self.dim["foosballMax1HSV"])
-mask2 = cv2.inRange(self.hsv, self.dim["foosballMin2HSV"], self.dim["foosballMax2HSV"])
-mask = cv2.bitwise_or(mask1, mask2)
-mask = cv2.erode(mask, None, iterations=2)
-mask = cv2.dilate(mask, None, iterations=2)
-self.mask3 = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
+#mask1 = cv2.inRange(self.hsv, self.dim["foosballMin1HSV"], self.dim["foosballMax1HSV"])
+#mask2 = cv2.inRange(self.hsv, self.dim["foosballMin2HSV"], self.dim["foosballMax2HSV"])
+#mask = cv2.bitwise_or(mask1, mask2)
+#mask = cv2.erode(mask, None, iterations=2)
+#mask = cv2.dilate(mask, None, iterations=2)
+#self.mask3 = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
 
 
 # Show display until a key is pressed
