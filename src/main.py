@@ -5,8 +5,7 @@
 # USAGE
 # python main.py
 # python main.py --debug
-# python main.py --video input.mp4
-# python main.py --video input.mp4 --output output.mp4
+# python main.py --output output.mp4
 
 # import the necessary packages
 import argparse
