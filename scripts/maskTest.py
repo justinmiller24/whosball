@@ -61,8 +61,8 @@ cv2.rectangle(mask, (180, 0), (240, h), (255, 255, 255), -1)
 # Show display until a key is pressed
 #print(mask)
 
-mask3 = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
-cv2.imshow("Mask", mask3)
+#mask3 = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
+cv2.imshow("Mask", mask)
 cv2.waitKey(0)
 
 
