@@ -403,9 +403,9 @@ class foosball:
 
         if self.debug:
             self.log("Num contours found: {}".format(len(cnts)))
-            self.log("Foosball detected: {}".format(fb.foosballDetected))
-            self.log("Foosball position: {}".format(fb.foosballPosition))
-            self.log("Foosball in play: {}".format(fb.ballIsInPlay))
+            self.log("Foosball detected: {}".format(self.foosballDetected))
+            self.log("Foosball position: {}".format(self.foosballPosition))
+            self.log("Foosball in play: {}".format(self.ballIsInPlay))
 
         if self.debug:
             self.log("Detect Foosball end")
