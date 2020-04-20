@@ -86,7 +86,7 @@ while fb.gameIsActive:
 	# Build multi view display, show on screen, and handle user input
 	# Stop loop if the "q" key is pressed
 	fb.log("Update display begin")
-	fb.updateDisplay([fb.frame, fb.blurred, fb.mask3, fb.contoursImg])
+	fb.updateDisplay([fb.frame, fb.mask3, fb.foosmenMask, fb.contoursImg])
 	#fb.updateDisplay([fb.frame, fb.contoursImg, fb.foosmenMask, fb.finalImg])
 	if cv2.waitKey(1) & 0xFF == ord("q"):
 		break

@@ -72,8 +72,10 @@ class foosball:
             # There are 13 total foosmen, each with a unique ID from left to right and top to bottom
             # Each foosmen kicks the ball with feet that measure 1" in width
             'foosmenWidth': 14,                     # Foosmen width (rounded up, in pixels)
-            'foosmenHSVLower': (85, 50, 50),        # HSV range for foosmen
-            'foosmenHSVUpper': (110, 150, 150),     # HSV range for foosmen
+            'foosmenBlueHSVLower': (85, 0, 0),      # Foosmen (blue) lower bound (HSV)
+            'foosmenBlueHSVUpper': (110, 255, 255), # Foosmen (blue) upper bound (HSV)
+            'foosmenRedHSVLower': (170, 0, 0),      # Foosmen (red) lower bound (HSV)
+            'foosmenRedHSVUpper': (180, 255, 255),  # Foosmen (red) upper bound (HSV)
 
             # The first row (goalie) has 3 men, spaced 7 1/8" apart, and 8 1/2" of linear movement
             # The second row (defense) has 2 men, spaced 9 5/8" apart, and 13 3/8" of linear movement
@@ -283,10 +285,8 @@ class foosball:
         # Opening erodes an image and then dilates the eroded image, using the same structuring
         # element for both operations. This is useful for removing small objects from an image
         # while preserving the shape and size of larger objects in the image.
-        maskOrig = cv2.inRange(self.hsv, self.dim["foosballHSVLower"], self.dim["foosballHSVUpper"])
-        self.maskOrig = cv2.cvtColor(maskOrig, cv2.COLOR_GRAY2BGR)
-
-        mask = cv2.erode(maskOrig, None, iterations=4)
+        mask = cv2.inRange(self.hsv, self.dim["foosballHSVLower"], self.dim["foosballHSVUpper"])
+        mask = cv2.erode(mask, None, iterations=4)
         mask = cv2.dilate(mask, None, iterations=4)
         self.mask3 = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
 
@@ -389,7 +389,7 @@ class foosball:
         hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
 
         # Create color mask for foosmen and perform erosions and dilation to remove small blobs in mask
-        mask = cv2.inRange(hsv, self.dim["foosmenHSVLower"], self.dim["foosmenHSVUpper"])
+        mask = cv2.inRange(hsv, self.dim["foosmenBlueHSVLower"], self.dim["foosmenBlueHSVUpper"])
         mask = cv2.erode(mask, None, iterations=2)
         mask = cv2.dilate(mask, None, iterations=2)
         self.foosmenMask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
