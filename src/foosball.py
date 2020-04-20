@@ -323,7 +323,7 @@ class foosball:
         self.mask3 = cv2.cvtColor(self.mask2, cv2.COLOR_GRAY2BGR)
 
         # Find contours in mask and initialize the current center (x, y) of the ball
-        cnts = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        cnts = cv2.findContours(self.mask2, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         # Extract contours depending on OpenCV version
         cnts = imutils.grab_contours(cnts)
 
