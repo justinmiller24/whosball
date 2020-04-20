@@ -322,17 +322,13 @@ class foosball:
         maskOrig = cv2.inRange(self.hsv, self.dim["foosballHSVLower"], self.dim["foosballHSVUpper"])
         self.maskOrig = cv2.cvtColor(maskOrig, cv2.COLOR_GRAY2BGR)
 
-        mask = cv2.erode(maskOrig, None, iterations=2)
-        mask = cv2.dilate(mask, None, iterations=2)
+        mask = cv2.erode(maskOrig, None, iterations=4)
+        mask = cv2.dilate(mask, None, iterations=4)
         self.mask3 = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
 
-        self.maskTest = cv2.erode(maskOrig, None, iterations=3)
-        self.maskTest = cv2.dilate(self.maskTest, None, iterations=3)
+        self.maskTest = cv2.erode(maskOrig, None, iterations=8)
+        self.maskTest = cv2.dilate(self.maskTest, None, iterations=8)
         self.maskTest = cv2.cvtColor(self.maskTest, cv2.COLOR_GRAY2BGR)
-
-        self.maskTest2 = cv2.erode(maskOrig, None, iterations=5)
-        self.maskTest2 = cv2.dilate(self.maskTest2, None, iterations=5)
-        self.maskTest2 = cv2.cvtColor(self.maskTest2, cv2.COLOR_GRAY2BGR)
 
         # Find contours in mask and initialize the current center (x, y) of the ball
         cnts = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -683,10 +679,6 @@ class foosball:
 
         # Show display on screen
         cv2.imshow("Output", self.output)
-
-        cv2.namedWindow("MaskTest2")
-        cv2.moveWindow("MaskTest2", 1250, 600)
-        cv2.imshow("MaskTest2", self.maskTest2)
 
         if self.debug:
             self.log("Update display end")
