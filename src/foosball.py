@@ -322,6 +322,10 @@ class foosball:
         self.mask2 = cv2.dilate(self.mask1, None, iterations=2)
         self.mask3 = cv2.cvtColor(self.mask2, cv2.COLOR_GRAY2BGR)
 
+        self.maskTest = cv2.dilate(self.mask, None, iterations=2)
+        self.maskTest = cv2.erode(self.maskTest, None, iterations=2)
+        self.maskTest = cv2.cvtColor(self.maskTest, cv2.COLOR_GRAY2BGR)
+
         # Find contours in mask and initialize the current center (x, y) of the ball
         cnts = cv2.findContours(self.mask2, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         # Extract contours depending on OpenCV version
@@ -517,7 +521,9 @@ class foosball:
             if self.debug:
                 self.log("No ArUco markers detected, use defaults")
 
-        # Compute perspective transformation matrix and apply to original image
+        # Apply projective transformation (also known as "perspective transformation" or "homography") to the
+        # original image. This type of transformation was chosen because it preserves straight lines.
+        # To do this, we first compute the transformational matrix (M) and then apply it to the original image.
         # The resulting frame will have an aspect ratio identical to the size (in pixels) of the foosball playing field
         w = self.dim['xPixels']
         h = self.dim['yPixels']
@@ -669,6 +675,10 @@ class foosball:
 
         # Show display on screen
         cv2.imshow("Output", self.output)
+
+        cv2.namedWindow("MaskTest")
+        cv2.moveWindow("MaskTest", 1250, 600)
+        cv2.imshow("MaskTest", self.maskTest)
 
         if self.debug:
             self.log("Update display end")
