@@ -315,15 +315,17 @@ class foosball:
         #text = "Number of Circular Blobs: " + str(len(keypoints))
         #cv2.putText(blobImg, text, (20, 550), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 100, 255), 2)
 
-        # Create color mask for foosball and perform erosions and dilation to remove small blobs in mask
+        # Create mask and perform morphological "opening" to remove small blobs in mask.
+        # Opening erodes an image and then dilates the eroded image, using the same structuring
+        # element for both operations. This is useful for removing small objects from an image
+        # while preserving the shape and size of larger objects in the image.
         self.mask = cv2.inRange(self.hsv, self.dim["foosballHSVLower"], self.dim["foosballHSVUpper"])
-        #mask = cv2.bitwise_or(mask1, mask2)
         self.mask1 = cv2.erode(self.mask, None, iterations=2)
         self.mask2 = cv2.dilate(self.mask1, None, iterations=2)
         self.mask3 = cv2.cvtColor(self.mask2, cv2.COLOR_GRAY2BGR)
 
-        self.maskTest = cv2.dilate(self.mask, None, iterations=2)
-        self.maskTest = cv2.erode(self.maskTest, None, iterations=2)
+        self.maskTest = cv2.erode(self.mask, None, iterations=3)
+        self.maskTest = cv2.dialate(self.maskTest, None, iterations=3)
         self.maskTest = cv2.cvtColor(self.maskTest, cv2.COLOR_GRAY2BGR)
 
         # Find contours in mask and initialize the current center (x, y) of the ball
