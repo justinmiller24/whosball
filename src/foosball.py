@@ -274,7 +274,7 @@ class foosball:
         self.finalImg = self.frame.copy()
 
         # HSV, Grayscale, Edges
-        self.blurred = cv2.GaussianBlur(origImg, (3, 3), 0)
+        self.blurred = cv2.GaussianBlur(origImg, (11, 11), 0)
         self.hsv = cv2.cvtColor(self.blurred, cv2.COLOR_BGR2HSV)
         #gray = cv2.cvtColor(origImg, cv2.COLOR_RGB2GRAY)
         #self.gray3 = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
