@@ -279,42 +279,6 @@ class foosball:
         #gray = cv2.cvtColor(origImg, cv2.COLOR_RGB2GRAY)
         #self.gray3 = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
 
-        # Blob detection
-        # Set our filtering parameters
-        # Initialize parameter settiing using cv2.SimpleBlobDetector
-        #blobImg = self.hsv.copy()
-        #params = cv2.SimpleBlobDetector_Params()
-
-        # Set Area filtering parameters
-        #params.filterByArea = True
-        #params.minArea = 100
-
-        # Set Circularity filtering parameters
-        #params.filterByCircularity = True
-        #params.minCircularity = 0.9
-
-        # Set Convexity filtering parameters
-        #params.filterByConvexity = True
-        #params.minConvexity = 0.2
-
-        # Set inertia filtering parameters
-        #params.filterByInertia = True
-        #params.minInertiaRatio = 0.01
-
-        # Create a detector with the parameters
-        #detector = cv2.SimpleBlobDetector_create(params)
-
-        # Detect blobs
-        #keypoints = detector.detect(blobImg)
-
-        # Draw blobs on our image as red circles
-        #blank = np.zeros((1, 1))
-        #blobs = cv2.drawKeypoints(blobImg, keypoints, blank, (0, 0, 255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
-
-        #number_of_blobs = len(keypoints)
-        #text = "Number of Circular Blobs: " + str(len(keypoints))
-        #cv2.putText(blobImg, text, (20, 550), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 100, 255), 2)
-
         # Create mask and perform morphological "opening" to remove small blobs in mask.
         # Opening erodes an image and then dilates the eroded image, using the same structuring
         # element for both operations. This is useful for removing small objects from an image
@@ -322,13 +286,9 @@ class foosball:
         maskOrig = cv2.inRange(self.hsv, self.dim["foosballHSVLower"], self.dim["foosballHSVUpper"])
         self.maskOrig = cv2.cvtColor(maskOrig, cv2.COLOR_GRAY2BGR)
 
-        mask = cv2.erode(maskOrig, None, iterations=4)
-        mask = cv2.dilate(mask, None, iterations=4)
+        mask = cv2.erode(maskOrig, None, iterations=5)
+        mask = cv2.dilate(mask, None, iterations=5)
         self.mask3 = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
-
-        self.maskTest = cv2.erode(maskOrig, None, iterations=8)
-        self.maskTest = cv2.dilate(self.maskTest, None, iterations=8)
-        self.maskTest = cv2.cvtColor(self.maskTest, cv2.COLOR_GRAY2BGR)
 
         # Find contours in mask and initialize the current center (x, y) of the ball
         cnts = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
