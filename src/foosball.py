@@ -316,9 +316,8 @@ class foosball:
         #cv2.putText(blobImg, text, (20, 550), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 100, 255), 2)
 
         # Create color mask for foosball and perform erosions and dilation to remove small blobs in mask
-        mask1 = cv2.inRange(self.hsv, self.dim["foosballMin1HSV"], self.dim["foosballMax1HSV"])
-        mask2 = cv2.inRange(self.hsv, self.dim["foosballMin2HSV"], self.dim["foosballMax2HSV"])
-        mask = cv2.bitwise_or(mask1, mask2)
+        mask = cv2.inRange(self.hsv, self.dim["foosballHSVLower"], self.dim["foosballHSVUpper"])
+        #mask = cv2.bitwise_or(mask1, mask2)
         mask = cv2.erode(mask, None, iterations=2)
         mask = cv2.dilate(mask, None, iterations=2)
         self.mask3 = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
