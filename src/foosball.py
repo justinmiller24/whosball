@@ -47,10 +47,8 @@ class foosball:
 
             # The foosball measures 1 3/8" in diameter
             'foosballWidth': 18,                    # Foosball width and height (rounded down, in pixels)
-            'foosballMin1HSV': (0, 20, 20),         # HSV value range for foosball
-            'foosballMax1HSV': (10, 255, 255),      # HSV value range for foosball
-            'foosballMin2HSV': (170, 20, 20),       # HSV value range for foosball
-            'foosballMax2HSV': (180, 255, 255),     # HSV value range for foosball
+            'foosballHSVLower': (15, 20, 20),       # Foosball lower bound (HSV)
+            'foosballHSVUpper': (25, 255, 255),     # Foosball upper bound (HSV)
 
             # There are 8 foosball rods, each one measures 5/8" in diameter
             # The total distance across all 8 rods is 40 7/16"
