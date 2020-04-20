@@ -47,7 +47,7 @@ class foosball:
 
             # The foosball measures 1 3/8" in diameter
             'foosballWidth': 18,                    # Foosball width and height (rounded down, in pixels)
-            'foosballHSVLower': (18, 0, 0),       # Foosball lower bound (HSV)
+            'foosballHSVLower': (18, 100, 100),     # Foosball lower bound (HSV)
             'foosballHSVUpper': (30, 255, 255),     # Foosball upper bound (HSV)
 
             # There are 8 foosball rods, each one measures 5/8" in diameter
@@ -316,11 +316,11 @@ class foosball:
         #cv2.putText(blobImg, text, (20, 550), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 100, 255), 2)
 
         # Create color mask for foosball and perform erosions and dilation to remove small blobs in mask
-        mask = cv2.inRange(self.hsv, self.dim["foosballHSVLower"], self.dim["foosballHSVUpper"])
+        self.mask = cv2.inRange(self.hsv, self.dim["foosballHSVLower"], self.dim["foosballHSVUpper"])
         #mask = cv2.bitwise_or(mask1, mask2)
-        mask = cv2.erode(mask, None, iterations=2)
-        mask = cv2.dilate(mask, None, iterations=2)
-        self.mask3 = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
+        self.mask1 = cv2.erode(self.mask, None, iterations=2)
+        self.mask2 = cv2.dilate(self.mask1, None, iterations=2)
+        self.mask3 = cv2.cvtColor(self.mask2, cv2.COLOR_GRAY2BGR)
 
         # Find contours in mask and initialize the current center (x, y) of the ball
         cnts = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
