@@ -286,8 +286,8 @@ class foosball:
         maskOrig = cv2.inRange(self.hsv, self.dim["foosballHSVLower"], self.dim["foosballHSVUpper"])
         self.maskOrig = cv2.cvtColor(maskOrig, cv2.COLOR_GRAY2BGR)
 
-        mask = cv2.erode(maskOrig, None, iterations=3)
-        mask = cv2.dilate(mask, None, iterations=3)
+        mask = cv2.erode(maskOrig, None, iterations=4)
+        mask = cv2.dilate(mask, None, iterations=4)
         self.mask3 = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
 
         # Find contours in mask and initialize the current center (x, y) of the ball
