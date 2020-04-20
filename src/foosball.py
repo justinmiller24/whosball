@@ -319,17 +319,23 @@ class foosball:
         # Opening erodes an image and then dilates the eroded image, using the same structuring
         # element for both operations. This is useful for removing small objects from an image
         # while preserving the shape and size of larger objects in the image.
-        self.mask = cv2.inRange(self.hsv, self.dim["foosballHSVLower"], self.dim["foosballHSVUpper"])
-        self.mask1 = cv2.erode(self.mask, None, iterations=2)
-        self.mask2 = cv2.dilate(self.mask1, None, iterations=2)
-        self.mask3 = cv2.cvtColor(self.mask2, cv2.COLOR_GRAY2BGR)
+        maskOrig = cv2.inRange(self.hsv, self.dim["foosballHSVLower"], self.dim["foosballHSVUpper"])
+        self.maskOrig = cv2.cvtColor(maskOrig, cv2.COLOR_GRAY2BGR)
 
-        self.maskTest = cv2.erode(self.mask, None, iterations=1)
-        self.maskTest = cv2.dilate(self.maskTest, None, iterations=1)
+        mask = cv2.erode(mask, None, iterations=2)
+        mask = cv2.dilate(mask, None, iterations=2)
+        self.mask3 = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
+
+        self.maskTest = cv2.erode(maskOrig, None, iterations=3)
+        self.maskTest = cv2.dilate(self.maskTest, None, iterations=3)
         self.maskTest = cv2.cvtColor(self.maskTest, cv2.COLOR_GRAY2BGR)
 
+        self.maskTest2 = cv2.erode(maskOrig, None, iterations=5)
+        self.maskTest2 = cv2.dilate(self.maskTest2, None, iterations=5)
+        self.maskTest2 = cv2.cvtColor(self.maskTest2, cv2.COLOR_GRAY2BGR)
+
         # Find contours in mask and initialize the current center (x, y) of the ball
-        cnts = cv2.findContours(self.mask2, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        cnts = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         # Extract contours depending on OpenCV version
         cnts = imutils.grab_contours(cnts)
 
@@ -339,8 +345,8 @@ class foosball:
         for c in cnts:
         	perimeter = cv2.arcLength(c, True)
         	approx = cv2.approxPolyDP(c, 0.04 * perimeter, True)
-        	if len(approx) > 5:
-        		cv2.drawContours(self.contoursImg, [c], -1, (36, 255, 12), -1)
+        	#if len(approx) > 5:
+        	cv2.drawContours(self.contoursImg, [c], -1, (36, 255, 12), -1)
 
         self.foosballPosition = None
         self.radius = None
@@ -678,9 +684,9 @@ class foosball:
         # Show display on screen
         cv2.imshow("Output", self.output)
 
-        cv2.namedWindow("MaskTest")
-        cv2.moveWindow("MaskTest", 1250, 600)
-        cv2.imshow("MaskTest", self.maskTest)
+        cv2.namedWindow("MaskTest2")
+        cv2.moveWindow("MaskTest2", 1250, 600)
+        cv2.imshow("MaskTest2", self.maskTest2)
 
         if self.debug:
             self.log("Update display end")
