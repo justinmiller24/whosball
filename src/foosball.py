@@ -659,12 +659,13 @@ class foosball:
         dDisplay = ("%2.1f cm" % self.distance) if self.distance is not None else "-"
         aDisplay = ("%2.1f" % self.degrees) if self.degrees is not None else "-"
         vDisplay = ("%2.1f m/s" % self.velocity) if self.velocity is not None else "-"
+        fDisplay = ("%2.1f" % self.fps) if self.fps is not None else "-"
         cv2.putText(self.output, "Center: %s" % cDisplay, (90, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
         cv2.putText(self.output, "Radius: %s" % rDisplay, (290, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
         cv2.putText(self.output, "Distance: %s" % dDisplay, (420, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
         cv2.putText(self.output, "Direction: %s" % aDisplay, (620, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
         cv2.putText(self.output, "Velocity: %s" % vDisplay, (820, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-        cv2.putText(self.output, "FPS: {}".format(self.fps), (1020, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+        cv2.putText(self.output, "FPS: %s" % fDisplay, (1020, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
 
         # Show display on screen
         cv2.imshow("Output", self.output)
