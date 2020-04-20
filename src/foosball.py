@@ -324,8 +324,8 @@ class foosball:
         self.mask2 = cv2.dilate(self.mask1, None, iterations=2)
         self.mask3 = cv2.cvtColor(self.mask2, cv2.COLOR_GRAY2BGR)
 
-        self.maskTest = cv2.erode(self.mask, None, iterations=3)
-        self.maskTest = cv2.dilate(self.maskTest, None, iterations=3)
+        self.maskTest = cv2.erode(self.mask, None, iterations=1)
+        self.maskTest = cv2.dilate(self.maskTest, None, iterations=1)
         self.maskTest = cv2.cvtColor(self.maskTest, cv2.COLOR_GRAY2BGR)
 
         # Find contours in mask and initialize the current center (x, y) of the ball
