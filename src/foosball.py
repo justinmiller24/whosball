@@ -322,7 +322,7 @@ class foosball:
         maskOrig = cv2.inRange(self.hsv, self.dim["foosballHSVLower"], self.dim["foosballHSVUpper"])
         self.maskOrig = cv2.cvtColor(maskOrig, cv2.COLOR_GRAY2BGR)
 
-        mask = cv2.erode(mask, None, iterations=2)
+        mask = cv2.erode(maskOrig, None, iterations=2)
         mask = cv2.dilate(mask, None, iterations=2)
         self.mask3 = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
 
