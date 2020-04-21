@@ -27,8 +27,13 @@ mask = np.zeros((h, w, 3), dtype="uint8")
 #mask = cv2.bitwise_not(mask)
 
 maskRED = mask
+maskBLUE = mask
+
 for rod in foosmenRED:
 	cv2.rectangle(maskRED, (int(rod - playerWidthPX), 0), (int(rod + playerWidthPX), h), (255, 255, 255), -1)
+
+for rod in foosmenBLUE:
+	cv2.rectangle(maskBLUE, (int(rod - playerWidthPX), 0), (int(rod + playerWidthPX), h), (255, 255, 255), -1)
 
 # initialize the camera and stream
 camera = PiCamera()
@@ -52,17 +57,33 @@ for (i, f) in enumerate(stream):
 	tL = (67,127)
 	tR = (551,134)
 	bR = (556,414)
-	bL = (53,404)
+	bL = (52,404)
 	origCoords = np.array([tL, tR, bR, bL], dtype="float32")
 	finalCoords = np.array([(0,0), (w-1,0), (w-1,h-1), (0,h-1)], dtype="float32")
 	M = cv2.getPerspectiveTransform(origCoords, finalCoords)
 	frame = cv2.warpPerspective(origFrame, M, (w, h))
 
-	mask2 = cv2.resize(maskRED, maskRED.shape[1::-1])
-	#print(mask2.shape)
-	# (225, 400, 3)
-	#print(mask2.dtype)
-	# uint8
+	maskRED2 = cv2.resize(maskRED, maskRED.shape[1::-1])
+	maskBLUE2 = cv2.resize(maskBLUE, maskBLUE.shape[1::-1])
+
+	outputRED = cv2.bitwise_and(frame, maskRED2)
+	outputBLUE = cv2.bitwise_and(frame, maskBLUE2)
+
+	# Display original (uncropped) image
+	# Show transformation coordinates on original image
+	for (x, y) in [tL, tR, bR, bL]:
+		cv2.circle(origFrame, (x, y), 5, (0, 255, 0), -1)
+	cv2.namedWindow("Raw")
+	cv2.moveWindow("Raw", 1250, 500)
+	cv2.imshow("Raw", origFrame)
+
+	# Display output and wait for "q" keypress to break loop
+	cv2.imshow("Output", np.hstack((frame, outputRED, outputBLUE)))
+	if cv2.waitKey(1) & 0xFF == ord("q"):
+		break
+
+	# clear the stream in preparation for the next frame
+	rawCapture.truncate(0)
 
 
 	#img2 = contours_img
@@ -81,24 +102,6 @@ for (i, f) in enumerate(stream):
 	# Put contours in image and modify the main image
 	#dst = cv2.add(img1_bg,img2_fg)
 	#cv2.imshow('res',dst)
-
-	output = cv2.bitwise_and(frame, mask2)
-
-	# Display original (uncropped) image
-	# Show transformation coordinates on original image
-	for (x, y) in [tL, tR, bR, bL]:
-		cv2.circle(origFrame, (x, y), 5, (0, 255, 0), -1)
-	cv2.namedWindow("Raw")
-	cv2.moveWindow("Raw", 1250, 100)
-	cv2.imshow("Raw", origFrame)
-
-	# Display output and wait for "q" keypress to break loop
-	cv2.imshow("Output", np.hstack((maskRED, frame, output)))
-	if cv2.waitKey(1) & 0xFF == ord("q"):
-		break
-
-	# clear the stream in preparation for the next frame
-	rawCapture.truncate(0)
 
 
 # do a bit of cleanup
