@@ -27,6 +27,7 @@ cv2.rectangle(mask, (int(w * 60 / 240), 0), (int(w * 90 / 240), h), (0, 0, 0), -
 cv2.rectangle(mask, (int(w * 116 / 240), 0), (int(w * 146 / 240), h), (0, 0, 0), -1)
 cv2.rectangle(mask, (int(w * 180 / 240), 0), (w, h), (0, 0, 0), -1)
 
+cv2.imshow("Mask", mask)
 
 # initialize the camera and stream
 camera = PiCamera()
@@ -83,7 +84,7 @@ for (i, f) in enumerate(stream):
 	output = cv2.bitwise_and(frame, mask2)
 
 	# Display output and wait for "q" keypress to break loop
-	cv2.imshow("Output", np.hstack((mask2, frame, output)))
+	cv2.imshow("Output", np.hstack((mask, frame, output)))
 	if cv2.waitKey(1) & 0xFF == ord("q"):
 		break
 
