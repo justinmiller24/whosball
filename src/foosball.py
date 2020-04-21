@@ -307,9 +307,9 @@ class foosball:
         (h, w) = origImg.shape[:2]
         self.contoursImg = np.zeros((h, w, 3), dtype="uint8")
         for c in cnts:
-        	#perimeter = cv2.arcLength(c, True)
+            #perimeter = cv2.arcLength(c, True)
             epsilon = 0.04 * cv2.arcLength(c, True)
-        	approx = cv2.approxPolyDP(c, epsilon, True)
+            approx = cv2.approxPolyDP(c, epsilon, True)
         	#if len(approx) > 5:
         	cv2.drawContours(self.contoursImg, [c], -1, (36, 255, 12), -1)
 
