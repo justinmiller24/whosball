@@ -20,15 +20,15 @@ h = 360
 # X-coordinate locations of foosmen rods, based on 640px width
 foosmenRED = np.array([43.19, 122.28, 280.46, 438.64], dtype="float32")
 foosmenBLUE = np.array([201.37, 359.55, 517.73, 596.82], dtype="float32")
-playerWidthPX = 20
+playerWidthPX = 30
 
 # Create "mask" for RED foosball player
 mask = np.zeros((h, w, 3), dtype="uint8")
-mask = cv2.bitwise_not(mask)
+#mask = cv2.bitwise_not(mask)
 
 maskRED = mask
 for rod in foosmenRED:
-	cv2.rectangle(maskRED, (int(rod - playerWidthPX), 0), (int(rod + playerWidthPX), h), (0, 0, 0), -1)
+	cv2.rectangle(maskRED, (int(rod - playerWidthPX), 0), (int(rod + playerWidthPX), h), (255, 255, 255), -1)
 #cv2.rectangle(mask, (int(w * 40 / 240), 0), (int(w * 70 / 240), h), (0, 0, 0), -1)
 #cv2.rectangle(mask, (int(w * 110 / 240), 0), (int(w * 150 / 240), h), (0, 0, 0), -1)
 #cv2.rectangle(mask, (int(w * 180 / 240), 0), (w, h), (0, 0, 0), -1)
