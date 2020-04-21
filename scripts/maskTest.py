@@ -17,14 +17,21 @@ import time
 w = 640
 h = 360
 
+# X-coordinate locations of foosmen rods, based on 640px width
+foosmenRED = np.array([43.19, 122.28, 280.46, 438.64], dtype="float32")
+foosmenBLUE = np.array([201.37, 359.55, 517.73, 596.82], dtype="float32")
+foosmenWIDTH = 20
+
 # Create "mask" for RED foosball player
 mask = np.zeros((h, w, 3), dtype="uint8")
 mask = cv2.bitwise_not(mask)
-#cv2.rectangle(mask, (0, 0), (int(w * 9 / 240), h), (0, 0, 0), -1)
-cv2.rectangle(mask, (int(w * 0 / 240), 0), (int(w * 20 / 240), h), (0, 0, 0), -1)
-cv2.rectangle(mask, (int(w * 40 / 240), 0), (int(w * 70 / 240), h), (0, 0, 0), -1)
-cv2.rectangle(mask, (int(w * 110 / 240), 0), (int(w * 150 / 240), h), (0, 0, 0), -1)
-cv2.rectangle(mask, (int(w * 180 / 240), 0), (w, h), (0, 0, 0), -1)
+
+maskRED = mask
+for i in len(foosmenRED):
+	cv2.rectangle(maskRED, (foosmenRED[i] - foosmenWIDTH, 0), (foosmenRED[i] + foosmenWIDTH, h), (0, 0, 0), -1)
+#cv2.rectangle(mask, (int(w * 40 / 240), 0), (int(w * 70 / 240), h), (0, 0, 0), -1)
+#cv2.rectangle(mask, (int(w * 110 / 240), 0), (int(w * 150 / 240), h), (0, 0, 0), -1)
+#cv2.rectangle(mask, (int(w * 180 / 240), 0), (w, h), (0, 0, 0), -1)
 
 # initialize the camera and stream
 camera = PiCamera()
@@ -54,7 +61,7 @@ for (i, f) in enumerate(stream):
 	M = cv2.getPerspectiveTransform(origCoords, finalCoords)
 	frame = cv2.warpPerspective(origFrame, M, (w, h))
 
-	mask2 = cv2.resize(mask, mask.shape[1::-1])
+	mask2 = cv2.resize(maskRED, maskRED.shape[1::-1])
 	#print(mask2.shape)
 	# (225, 400, 3)
 	#print(mask2.dtype)
@@ -81,7 +88,7 @@ for (i, f) in enumerate(stream):
 	output = cv2.bitwise_and(frame, mask2)
 
 	# Display output and wait for "q" keypress to break loop
-	cv2.imshow("Output", np.hstack((mask, frame, output)))
+	cv2.imshow("Output", np.hstack((maskRED, frame, output)))
 	if cv2.waitKey(1) & 0xFF == ord("q"):
 		break
 
