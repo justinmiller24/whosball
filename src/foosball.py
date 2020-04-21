@@ -599,7 +599,8 @@ class foosball:
 
         # Add "whitelabel" mask for each rod containing foosmen with matching color
         for rod in foosmenRods:
-            cv2.rectangle(mask, (int(rod - self.dim["foosmenHeight"]), 0), (int(rod + self.dim["foosmenHeight"]), h), (255, 255, 255), -1)
+            # Create "vertical strips" that are 2 x "foosmenHeight" pixels wide, spanning entire frame (0 to yMax height)
+            cv2.rectangle(mask, (int(rod - self.dim["foosmenHeight"]), 0), (int(rod + self.dim["foosmenHeight"]), self.dim["yPixels"]), (255, 255, 255), -1)
         mask = cv2.resize(mask, mask.shape[1::-1])
 
         if self.debug:
