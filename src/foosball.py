@@ -412,7 +412,7 @@ class foosball:
         # Create mask containing "only" the areas with the rods for RED/BLUE foosmen
         # TODO: Reduce processing time by moving the "mask creation" to init() function, since it does not need to be recreated every frame
         origImg = self.frame.copy()
-        playerMask = _getMaskForPlayers(foosmenRods)
+        playerMask = self._getMaskForPlayers(foosmenRods)
         maskedImg = cv2.bitwise_and(origImg, playerMask)
 
         # Create mask based on HSV range for foosmen
