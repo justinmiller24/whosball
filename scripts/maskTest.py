@@ -20,20 +20,19 @@ h = 360
 # X-coordinate locations of foosmen rods, based on 640px width
 foosmenRED = np.array([43.19, 122.28, 280.46, 438.64], dtype="float32")
 foosmenBLUE = np.array([201.37, 359.55, 517.73, 596.82], dtype="float32")
-playerWidthPX = 30
+playerWidthPX = 36
 
-# Create "mask" for RED foosball player
-mask = np.zeros((h, w, 3), dtype="uint8")
-#mask = cv2.bitwise_not(mask)
-
-maskRED = mask
-maskBLUE = mask
-
+# Red foosmen "mask"
+maskRED = np.zeros((h, w, 3), dtype="uint8")
 for rod in foosmenRED:
 	cv2.rectangle(maskRED, (int(rod - playerWidthPX), 0), (int(rod + playerWidthPX), h), (255, 255, 255), -1)
+maskRED = cv2.resize(maskRED, maskRED.shape[1::-1])
 
+# Blue foosmen "mask"
+maskBLUE = np.zeros((h, w, 3), dtype="uint8")
 for rod in foosmenBLUE:
 	cv2.rectangle(maskBLUE, (int(rod - playerWidthPX), 0), (int(rod + playerWidthPX), h), (255, 255, 255), -1)
+maskBLUE = cv2.resize(maskBLUE, maskBLUE.shape[1::-1])
 
 # initialize the camera and stream
 camera = PiCamera()
@@ -63,12 +62,6 @@ for (i, f) in enumerate(stream):
 	M = cv2.getPerspectiveTransform(origCoords, finalCoords)
 	frame = cv2.warpPerspective(origFrame, M, (w, h))
 
-	maskRED2 = cv2.resize(maskRED, maskRED.shape[1::-1])
-	maskBLUE2 = cv2.resize(maskBLUE, maskBLUE.shape[1::-1])
-
-	outputRED = cv2.bitwise_and(frame, maskRED2)
-	outputBLUE = cv2.bitwise_and(frame, maskBLUE2)
-
 	# Display original (uncropped) image
 	# Show transformation coordinates on original image
 	for (x, y) in [tL, tR, bR, bL]:
@@ -78,30 +71,14 @@ for (i, f) in enumerate(stream):
 	cv2.imshow("Raw", origFrame)
 
 	# Display output and wait for "q" keypress to break loop
-	cv2.imshow("Output", np.hstack((frame, outputRED, outputBLUE)))
+	outputR = cv2.bitwise_and(frame.copy(), maskRED)
+	outputB = cv2.bitwise_and(frame.copy(), maskBLUE)
+	cv2.imshow("Output", np.hstack((frame, outputR, outputB)))
 	if cv2.waitKey(1) & 0xFF == ord("q"):
 		break
 
 	# clear the stream in preparation for the next frame
 	rawCapture.truncate(0)
-
-
-	#img2 = contours_img
-
-	# Create a mask of contours and create its inverse mask also
-	#img2gray = cv2.cvtColor(img2,cv2.COLOR_BGR2GRAY)
-	#ret, mask = cv2.threshold(img2gray, 10, 255, cv2.THRESH_BINARY)
-	#mask_inv = cv2.bitwise_not(mask)
-
-	# Now black-out the area of contours in original image
-	#img1_bg = cv2.bitwise_and(img1, img1, mask = mask_inv)
-
-	# Take only region of contours from contours image.
-	#img2_fg = cv2.bitwise_and(img2, img2, mask = mask)
-
-	# Put contours in image and modify the main image
-	#dst = cv2.add(img1_bg,img2_fg)
-	#cv2.imshow('res',dst)
 
 
 # do a bit of cleanup
