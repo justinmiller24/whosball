@@ -27,8 +27,8 @@ mask = np.zeros((h, w, 3), dtype="uint8")
 mask = cv2.bitwise_not(mask)
 
 maskRED = mask
-for i in foosmenRED:
-	cv2.rectangle(maskRED, (foosmenRED[i] - foosmenWIDTH, 0), (foosmenRED[i] + foosmenWIDTH, h), (0, 0, 0), -1)
+for rod in foosmenRED:
+	cv2.rectangle(maskRED, (rod - foosmenWIDTH, 0), (rod + foosmenWIDTH, h), (0, 0, 0), -1)
 #cv2.rectangle(mask, (int(w * 40 / 240), 0), (int(w * 70 / 240), h), (0, 0, 0), -1)
 #cv2.rectangle(mask, (int(w * 110 / 240), 0), (int(w * 150 / 240), h), (0, 0, 0), -1)
 #cv2.rectangle(mask, (int(w * 180 / 240), 0), (w, h), (0, 0, 0), -1)
