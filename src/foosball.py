@@ -310,8 +310,8 @@ class foosball:
             #perimeter = cv2.arcLength(c, True)
             epsilon = 0.04 * cv2.arcLength(c, True)
             approx = cv2.approxPolyDP(c, epsilon, True)
-        	#if len(approx) > 5:
-        	cv2.drawContours(self.contoursImg, [c], -1, (36, 255, 12), -1)
+            #if len(approx) > 5:
+            cv2.drawContours(self.contoursImg, [c], -1, (36, 255, 12), -1)
 
         self.foosballPosition = None
         self.radius = None
