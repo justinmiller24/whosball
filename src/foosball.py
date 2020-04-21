@@ -301,7 +301,7 @@ class foosball:
         self.mask3 = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
 
         # Find contours in mask and initialize the current center (x, y) of the ball
-        cnts = _getContours(mask)
+        cnts = self._getContours(mask)
 
         # Iterate through contours and filter by the number of vertices
         (h, w) = origImg.shape[:2]
@@ -426,7 +426,7 @@ class foosball:
         #self.foosmenMask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
 
         # Detect foosmen using contours
-        players = _getContours(mask)
+        players = self._getContours(mask)
 
         # Overlay contour and rectangle over each player
         self.playersImg = np.zeros((self.dim["yPixels"], self.dim["xPixels"], 3), dtype="uint8")
