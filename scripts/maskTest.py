@@ -14,9 +14,6 @@ import numpy as np
 import time
 
 
-w = 960
-h = 640
-
 mask = np.zeros((h, w, 3), dtype="uint8")
 #mask = np.ones((h, w, 3), dtype="uint8")
 mask = cv2.bitwise_not(mask)
@@ -64,19 +61,50 @@ time.sleep(2.0)
 # loop over some frames
 for (i, f) in enumerate(stream):
 	# grab the frame from the stream
-	frame = f.array
+	origFrame = f.array
 	#frame_HSV = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
 
+	# Crop image to just the foosball table
+	tL = (73,130)
+	tR = (557,136)
+	bR = (561,414)
+	bL = (59,405)
+	origCoords = np.array([tL, tR, bR, bL], dtype="float32")
+
+	w = 960
+	h = 640
+	finalCoords = np.array([(0,0), (w-1,0), (w-1,h-1), (0,h-1)], dtype="float32")
+	M = cv2.getPerspectiveTransform(origCoords, finalCoords)
+	frame = cv2.warpPerspective(origFrame, M, (w, h))
+
 	# display frame to our screen
+	# wait for keypress
 	cv2.imshow("Frame", frame)
-	key = cv2.waitKey(1) & 0xFF
+	cv2.waitKey(0)
+
+
+	#src2 = cv2.imread('data/src/horse_r.png')
+	mask2 = cv2.resize(mask, mask.shape[1::-1])
+
+	print(mask2.shape)
+	# (225, 400, 3)
+	print(mask2.dtype)
+	# uint8
+
+	output = cv2.bitwise_and(frame, mask2)
+	#cv2.imwrite('data/dst/opencv_bitwise_and.jpg', dst)
+
+	# display frame to our screen
+	# wait for keypress
+	cv2.imshow("Output", output)
+	cv2.waitKey(0)
 
 	# clear the stream in preparation for the next frame
 	rawCapture.truncate(0)
 
 	# break when "q" key is pressed
-	if key == ord("q"):
-		break
+	#if key == ord("q"):
+		#break
 
 
 # do a bit of cleanup
