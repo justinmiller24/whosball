@@ -82,16 +82,13 @@ for (i, f) in enumerate(stream):
 
 	output = cv2.bitwise_and(frame, mask2)
 
-	# Display output and wait for keypress
-	cv2.imshow("Output", np.hstack((mask, frame, output)))
-	cv2.waitKey(0)
+	# Display output and wait for "q" keypress to break loop
+	cv2.imshow("Output", np.hstack((mask2, frame, output)))
+	if cv2.waitKey(1) & 0xFF == ord("q"):
+		break
 
 	# clear the stream in preparation for the next frame
 	rawCapture.truncate(0)
-
-	# break when "q" key is pressed
-	#if key == ord("q"):
-		#break
 
 
 # do a bit of cleanup
