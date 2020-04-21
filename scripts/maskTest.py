@@ -18,9 +18,9 @@ w = 640
 h = 480
 
 # Create "mask" for RED foosball player
-#mask = np.zeros((h, w, 3), dtype="uint8")
-#mask = cv2.bitwise_not(mask)
-mask = np.ones((h, w, 3), dtype="uint8")
+mask = np.zeros((h, w, 3), dtype="uint8")
+mask = cv2.bitwise_not(mask)
+#mask = np.ones((h, w, 3), dtype="uint8")
 cv2.rectangle(mask, (0, 0), (int(w * 9 / 240), h), (0, 0, 0), -1)
 cv2.rectangle(mask, (int(w * 33 / 240), 0), (int(w * 40 / 240), h), (0, 0, 0), -1)
 cv2.rectangle(mask, (int(w * 60 / 240), 0), (int(w * 90 / 240), h), (0, 0, 0), -1)
