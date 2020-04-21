@@ -55,7 +55,8 @@ while fb.gameIsActive:
 	fb.detectTable()
 
 	# Detect players and foosball
-	fb.detectPlayers()
+	fb.detectPlayers("RED")
+	fb.detectPlayers("BLUE")
 	fb.detectFoosball()
 
 	# Keep processing if foosball was not detected

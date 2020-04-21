@@ -3,7 +3,6 @@ from collections import deque
 import cv2
 import cv2.aruco as aruco
 import datetime
-import imutils
 import math
 import numpy as np
 import time
@@ -67,15 +66,26 @@ class foosball:
             # The first rod is located at 38.91px + (rodWidth / 2) = 43.185px
             # Each additional rod is located an additional "rodSpacing" (79.09px) apart
             'rodPosition': np.array([43.19, 122.28, 201.37, 280.46, 359.55, 438.64, 517.73, 596.82], dtype="float32"),
+            'foosmenRED': np.array([43.19, 122.28, 280.46, 438.64], dtype="float32"),
+            'foosmenBLUE': np.array([201.37, 359.55, 517.73, 596.82], dtype="float32"),
 
             # The foosmen are centered on each rod, but each rod (row) has a different number of men
             # There are 13 total foosmen, each with a unique ID from left to right and top to bottom
             # Each foosmen kicks the ball with feet that measure 1" in width
             'foosmenWidth': 14,                     # Foosmen width (rounded up, in pixels)
-            'foosmenBlueHSVLower': (85, 0, 0),      # Foosmen (blue) lower bound (HSV)
-            'foosmenBlueHSVUpper': (110, 255, 255), # Foosmen (blue) upper bound (HSV)
-            'foosmenRedHSVLower': (170, 0, 0),      # Foosmen (red) lower bound (HSV)
-            'foosmenRedHSVUpper': (180, 255, 255),  # Foosmen (red) upper bound (HSV)
+            'foosmenHeight': 36,                    # Foosmen height (how far they "span" in either direction)
+
+            # RED players
+            'foosmenRedHSVLower': (170, 0, 0),      # Foosmen lower bound (HSV)
+            'foosmenRedHSVUpper': (180, 255, 255),  # Foosmen upper bound (HSV)
+            'foosmenRedContour': (255, 100, 100),   # Foosmen contour highlight color
+            'foosmenRedBox': (255, 0, 0),           # Foosmen bounding box color
+
+            # BLUE players
+            'foosmenBlueHSVLower': (85, 0, 0),      # Foosmen lower bound (HSV)
+            'foosmenBlueHSVUpper': (110, 255, 255), # Foosmen upper bound (HSV)
+            'foosmenBlueContour': (100, 100, 255),  # Foosmen contour highlight color
+            'foosmenBlueBox': (0, 0, 255),          # Foosmen bounding box color
 
             # The first row (goalie) has 3 men, spaced 7 1/8" apart, and 8 1/2" of linear movement
             # The second row (defense) has 2 men, spaced 9 5/8" apart, and 13 3/8" of linear movement
@@ -291,16 +301,15 @@ class foosball:
         self.mask3 = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
 
         # Find contours in mask and initialize the current center (x, y) of the ball
-        cnts = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        # Extract contours depending on OpenCV version
-        cnts = imutils.grab_contours(cnts)
+        cnts = _getContours(mask)
 
         # Iterate through contours and filter by the number of vertices
         (h, w) = origImg.shape[:2]
         self.contoursImg = np.zeros((h, w, 3), dtype="uint8")
         for c in cnts:
-        	perimeter = cv2.arcLength(c, True)
-        	approx = cv2.approxPolyDP(c, 0.04 * perimeter, True)
+        	#perimeter = cv2.arcLength(c, True)
+            epsilon = 0.04 * cv2.arcLength(c, True)
+        	approx = cv2.approxPolyDP(c, epsilon, True)
         	#if len(approx) > 5:
         	cv2.drawContours(self.contoursImg, [c], -1, (36, 255, 12), -1)
 
@@ -378,26 +387,54 @@ class foosball:
 
     # Take current image, perform object recognition,
     # and convert this information into the coordinates of the RED and BLUE players
-    def detectPlayers(self):
+    def detectPlayers(self, mode):
         if self.debug:
             self.log("Detect players begin")
 
+        # Create mask containing "only" the areas with the rods for RED/BLUE foosmen
+        # TODO: Reduce processing time by moving the "mask creation" to init() function, since it does not need to be recreated every frame
+        if mode == "RED":
+            foosmenRods = self.dim["foosmenRED"]
+            hsvLower = self.dim["foosmenRedHSVLower"]
+            hsvUpper = self.dim["foosmenRedHSVUpper"]
+            contourRGB = self.dim["foosmenRedContour"]
+            rectangleRGB = self.dim["foosmenRedBox"]
+        elif mode == "BLUE":
+            foosmenRods = self.dim["foosmenBLUE"]
+            hsvLower = self.dim["foosmenBlueHSVLower"]
+            hsvUpper = self.dim["foosmenBlueHSVUpper"]
+            contourRGB = self.dim["foosmenBlueContour"]
+            rectangleRGB = self.dim["foosmenBlueBox"]
+        else:
+            self.log("[ERROR] _getMaskForPlayers has invalid value for mode")
+            return
+
+        # Get mask and apply mask to image
         origImg = self.frame.copy()
+        playerMask = _getMaskForPlayers(foosmenRods)
+        maskedImg = cv2.bitwise_and(origImg, playerMask)
 
         # Create mask based on HSV range for foosmen
-        blurred = cv2.GaussianBlur(origImg, (11, 11), 0)
+        blurred = cv2.GaussianBlur(maskedImg, (11, 11), 0)
         hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
 
         # Create color mask for foosmen and perform erosions and dilation to remove small blobs in mask
-        mask = cv2.inRange(hsv, self.dim["foosmenBlueHSVLower"], self.dim["foosmenBlueHSVUpper"])
-        mask = cv2.erode(mask, None, iterations=2)
-        mask = cv2.dilate(mask, None, iterations=2)
-        self.foosmenMask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
+        mask = cv2.inRange(hsv, hsvLower, hsvUpper)
+        mask = cv2.erode(mask, None, iterations=4)
+        mask = cv2.dilate(mask, None, iterations=4)
+        #self.foosmenMask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
 
-        # Find contours in mask and initialize the current center (x, y) of the ball
-        cnts = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        # Extract contours depending on OpenCV version
-        cnts = imutils.grab_contours(cnts)
+        # Detect foosmen using contours
+        players = _getContours(mask)
+
+        # Overlay contour and rectangle over each player
+        self.playersImg = np.zeros((self.dim["yPixels"], self.dim["xPixels"], 3), dtype="uint8")
+        for i in players:
+
+            # Get coordinates of bounding rectangle and draw rectangle on output image
+            x, y, w, h = cv2.boundingRect(i)
+            cv2.drawContours(self.playersImg, [i], -1, contourRGB, -1)
+            cv2.rectangle(self.playersImg, (x, y), (x + w, y + h), rectangleRGB, 2)
 
         if self.debug:
             self.log("Detect players end")
@@ -526,6 +563,48 @@ class foosball:
     def foosmenTakeover(self):
         if self.debug:
             self.log("Foosmen takeover begin")
+
+
+    # Get contours
+    def _getContours(self, mask):
+
+        # Detect object using contours
+        cnts = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+        # Extract contours depending on the OpenCV version
+        # Copied from https://github.com/jrosebr1/imutils/blob/master/imutils/convenience.py
+        if len(cnts) == 2:
+            if self.debug:
+                self.log("Using OpenCV 2.4 or 4.x")
+            cnts = cnts[0]
+        # if the length of the contours tuple is '3' then we are using
+        # either OpenCV v3, v4-pre, or v4-alpha
+        elif len(cnts) == 3:
+            if self.debug:
+                self.log("Using OpenCV 3.x or v4pre/alpha")
+            cnts = cnts[1]
+        else:
+            self.log("[ERROR] _getContours function did not return the correct result")
+
+        return cnts
+
+
+    # Get mask for RED or BLUE players based on foosmenRods array
+    def _getMaskForPlayers(self, foosmenRods):
+        if self.debug:
+            self.log("Get Mask for Mode begin")
+
+        mask = np.zeros((self.dim["yPixels"], self.dim["xPixels"], 3), dtype="uint8")
+
+        # Add "whitelabel" mask for each rod containing foosmen with matching color
+        for rod in foosmenRods:
+            cv2.rectangle(mask, (int(rod - self.dim["foosmenHeight"]), 0), (int(rod + self.dim["foosmenHeight"]), h), (255, 255, 255), -1)
+        mask = cv2.resize(mask, mask.shape[1::-1])
+
+        if self.debug:
+            self.log("Get Mask for Mode end")
+
+        return mask
 
 
     # Get motor with position "i"
