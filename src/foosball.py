@@ -428,6 +428,11 @@ class foosball:
         # Detect foosmen using contours
         players = self._getContours(mask)
 
+        #if mode == "RED":
+            #self.playersRed = players
+        #elif mode == "BLUE":
+            #self.playersBlue = players
+
         # Overlay contour and rectangle over each player
         self.playersImg = np.zeros((self.dim["yPixels"], self.dim["xPixels"], 3), dtype="uint8")
         for i in players:
