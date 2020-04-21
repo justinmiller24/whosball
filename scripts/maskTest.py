@@ -14,6 +14,15 @@ import numpy as np
 import time
 
 
+# Crop image to just the foosball table
+tL = (73,130)
+tR = (557,136)
+bR = (561,414)
+bL = (59,405)
+
+w = 960
+h = 640
+
 mask = np.zeros((h, w, 3), dtype="uint8")
 #mask = np.ones((h, w, 3), dtype="uint8")
 mask = cv2.bitwise_not(mask)
@@ -64,15 +73,7 @@ for (i, f) in enumerate(stream):
 	origFrame = f.array
 	#frame_HSV = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
 
-	# Crop image to just the foosball table
-	tL = (73,130)
-	tR = (557,136)
-	bR = (561,414)
-	bL = (59,405)
 	origCoords = np.array([tL, tR, bR, bL], dtype="float32")
-
-	w = 960
-	h = 640
 	finalCoords = np.array([(0,0), (w-1,0), (w-1,h-1), (0,h-1)], dtype="float32")
 	M = cv2.getPerspectiveTransform(origCoords, finalCoords)
 	frame = cv2.warpPerspective(origFrame, M, (w, h))
