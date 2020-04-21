@@ -29,9 +29,6 @@ mask = np.zeros((h, w, 3), dtype="uint8")
 maskRED = mask
 for rod in foosmenRED:
 	cv2.rectangle(maskRED, (int(rod - playerWidthPX), 0), (int(rod + playerWidthPX), h), (255, 255, 255), -1)
-#cv2.rectangle(mask, (int(w * 40 / 240), 0), (int(w * 70 / 240), h), (0, 0, 0), -1)
-#cv2.rectangle(mask, (int(w * 110 / 240), 0), (int(w * 150 / 240), h), (0, 0, 0), -1)
-#cv2.rectangle(mask, (int(w * 180 / 240), 0), (w, h), (0, 0, 0), -1)
 
 # initialize the camera and stream
 camera = PiCamera()
@@ -86,6 +83,14 @@ for (i, f) in enumerate(stream):
 	#cv2.imshow('res',dst)
 
 	output = cv2.bitwise_and(frame, mask2)
+
+	# Display original (uncropped) image
+	# Show transformation coordinates on original image
+	for (x, y) in [tL, tR, bR, bL]:
+		cv2.circle(origFrame, (x, y), 5, (0, 255, 0), -1)
+	cv2.namedWindow("Raw")
+	cv2.moveWindow("Raw", 1250, 100)
+	cv2.imshow("Raw", origFrame)
 
 	# Display output and wait for "q" keypress to break loop
 	cv2.imshow("Output", np.hstack((maskRED, frame, output)))
