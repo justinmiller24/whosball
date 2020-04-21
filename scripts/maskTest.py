@@ -15,19 +15,16 @@ import time
 
 
 w = 640
-h = 480
+h = 360
 
 # Create "mask" for RED foosball player
 mask = np.zeros((h, w, 3), dtype="uint8")
 mask = cv2.bitwise_not(mask)
-#mask = np.ones((h, w, 3), dtype="uint8")
 #cv2.rectangle(mask, (0, 0), (int(w * 9 / 240), h), (0, 0, 0), -1)
-cv2.rectangle(mask, (int(w * 0 / 240), 0), (int(w * 35 / 240), h), (0, 0, 0), -1)
-cv2.rectangle(mask, (int(w * 35 / 240), 0), (int(w * 70 / 240), h), (0, 0, 0), -1)
+cv2.rectangle(mask, (int(w * 0 / 240), 0), (int(w * 20 / 240), h), (0, 0, 0), -1)
+cv2.rectangle(mask, (int(w * 40 / 240), 0), (int(w * 70 / 240), h), (0, 0, 0), -1)
 cv2.rectangle(mask, (int(w * 110 / 240), 0), (int(w * 150 / 240), h), (0, 0, 0), -1)
 cv2.rectangle(mask, (int(w * 180 / 240), 0), (w, h), (0, 0, 0), -1)
-
-cv2.imshow("Mask", mask)
 
 # initialize the camera and stream
 camera = PiCamera()
