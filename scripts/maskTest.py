@@ -49,10 +49,10 @@ for (i, f) in enumerate(stream):
 
 	# Apply homography to show just the foosball table
 	# Crop image to just the foosball table
-	tL = (63,125)
-	tR = (557,134)
-	bR = (561,414)
-	bL = (50,404)
+	tL = (65,127)
+	tR = (552,134)
+	bR = (557,414)
+	bL = (53,404)
 	origCoords = np.array([tL, tR, bR, bL], dtype="float32")
 	finalCoords = np.array([(0,0), (w-1,0), (w-1,h-1), (0,h-1)], dtype="float32")
 	M = cv2.getPerspectiveTransform(origCoords, finalCoords)
