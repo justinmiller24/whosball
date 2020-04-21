@@ -391,8 +391,7 @@ class foosball:
         if self.debug:
             self.log("Detect players begin")
 
-        # Create mask containing "only" the areas with the rods for RED/BLUE foosmen
-        # TODO: Reduce processing time by moving the "mask creation" to init() function, since it does not need to be recreated every frame
+        # Set variables based on mode (RED or BLUE)
         if mode == "RED":
             foosmenRods = self.dim["foosmenRED"]
             hsvLower = self.dim["foosmenRedHSVLower"]
@@ -410,6 +409,8 @@ class foosball:
             return
 
         # Get mask and apply mask to image
+        # Create mask containing "only" the areas with the rods for RED/BLUE foosmen
+        # TODO: Reduce processing time by moving the "mask creation" to init() function, since it does not need to be recreated every frame
         origImg = self.frame.copy()
         playerMask = _getMaskForPlayers(foosmenRods)
         maskedImg = cv2.bitwise_and(origImg, playerMask)
