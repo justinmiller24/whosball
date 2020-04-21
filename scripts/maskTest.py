@@ -43,7 +43,7 @@ for (i, f) in enumerate(stream):
 
 	# Grab latest frame from PiCamera stream
 	origFrame = f.array
-	img1 = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
+	#img1 = cv2.cvtColor(origFrame, cv2.COLOR_GRAY2BGR)
 
 	# Apply homography to show just the foosball table
 	# Crop image to just the foosball table
