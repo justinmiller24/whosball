@@ -14,7 +14,7 @@ import time
 from foosball import foosball
 from video import videoStream
 
-print("Start Main Script")
+print("Starting Main Script")
 
 
 # construct the argument parse and parse the arguments
@@ -83,18 +83,30 @@ while fb.gameIsActive:
 		# Check for goal and update score
 		#fb.checkForGoal()
 
-	# Video processing
-	# Build multi view display, show on screen, and handle user input
+
+	# Display original (uncropped) image and transformation coordinates
+	origImg = fb.rawFrame.copy()
+	if fb.origCoords is not None:
+		for (x, y) in fb.origCoords:
+			cv2.circle(origImg, (x, y), 5, (0, 255, 0), -1)
+	cv2.namedWindow("Raw")
+	cv2.moveWindow("Raw", 1250, 100)
+	cv2.imshow("Raw", origImg)
+
+
+	# Build output frame, show on screen, and handle user input
 	# Stop loop if the "q" key is pressed
-	fb.log("Update display begin")
-	fb.updateDisplay([fb.frame, fb.mask3, fb.contoursImg, fb.finalImg])
+	fb.log("Update output display begin")
+	fb.buildOutputFrame()
+    cv2.imshow("Output", fb.outputImg)
 	if cv2.waitKey(1) & 0xFF == ord("q"):
 		break
-	fb.log("Update display end")
+	fb.log("Update output display end")
+
 
 	# Write frame to output file
 	if writer is not None:
-		writer.write(fb.output)
+		writer.write(fb.outputImg)
 
 	fb.log("Main loop end")
 
@@ -102,8 +114,8 @@ while fb.gameIsActive:
 # Stop timer and display FPS information
 print()
 print("[INFO] Elasped time: {:.2f}".format(fb.elapsedTime))
-print("[INFO] Avg FPS: {:.2f}".format(fb.numFrames / fb.elapsedTime))
 print("[INFO] Avg FPS: {:.2f}".format(fb.fps))
+
 
 # Do a bit of cleanup
 # Stop camera, video file, and destroy all windows

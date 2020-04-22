@@ -15,7 +15,7 @@ class foosball:
 
         self.debug = debug
 
-        # Pre-calculate and store dimensions for faster lookup during game play
+        # Create a dictionary with pre-calculated values for faster lookup
         # Attributes prefixed with an underscore (_) are needed for calculation only
         self.dim = {
 
@@ -48,6 +48,7 @@ class foosball:
             'foosballWidth': 18,                    # Foosball width and height (rounded down, in pixels)
             'foosballHSVLower': (15, 0, 0),         # Foosball lower bound (HSV)
             'foosballHSVUpper': (35, 255, 255),     # Foosball upper bound (HSV)
+            'foosballMaxPositions' 30,              # The maximum number of "coordinates" to track
 
             # There are 8 foosball rods, each one measures 5/8" in diameter
             # The total distance across all 8 rods is 40 7/16"
@@ -65,7 +66,7 @@ class foosball:
             # Total rod spacing = (640px - (79.09 * 7 + 8.55)) / 2 = 38.91px (on each end)
             # The first rod is located at 38.91px + (rodWidth / 2) = 43.185px
             # Each additional rod is located an additional "rodSpacing" (79.09px) apart
-            'rodPosition': np.array([43.19, 122.28, 201.37, 280.46, 359.55, 438.64, 517.73, 596.82], dtype="float32"),
+            'rodPosition': [43.19, 122.28, 201.37, 280.46, 359.55, 438.64, 517.73, 596.82],
             'foosmenRED': np.array([43.19, 122.28, 280.46, 438.64], dtype="float32"),
             'foosmenBLUE': np.array([201.37, 359.55, 517.73, 596.82], dtype="float32"),
 
@@ -166,15 +167,15 @@ class foosball:
         self.fps = None
 
         if self.debug:
-            self.log("Initialize Table")
-            self.log("Game Is Active: {}".format(self.gameIsActive))
-            self.log("Ball Is In Play: {}".format(self.ballIsInPlay))
+            self.log("[STATUS] Initialize Table")
+            self.log("[STATUS] Game Is Active: {}".format(self.gameIsActive))
+            self.log("[STATUS] Ball Is In Play: {}".format(self.ballIsInPlay))
 
 
     # Start game
     def start(self):
         if self.debug:
-            self.log("Start function begin")
+            self.log("[DEBUG] Start function begin")
 
         # Initialize motors and all I/O ports
         # This includes calibration of the motors for linear and rotational motion
@@ -197,54 +198,77 @@ class foosball:
         self.gameIsActive = True
         self.ballIsInPlay = False
 
-        # Track history of ball position
-        # Initialize ball position array
-        self.ball_position_history = []
-        # Initialize list of tracked points
-        self.pts = deque(maxlen=30)
+        # History of foosball position/coordinates
+        self.ballPositions = []
+        self.projectedPosition = None
 
         # Initialize score to 0-0
         self.score = (0, 0)
 
         # Start timer
         self.startTime = datetime.datetime.now()
-        #self.currentTime = datetime.datetime.now()
 
         if self.debug:
-            self.log("Start function end")
+            self.log("[DEBUG] Start function end")
 
         return self
 
 
-    # Calculate motion of foosball based on history
-    def _calculateFoosballMotion(self):
+    # Add current foosball position and calculate motion
+    def _addCurrentPosition(self, pos):
 
-        # Make sure we have at least two points to perform motion calculations
-        if len(self.ball_position_history) < 2:
+        # Reset counter of how many frames the foosball has been undetected
+        self.lostBallFrames = 0
+
+        # Add current foosball position to array, and make sure we have no more than X items
+        self.ballPositions.append(pos)
+        if len(self.ballPositions) > self.dim["foosballMaxPositions"]:
+            self.ballPositions.pop(0)
+
+        # Make sure we have at least 3 points to perform calculations
+        if len(self.ballPositions) < 3:
             return
 
-        # Last ball position
-        lastPosition = self.ball_position_history[-2:][0]
-        origX = lastPosition[0]
-        origY = lastPosition[1]
+        # Previous ball position
+        #lastPosition = self.ballPositions[-2:][0]
+        #origX = lastPosition[0]
+        #origY = lastPosition[1]
 
         # Current ball position
-        currPosition = self.ball_position_history[-1:][0]
-        destX = currPosition[0]
-        destY = currPosition[1]
+        #currPosition = self.ballPositions[-1:][0]
+        #destX = currPosition[0]
+        #destY = currPosition[1]
 
         # Deltas
-        deltaX = destX - origX
-        deltaY = destY - origY
+        #deltaX = destX - origX
+        #deltaY = destY - origY
 
-        # Distance
-        distancePX = math.sqrt(deltaX * deltaX + deltaY * deltaY)
-        distanceCM = distancePX / self.dim["pxPerCm"]
-        distanceM = distanceCM / 100
-        self.distance = distanceCM
+
+        # Calculate motion and projected trajectory based on the last 3 coordinates
+        #prevX, prevY = self.ballPositions[-3:][0]
+        #currX, currY = self.ballPositions[-1:][0]
+
+        # Use average of the last 2 x/y slopes
+        self.deltaX = (self.ballPositions[-1:][0][0] - self.ballPositions[-3:][0][0]) / 2
+        self.deltaY = (self.ballPositions[-1:][0][1] - self.ballPositions[-3:][0][1]) / 2
+
+        # Ignore unless there is "significant" movement
+        if abs(self.deltaX) + abs(self.deltaY) < 2:
+            self.log("[TRACKING] Ignore insignificant movement for projected positions")
+            self.deltaX = 0
+            self.deltaY = 0
+
+        # Calculate projected next coordinate
+        self.projectedPosition = [self.ballPositions[-1:][0][0] + self.deltaX, self.ballPositions[-1:][0][1] + self.deltaY]
+        self.log("[TRACKING] Projected next position is: {}".format(self.projectedPosition))
+
+        # Calculate distance (in cm), velocity, and direction -- for visual display only
+        distancePX = math.sqrt(self.deltaX * self.deltaX + self.deltaY * self.deltaY)
+        self.distance = distancePX / self.dim["pxPerCm"]
 
         # Velocity
         # Use FPS if avaialble, otherwise default to 30fps
+        distanceM = self.distance / 100
         if self.fps:
             self.velocity = distanceM / (1 / self.fps)
         else:
@@ -253,25 +277,80 @@ class foosball:
         # Direction
         # Calculate number degrees between two points
         # Calculate arc tangent (in radians) and convert to degrees
-        degrees_temp = math.atan2(deltaX, deltaY) / math.pi * 180
+        degrees_temp = math.atan2(self.deltaX, self.deltaY) / math.pi * 180
         if degrees_temp < 0:
             self.degrees = 360 + degrees_temp
         else:
             self.degrees = degrees_temp
 
 
+    # Function to update video display
+    def buildOutputFrame(self):
+        if self.debug:
+            self.log("[DEBUG] Update display begin")
+
+        images = [self.frame, self.mask3, self.contoursImg, self.outputImg]
+
+
+        # Grab dimensions of first image
+        (h, w) = images[0].shape[:2]
+
+        # Build multiview display
+        padW = 8
+        padH = 20
+        mvHeight = (h * 2) + (padH * 3) + (padW * 2)
+        mvWidth = w * 2 + padW
+        out = np.zeros((mvHeight, mvWidth, 3), dtype="uint8")
+
+        # Top Left
+        cv2.putText(out, "Original", (w // 2 - 35, 15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+        out[padH:h+padH, 0:w] = images[0]
+
+        # Top Right
+        cv2.putText(out, "Mask", (w + w // 2 - 30, 15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+        out[padH:h+padH, w+padW:w*2+padW] = images[1]
+
+        # Bottom Left
+        cv2.putText(out, "Contours", (w // 2 - 35, 20+h+3+15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+        out[h+3+padH+padH:h*2+3+padH+padH, 0:w] = images[2]
+
+        # Bottom Right
+        cv2.putText(out, "Final", (w + w // 2 - 30, 20+h+3+15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+        out[h+3+padH+padH:h*2+3+padH+padH, w+padW:w*2+padW] = images[3]
+
+        # Bottom
+        cDisplay = ("{}".format(self.foosballPosition)) if self.foosballPosition is not None else "-"
+        rDisplay = ("%2.1f" % self.radius) if self.radius is not None else "-"
+        dDisplay = ("%2.1f cm" % self.distance) if self.distance is not None else "-"
+        aDisplay = ("%2.1f" % self.degrees) if self.degrees is not None else "-"
+        vDisplay = ("%2.1f m/s" % self.velocity) if self.velocity is not None else "-"
+        fDisplay = ("%2.1f" % self.fps) if self.fps is not None else "-"
+        cv2.putText(out, "Center: %s" % cDisplay, (90, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+        cv2.putText(out, "Radius: %s" % rDisplay, (290, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+        cv2.putText(out, "Distance: %s" % dDisplay, (420, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+        cv2.putText(out, "Direction: %s" % aDisplay, (620, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+        cv2.putText(out, "Velocity: %s" % vDisplay, (820, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+        cv2.putText(out, "FPS: %s" % fDisplay, (1020, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+
+        if self.debug:
+            self.log("[DEBUG] Update display end")
+
+        return out
+
+
     # Check if a goal occurred
     def checkForGoal(self):
         if self.debug:
-            self.log("Check for goal begin")
+            self.log("[DEBUG] Check for goal begin")
+
 
         goalScored = False
         if goalScored:
-            self.log("Goal Scored!")
+            self.log("[STATUS] Goal Scored!")
             self.ballIsInPlay = False
 
         if self.debug:
-            self.log("Check for goal end")
+            self.log("[DEBUG] Check for goal end")
 
         return goalScored
 
@@ -280,10 +359,10 @@ class foosball:
     # and convert this information into the coordinate of the foosball
     def detectFoosball(self):
         if self.debug:
-            self.log("Detect Foosball begin")
+            self.log("[DEBUG] Detect Foosball begin")
 
         origImg = self.frame.copy()
-        self.finalImg = self.frame.copy()
+        self.outputImg = self.frame.copy()
 
         # HSV, Grayscale, Edges
         self.blurred = cv2.GaussianBlur(origImg, (11, 11), 0)
@@ -330,20 +409,17 @@ class foosball:
             c = max(cnts, key=cv2.contourArea)
             ((x, y), self.radius) = cv2.minEnclosingCircle(c)
             M = cv2.moments(c)
-            self.foosballPosition = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
-            self.log("[STATUS] Foosball detected: {}".format(self.foosballPosition))
+            foosballPosition = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
+            self.log("[STATUS] Foosball detected: {}".format(foosballPosition))
 
-            # Add to list of tracked points
-            self.ball_position_history.append(self.foosballPosition)
-
-            # Calculate motion of foosball
-            self._calculateFoosballMotion()
+            # Add current position to the list of tracked points
+            self._addCurrentPosition(foosballPosition)
 
             # Draw centroid
-            cv2.circle(self.finalImg, self.foosballPosition, 5, (0, 0, 255), -1)
+            cv2.circle(self.outputImg, foosballPosition, 5, (0, 0, 255), -1)
 
             # Update list of tracked points
-            self._updateTrackedPoints()
+            #self._updateTrackedPoints()
 
         # Foosball was not detected as a recognized object. This is either because:
         #   1) The foosball was not in play previously
@@ -375,31 +451,30 @@ class foosball:
             # At this point, we know the ball is likely occluded
             self.log("[STATUS] The ball is likely occluded. Determine projected coordinates.")
 
-        if self.debug:
-            self.log("Num contours found: {}".format(len(cnts)))
-            self.log("Foosball detected: {}".format(self.foosballDetected))
-            self.log("Foosball position: {}".format(self.foosballPosition))
-            self.log("Foosball in play: {}".format(self.ballIsInPlay))
+        self.log("[STATUS] Num contours found: {}".format(len(cnts)))
+        self.log("[STATUS] Foosball detected: {}".format(self.foosballDetected))
+        self.log("[STATUS] Foosball position: {}".format(self.foosballPosition))
+        self.log("[STATUS] Foosball in play: {}".format(self.ballIsInPlay))
 
         if self.debug:
-            self.log("Detect Foosball end")
+            self.log("[DEBUG] Detect Foosball end")
 
 
     # Take current image, perform object recognition,
     # and convert this information into the coordinates of the RED and BLUE players
     def detectPlayers(self, mode):
         if self.debug:
-            self.log("Detect players begin")
+            self.log("[DEBUG] Detect players begin")
 
         # Set variables based on mode (RED or BLUE)
         if mode == "RED":
-            foosmenRods = self.dim["foosmenRED"]
+            foosmenRows = self.dim["foosmenRED"]
             hsvLower = self.dim["foosmenRedHSVLower"]
             hsvUpper = self.dim["foosmenRedHSVUpper"]
             contourRGB = self.dim["foosmenRedContour"]
             rectangleRGB = self.dim["foosmenRedBox"]
         elif mode == "BLUE":
-            foosmenRods = self.dim["foosmenBLUE"]
+            foosmenRows = self.dim["foosmenBLUE"]
             hsvLower = self.dim["foosmenBlueHSVLower"]
             hsvUpper = self.dim["foosmenBlueHSVUpper"]
             contourRGB = self.dim["foosmenBlueContour"]
@@ -412,7 +487,7 @@ class foosball:
         # Create mask containing "only" the areas with the rods for RED/BLUE foosmen
         # TODO: Reduce processing time by moving the "mask creation" to init() function, since it does not need to be recreated every frame
         origImg = self.frame.copy()
-        playerMask = self._getMaskForPlayers(foosmenRods)
+        playerMask = self._getMaskForPlayers(foosmenRows)
         maskedImg = cv2.bitwise_and(origImg, playerMask)
 
         # Create mask based on HSV range for foosmen
@@ -443,14 +518,14 @@ class foosball:
             cv2.rectangle(self.playersImg, (x, y), (x + w, y + h), rectangleRGB, 2)
 
         if self.debug:
-            self.log("Detect players end")
+            self.log("[DEBUG] Detect players end")
 
 
     # Detect ArUco markers and transform perspective
     # This effectively crops the frame to just show the foosball table
     def detectTable(self):
         if self.debug:
-            self.log("Detect table begin")
+            self.log("[DEBUG] Detect table begin")
 
         origImg = self.rawFrame.copy()
 
@@ -465,9 +540,8 @@ class foosball:
 
         # Display detected markers
         if ids is not None:
-            if self.debug:
-                self.log("ArUco markers detected!")
-                self.log(ids)
+            self.log("[STATUS] ArUco markers detected:")
+            self.log(ids)
             #output = aruco.drawDetectedMarkers(output, corners, ids)
 
             # Default to existing coordinates
@@ -479,7 +553,7 @@ class foosball:
                 #x, y = marker[0]
                 #tL = (x, y)
                 #if self.debug:
-                    #self.log("ArUco Marker exists in Top Left")
+                    #self.log("[DEBUG] ArUco Marker exists in Top Left")
                     #self.log(tL)
 
             # Top Right
@@ -488,7 +562,7 @@ class foosball:
                 #x, y = marker[1]
                 #tR = (x, y)
                 #if self.debug:
-                    #self.log("ArUco Marker exists in Top Right")
+                    #self.log("[DEBUG] ArUco Marker exists in Top Right")
                     #self.log(tR)
 
             # Bottom Right
@@ -497,7 +571,7 @@ class foosball:
                 #x, y = marker[2]
                 #bR = (x, y)
                 #if self.debug:
-                    #self.log("ArUco Marker exists in Bottom Right")
+                    #self.log("[DEBUG] ArUco Marker exists in Bottom Right")
                     #self.log(bR)
 
             # Bottom Left
@@ -506,12 +580,12 @@ class foosball:
                 #x, y = marker[3]
                 #bL = (x, y)
                 #if self.debug:
-                    #self.log("ArUco Marker exists in Bottom Left")
+                    #self.log("[DEBUG] ArUco Marker exists in Bottom Left")
                     #self.log(bL)
 
             #self.tableCoords = [tL, tR, bR, bL]
             if self.debug:
-                self.log("Table boundaries (tL, tR, bR, bL):")
+                self.log("[STATUS] Table boundaries (tL, tR, bR, bL):")
                 self.log(self.tableCoords)
             #for i in range(0, len(ids)):
                 #id = str(ids[i][0])
@@ -525,8 +599,7 @@ class foosball:
 
                 #result.add((id, x, y))
         else:
-            if self.debug:
-                self.log("No ArUco markers detected, use defaults")
+            self.log("[ERROR] No ArUco markers detected, use defaults")
 
         # Apply projective transformation (also known as "perspective transformation" or "homography") to the
         # original image. This type of transformation was chosen because it preserves straight lines.
@@ -540,35 +613,35 @@ class foosball:
         self.frame = cv2.warpPerspective(origImg, M, (w, h))
 
         if self.debug:
-            self.log("Detect table end")
+            self.log("[DEBUG] Detect table end")
 
         return self.frame
 
 
     def determineMotorMovement(self):
         if self.debug:
-            self.log("Determine motor movement begin")
-            self.log("Determine motor movement end")
+            self.log("[DEBUG] Determine motor movement begin")
+            self.log("[DEBUG] Determine motor movement end")
 
 
     def determineTrackingMethod(self):
         if self.debug:
-            self.log("Determine tracking method begin")
+            self.log("[DEBUG] Determine tracking method begin")
 
         self.trackingMethod = "Defense"
 
-        if self.debug:
-            self.log("Tracking method is {}".format(self.trackingMethod))
+        self.log("[STATUS] Tracking method: {}".format(self.trackingMethod))
 
         if self.debug:
-            self.log("Determine tracking method end")
+            self.log("[DEBUG] Determine tracking method end")
 
         return self.trackingMethod
 
 
     def foosmenTakeover(self):
         if self.debug:
-            self.log("Foosmen takeover begin")
+            self.log("[DEBUG] Foosmen takeover begin")
+            self.log("[DEBUG] Foosmen takeover end")
 
 
     # Get contours
@@ -581,13 +654,13 @@ class foosball:
         # Copied from https://github.com/jrosebr1/imutils/blob/master/imutils/convenience.py
         if len(cnts) == 2:
             if self.debug:
-                self.log("Using OpenCV 2.4 or 4.x")
+                self.log("[REMOVE THIS] Using OpenCV 2.4 or 4.x")
             cnts = cnts[0]
         # if the length of the contours tuple is '3' then we are using
         # either OpenCV v3, v4-pre, or v4-alpha
         elif len(cnts) == 3:
             if self.debug:
-                self.log("Using OpenCV 3.x or v4pre/alpha")
+                self.log("[REMOVE THIS] Using OpenCV 3.x or v4pre/alpha")
             cnts = cnts[1]
         else:
             self.log("[ERROR] _getContours function did not return the correct result")
@@ -595,29 +668,43 @@ class foosball:
         return cnts
 
 
-    # Get mask for RED or BLUE players based on foosmenRods array
-    def _getMaskForPlayers(self, foosmenRods):
+    # Get mask for RED or BLUE players based on foosmenRows array
+    def _getMaskForPlayers(self, foosmenRows):
         if self.debug:
-            self.log("Get Mask for Mode begin")
+            self.log("[DEBUG] Get Mask for Mode begin")
 
         mask = np.zeros((self.dim["yPixels"], self.dim["xPixels"], 3), dtype="uint8")
 
         # Add "whitelabel" mask for each rod containing foosmen with matching color
-        for rod in foosmenRods:
+        for rod in foosmenRows:
             # Create "vertical strips" that are 2 x "foosmenHeight" pixels wide, spanning entire frame (0 to yMax height)
             cv2.rectangle(mask, (int(rod - self.dim["foosmenHeight"]), 0), (int(rod + self.dim["foosmenHeight"]), self.dim["yPixels"]), (255, 255, 255), -1)
         mask = cv2.resize(mask, mask.shape[1::-1])
 
         if self.debug:
-            self.log("Get Mask for Mode end")
+            self.log("[DEBUG] Get Mask for Mode end")
 
         return mask
+
+
+    # Determine which foosmen row is closest to the foosball
+    def _getClosestRow(self, x):
+        closestRow = 0
+        min = self.dim.["xPixels"]
+
+        # Loop through foosball rows and determine which is closest to X-coordinate of the foosball's current position
+        for row in range(self.dim["rodPosition"]):
+            if abs(self.dim["rodPosition"][row] - x) < min:
+                min = abs(self.dim["rodPosition"][row] - x)
+                closestRow = row
+
+        return closestRow
 
 
     # Get motor with position "i"
     def getMotor(self, i):
         if self.debug:
-            self.log("Get Motor [{}]".format(i))
+            self.log("[DEBUG] Get Motor [{}]".format(i))
 
         return self.motors[i]
 
@@ -626,12 +713,12 @@ class foosball:
     # the function at point xi
     def interpolate(self, xi, x2, y2, x1, y1):
         if self.debug:
-            self.log("Interpolate begin")
+            self.log("[DEBUG] Interpolate begin")
 
         ret = (xi - x1) * (y2 - y1) / (x2 - x1) + y1
 
         if self.debug:
-            self.log("Interpolate end")
+            self.log("[DEBUG] Interpolate end")
 
         return ret
 
@@ -645,8 +732,8 @@ class foosball:
     # https://learn.adafruit.com/adafruit-dc-and-stepper-motor-hat-for-raspberry-pi/using-stepper-motors
     def moveMotors(self):
         if self.debug:
-            self.log("Move motors begin")
-            self.log("Move motors end")
+            self.log("[DEBUG] Move motors begin")
+            self.log("[DEBUG] Move motors end")
 
         #self.motors.kit1.stepper1.onestep()
 
@@ -654,7 +741,7 @@ class foosball:
     # Save new frame and update FPS data
     def readFrame(self, frame):
         if self.debug:
-            self.log("Read frame begin")
+            self.log("[DEBUG] Read frame begin")
 
         self.rawFrame = frame
 
@@ -665,84 +752,22 @@ class foosball:
         self.fps = self.numFrames / self.elapsedTime
 
         if self.debug:
-            self.log("Read frame end")
-
-
-    # Function to update video display
-    def updateDisplay(self, images):
-        if self.debug:
-            self.log("Update display begin")
-
-        # Display original (uncropped) image
-        # Show transformation coordinates on original image
-        origImg = self.rawFrame.copy()
-        if self.origCoords is not None:
-            for (x, y) in self.origCoords:
-                cv2.circle(origImg, (x, y), 5, (0, 255, 0), -1)
-        cv2.namedWindow("Raw")
-        cv2.moveWindow("Raw", 1250, 100)
-        cv2.imshow("Raw", origImg)
-
-        # Grab dimensions of first image
-        (h, w) = images[0].shape[:2]
-
-        # Build multiview display
-        padW = 8
-        padH = 20
-        mvHeight = (h * 2) + (padH * 3) + (padW * 2)
-        mvWidth = w * 2 + padW
-        self.output = np.zeros((mvHeight, mvWidth, 3), dtype="uint8")
-
-        # Top Left
-        cv2.putText(self.output, "Original", (w // 2 - 35, 15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-        self.output[padH:h+padH, 0:w] = images[0]
-
-        # Top Right
-        cv2.putText(self.output, "Mask", (w + w // 2 - 30, 15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-        self.output[padH:h+padH, w+padW:w*2+padW] = images[1]
-
-        # Bottom Left
-        cv2.putText(self.output, "Contours", (w // 2 - 35, 20+h+3+15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-        self.output[h+3+padH+padH:h*2+3+padH+padH, 0:w] = images[2]
-
-        # Bottom Right
-        cv2.putText(self.output, "Final", (w + w // 2 - 30, 20+h+3+15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-        self.output[h+3+padH+padH:h*2+3+padH+padH, w+padW:w*2+padW] = images[3]
-
-        # Bottom
-        cDisplay = ("{}".format(self.foosballPosition)) if self.foosballPosition is not None else "-"
-        rDisplay = ("%2.1f" % self.radius) if self.radius is not None else "-"
-        dDisplay = ("%2.1f cm" % self.distance) if self.distance is not None else "-"
-        aDisplay = ("%2.1f" % self.degrees) if self.degrees is not None else "-"
-        vDisplay = ("%2.1f m/s" % self.velocity) if self.velocity is not None else "-"
-        fDisplay = ("%2.1f" % self.fps) if self.fps is not None else "-"
-        cv2.putText(self.output, "Center: %s" % cDisplay, (90, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-        cv2.putText(self.output, "Radius: %s" % rDisplay, (290, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-        cv2.putText(self.output, "Distance: %s" % dDisplay, (420, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-        cv2.putText(self.output, "Direction: %s" % aDisplay, (620, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-        cv2.putText(self.output, "Velocity: %s" % vDisplay, (820, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-        cv2.putText(self.output, "FPS: %s" % fDisplay, (1020, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-
-        # Show display on screen
-        cv2.imshow("Output", self.output)
-
-        if self.debug:
-            self.log("Update display end")
+            self.log("[DEBUG] Read frame end")
 
 
     # Show trailing list of tracked points
-    def _updateTrackedPoints(self):
+    #def _updateTrackedPoints(self):
 
         # Add latest point to list of tracked points
-        self.pts.appendleft(self.foosballPosition)
+        #self.pts.appendleft(self.foosballPosition)
 
         # loop over the set of tracked points
-        for i in range(1, len(self.pts)):
+        #for i in range(1, len(self.pts)):
 
         	# if either of the tracked points are None, ignore them
-        	if self.pts[i - 1] is None or self.pts[i] is None:
-        		continue
+        	#if self.pts[i - 1] is None or self.pts[i] is None:
+        		#continue
 
         	# otherwise, compute the thickness of the line and draw the connecting lines
-        	thickness = int(np.sqrt(30 / float(i + 1)) * 2.5)
-        	cv2.line(self.finalImg, self.pts[i - 1], self.pts[i], (0, 0, 255), thickness)
+        	#thickness = int(np.sqrt(30 / float(i + 1)) * 2.5)
+        	#cv2.line(self., self.pts[i - 1], self.pts[i], (0, 0, 255), thickness)
