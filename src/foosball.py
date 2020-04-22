@@ -262,6 +262,12 @@ class foosball:
         self.projectedPosition = [self.ballPositions[-1:][0][0] + self.deltaX, self.ballPositions[-1:][0][1] + self.deltaY]
         self.log("[TRACKING] Projected next position is: {}".format(self.projectedPosition))
 
+        # Project goal on next frame
+        if self.projectedPosition[0] < 0:
+            self.log("[TRACKING] Projected Goal: WHOSBALL Player")
+        elif self.projectedPosition[0] > self.dim["xPixels"]:
+            self.log("[TRACKING] Projected Goal: Human Player")
+
         # Calculate distance (in cm), velocity, and direction -- for visual display only
         distancePX = math.sqrt(self.deltaX * self.deltaX + self.deltaY * self.deltaY)
         self.distance = distancePX / self.dim["pxPerCm"]
@@ -338,21 +344,45 @@ class foosball:
         return out
 
 
-    # Check if a goal occurred
-    def checkForGoal(self):
+    # Determine if a goal was scored or not
+    def _checkForGoal(self):
         if self.debug:
             self.log("[DEBUG] Check for goal begin")
 
+        # An actual goal can only happen once
+        if self.lostBallFrames > 1:
+            return
 
-        goalScored = False
-        if goalScored:
-            self.log("[STATUS] Goal Scored!")
+        # Check for score
+        # Use average of the last 2 x/y slopes
+        lastKnownX = self.ballPositions[-1:][0][0]
+        lastProjectedX = self.projectedPosition[0]
+
+        # Computer Goal
+        if lastKnownX < 10 and lastProjectedX < 10:
+            self.log("[TRACKING] Goal for WHOSBALL Player")
+            self.goalScored = True
             self.ballIsInPlay = False
+
+        # Human Goal
+        elif lastKnownX > self.dim["xPixels"] - 10 and lastProjectedX > self.dim["xPixels"] - 10:
+            self.log("[TRACKING] Goal for Human Player")
+            self.goalScored = True
+            self.ballIsInPlay = False
+
+        # No Goal
+        else:
+            self.log("[TRACKING] No Goal Scored for either player")
+            self.goalScored = False
+            self.ballIsInPlay = True
+
+        self.log("[DEBUG] Goal Scored: {}".format(self.goalScored))
+        self.log("[DEBUG] Ball Is In Play: {}".format(self.ballIsInPlay))
 
         if self.debug:
             self.log("[DEBUG] Check for goal end")
 
-        return goalScored
+        return self.goalScored
 
 
     # Take current image, perform object recognition,
@@ -392,7 +422,6 @@ class foosball:
             #if len(approx) > 5:
             cv2.drawContours(self.contoursImg, [c], -1, (36, 255, 12), -1)
 
-        self.foosballPosition = None
         self.radius = None
         self.distance = None
         self.degrees = None
@@ -429,6 +458,9 @@ class foosball:
         else:
             self.foosballDetected = False
 
+            # Increase counter of how many frames the foosball has been undetected
+            self.lostBallFrames += 1
+
             # Check for case #1 -- the foosball was not in play previously
             # If this is the case, there's probably nothing else to do until the next play starts
             if not self.ballIsInPlay:
@@ -438,10 +470,8 @@ class foosball:
 
             # At this point, we know the ball was in play previously
             # Check for case #2 -- the foosball was in play previously and a goal just occurred
-            if self.checkForGoal():
+            if self._checkForGoal():
                 self.log("[STATUS] The ball was in play and it looks like a goal occurred!")
-
-                # Determine who scored
 
                 # Update score
 
