@@ -351,7 +351,7 @@ class foosball:
 
         # An actual goal can only happen once
         if self.lostBallFrames > 1:
-            return
+            return False
 
         # Check for score
         # Use average of the last 2 x/y slopes
@@ -362,22 +362,20 @@ class foosball:
         if lastKnownX < 10 and lastProjectedX < 10:
             self.log("[TRACKING] Goal for WHOSBALL Player")
             self.goalScored = True
-            self.ballIsInPlay = False
+            self.score[0] += 1
+            self.log("[STATUS] Score is now: {}".format(self.score))
 
         # Human Goal
         elif lastKnownX > self.dim["xPixels"] - 10 and lastProjectedX > self.dim["xPixels"] - 10:
             self.log("[TRACKING] Goal for Human Player")
             self.goalScored = True
-            self.ballIsInPlay = False
+            self.score[1] += 1
+            self.log("[STATUS] Score is now: {}".format(self.score))
 
         # No Goal
         else:
             self.log("[TRACKING] No Goal Scored for either player")
             self.goalScored = False
-            self.ballIsInPlay = True
-
-        self.log("[DEBUG] Goal Scored: {}".format(self.goalScored))
-        self.log("[DEBUG] Ball Is In Play: {}".format(self.ballIsInPlay))
 
         if self.debug:
             self.log("[DEBUG] Check for goal end")
@@ -465,21 +463,19 @@ class foosball:
             # If this is the case, there's probably nothing else to do until the next play starts
             if not self.ballIsInPlay:
                 self.log("[STATUS] The ball was not in play previously, continue with loop...")
-                self.ballIsInPlay = False
+                #self.ballIsInPlay = False
                 return
 
             # At this point, we know the ball was in play previously
             # Check for case #2 -- the foosball was in play previously and a goal just occurred
             if self._checkForGoal():
                 self.log("[STATUS] The ball was in play and it looks like a goal occurred!")
-
-                # Update score
-
-                self.ballIsInPlay = False
+                #self.ballIsInPlay = False
                 return
 
             # At this point, we know the ball is likely occluded
             self.log("[STATUS] The ball is likely occluded. Determine projected coordinates.")
+            self.log("[STATUS] The last known projected coordinates were: {}".format(self.projectedPosition))
 
         self.log("[STATUS] Num contours found: {}".format(len(cnts)))
         self.log("[STATUS] Foosball detected: {}".format(self.foosballDetected))
