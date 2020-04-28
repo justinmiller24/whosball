@@ -48,7 +48,7 @@ class foosball:
             'foosballWidth': 18,                    # Foosball width and height (rounded down, in pixels)
             'foosballHSVLower': (15, 0, 0),         # Foosball lower bound (HSV)
             'foosballHSVUpper': (35, 255, 255),     # Foosball upper bound (HSV)
-            'foosballMaxPositions' 30,              # The maximum number of "coordinates" to track
+            'foosballMaxPositions': 30,             # The maximum number of "coordinates" to track
 
             # There are 8 foosball rods, each one measures 5/8" in diameter
             # The total distance across all 8 rods is 40 7/16"
@@ -479,7 +479,7 @@ class foosball:
 
         self.log("[STATUS] Num contours found: {}".format(len(cnts)))
         self.log("[STATUS] Foosball detected: {}".format(self.foosballDetected))
-        self.log("[STATUS] Foosball position: {}".format(self.foosballPosition))
+        self.log("[STATUS] Foosball position: {}".format(self.ballPositions[-1:]))
         self.log("[STATUS] Foosball in play: {}".format(self.ballIsInPlay))
 
         if self.debug:
@@ -716,7 +716,7 @@ class foosball:
     # Determine which foosmen row is closest to the foosball
     def _getClosestRow(self, x):
         closestRow = 0
-        min = self.dim.["xPixels"]
+        min = self.dim["xPixels"]
 
         # Loop through foosball rows and determine which is closest to X-coordinate of the foosball's current position
         for row in range(self.dim["rodPosition"]):
