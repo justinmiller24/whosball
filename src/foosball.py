@@ -201,6 +201,7 @@ class foosball:
         # History of foosball position/coordinates
         self.ballPositions = []
         self.lostBallFrames = 0
+        self.foosballPosition = None
         self.projectedPosition = None
 
         # Initialize score to 0-0
@@ -624,7 +625,7 @@ class foosball:
 
                 #result.add((id, x, y))
         else:
-            self.log("[ERROR] No ArUco markers detected, use defaults")
+            self.log("[INFO] No ArUco markers detected, use defaults")
 
         # Apply projective transformation (also known as "perspective transformation" or "homography") to the
         # original image. This type of transformation was chosen because it preserves straight lines.
