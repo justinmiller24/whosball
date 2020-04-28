@@ -562,16 +562,16 @@ class foosball:
         # Detect markers
         # `corners` is the list of corners returned in clockwise order: top left, top right, bottom right, bottom left
         # `ids` is a list of marker IDs of each of the detected markers
-        gray = cv2.cvtColor(origImg, cv2.COLOR_BGR2GRAY)
-        arucoDict = aruco.Dictionary_get(aruco.DICT_4X4_50)
-        arucoParameters =  aruco.DetectorParameters_create()
-        corners, ids, rejectedImgPoints = aruco.detectMarkers(gray, arucoDict, parameters=arucoParameters)
+        #gray = cv2.cvtColor(origImg, cv2.COLOR_BGR2GRAY)
+        #arucoDict = aruco.Dictionary_get(aruco.DICT_4X4_50)
+        #arucoParameters =  aruco.DetectorParameters_create()
+        #corners, ids, rejectedImgPoints = aruco.detectMarkers(gray, arucoDict, parameters=arucoParameters)
         #print(ids)
 
         # Display detected markers
-        if ids is not None:
-            self.log("[INFO] ArUco markers detected:")
-            self.log(ids)
+        #if ids is not None:
+            #self.log("[INFO] ArUco markers detected:")
+            #self.log(ids)
             #output = aruco.drawDetectedMarkers(output, corners, ids)
 
             # Default to existing coordinates
@@ -614,8 +614,8 @@ class foosball:
                     #self.log(bL)
 
             #self.tableCoords = [tL, tR, bR, bL]
-            if self.debug:
-                self.log("[DEBUG] Table boundaries (tL, tR, bR, bL): {}".format(self.tableCoords))
+            #if self.debug:
+                #self.log("[DEBUG] Table boundaries (tL, tR, bR, bL): {}".format(self.tableCoords))
             #for i in range(0, len(ids)):
                 #id = str(ids[i][0])
 
@@ -627,8 +627,8 @@ class foosball:
                 #y = int((y0 + y2)/2)
 
                 #result.add((id, x, y))
-        else:
-            self.log("[INFO] No ArUco markers detected, use defaults")
+        #else:
+            #self.log("[INFO] No ArUco markers detected, use defaults")
 
         # Apply projective transformation (also known as "perspective transformation" or "homography") to the
         # original image. This type of transformation was chosen because it preserves straight lines.
