@@ -166,10 +166,10 @@ class foosball:
         self.numFrames = 0
         self.fps = None
 
-        if self.debug:
-            self.log("[STATUS] Initialize Table")
-            self.log("[STATUS] Game Is Active: {}".format(self.gameIsActive))
-            self.log("[STATUS] Ball Is In Play: {}".format(self.ballIsInPlay))
+        # Output Log Messages
+        self.log("[INFO] Initialize Table")
+        self.log("[INFO] Game Is Active: {}".format(self.gameIsActive))
+        self.log("[INFO] Ball Is In Play: {}".format(self.ballIsInPlay))
 
 
     # Start game
@@ -255,19 +255,20 @@ class foosball:
 
         # Ignore unless there is "significant" movement
         if abs(self.deltaX) + abs(self.deltaY) < 2:
-            self.log("[TRACKING] Ignore insignificant movement for projected positions")
+            if self.debug:
+                self.log("[DEBUG] Ignore insignificant movement for projected positions")
             self.deltaX = 0
             self.deltaY = 0
 
         # Calculate projected next coordinate
         self.projectedPosition = [self.ballPositions[-1:][0][0] + self.deltaX, self.ballPositions[-1:][0][1] + self.deltaY]
-        self.log("[TRACKING] Projected next position is: {}".format(self.projectedPosition))
+        self.log("[INFO] Projected next position is: {}".format(self.projectedPosition))
 
         # Project goal on next frame
         if self.projectedPosition[0] < 0:
-            self.log("[TRACKING] Projected Goal: WHOSBALL Player")
+            self.log("[INFO] Projected Goal: WHOSBALL Player")
         elif self.projectedPosition[0] > self.dim["xPixels"]:
-            self.log("[TRACKING] Projected Goal: Human Player")
+            self.log("[INFO] Projected Goal: Human Player")
 
         # Calculate distance (in cm), velocity, and direction -- for visual display only
         distancePX = math.sqrt(self.deltaX * self.deltaX + self.deltaY * self.deltaY)
@@ -361,21 +362,19 @@ class foosball:
 
         # Computer Goal
         if lastKnownX < 10 and lastProjectedX < 10:
-            self.log("[TRACKING] Goal for WHOSBALL Player")
             self.goalScored = True
             self.score[0] += 1
-            self.log("[STATUS] Score is now: {}".format(self.score))
+            self.log("[INFO] Goal for WHOSBALL Player, score is now: {}".format(self.score))
 
         # Human Goal
         elif lastKnownX > self.dim["xPixels"] - 10 and lastProjectedX > self.dim["xPixels"] - 10:
-            self.log("[TRACKING] Goal for Human Player")
             self.goalScored = True
             self.score[1] += 1
-            self.log("[STATUS] Score is now: {}".format(self.score))
+            self.log("[INFO] Goal for Human Player, score is now: {}".format(self.score))
 
         # No Goal
         else:
-            self.log("[TRACKING] No Goal Scored for either player")
+            self.log("[INFO] No Goal Scored for either player")
             self.goalScored = False
 
         if self.debug:
@@ -438,7 +437,7 @@ class foosball:
             ((x, y), self.radius) = cv2.minEnclosingCircle(c)
             M = cv2.moments(c)
             self.foosballPosition = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
-            self.log("[STATUS] Foosball detected: {}".format(self.foosballPosition))
+            self.log("[INFO] Foosball detected: {}".format(self.foosballPosition))
 
             # Add current position to the list of tracked points
             self._addCurrentPosition(self.foosballPosition)
@@ -463,25 +462,25 @@ class foosball:
             # Check for case #1 -- the foosball was not in play previously
             # If this is the case, there's probably nothing else to do until the next play starts
             if not self.ballIsInPlay:
-                self.log("[STATUS] The ball was not in play previously, continue with loop...")
+                self.log("[INFO] The ball was not in play previously, continue with loop")
                 #self.ballIsInPlay = False
                 return
 
             # At this point, we know the ball was in play previously
             # Check for case #2 -- the foosball was in play previously and a goal just occurred
             if self._checkForGoal():
-                self.log("[STATUS] The ball was in play and it looks like a goal occurred!")
+                self.log("[INFO] The ball was in play and it looks like a goal occurred!")
                 #self.ballIsInPlay = False
                 return
 
             # At this point, we know the ball is likely occluded
-            self.log("[STATUS] The ball is likely occluded. Determine projected coordinates.")
-            self.log("[STATUS] The last known projected coordinates were: {}".format(self.projectedPosition))
+            self.log("[INFO] The ball is likely occluded. Determine projected coordinates.")
+            self.log("[INFO] The last known projected coordinates were: {}".format(self.projectedPosition))
 
-        self.log("[STATUS] Num contours found: {}".format(len(cnts)))
-        self.log("[STATUS] Foosball detected: {}".format(self.foosballDetected))
-        self.log("[STATUS] Foosball position: {}".format(self.foosballPosition))
-        self.log("[STATUS] Foosball in play: {}".format(self.ballIsInPlay))
+        self.log("[INFO] Num contours found: {}".format(len(cnts)))
+        self.log("[INFO] Foosball detected: {}".format(self.foosballDetected))
+        self.log("[INFO] Foosball position: {}".format(self.foosballPosition))
+        self.log("[INFO] Foosball in play: {}".format(self.ballIsInPlay))
 
         if self.debug:
             self.log("[DEBUG] Detect Foosball end")
@@ -567,7 +566,7 @@ class foosball:
 
         # Display detected markers
         if ids is not None:
-            self.log("[STATUS] ArUco markers detected:")
+            self.log("[INFO] ArUco markers detected:")
             self.log(ids)
             #output = aruco.drawDetectedMarkers(output, corners, ids)
 
@@ -612,8 +611,7 @@ class foosball:
 
             #self.tableCoords = [tL, tR, bR, bL]
             if self.debug:
-                self.log("[STATUS] Table boundaries (tL, tR, bR, bL):")
-                self.log(self.tableCoords)
+                self.log("[DEBUG] Table boundaries (tL, tR, bR, bL): {}".format(self.tableCoords))
             #for i in range(0, len(ids)):
                 #id = str(ids[i][0])
 
@@ -657,7 +655,7 @@ class foosball:
 
         self.trackingMethod = "Defense"
 
-        self.log("[STATUS] Tracking method: {}".format(self.trackingMethod))
+        self.log("[INFO] Tracking method: {}".format(self.trackingMethod))
 
         if self.debug:
             self.log("[DEBUG] Determine tracking method end")

@@ -45,7 +45,7 @@ if args["debug"]:
 # Main loop
 while fb.gameIsActive:
 	print()
-	fb.log("Main loop begin")
+	fb.log("[INFO] Main loop begin")
 
 	# Read frame from camera stream and update FPS counter
 	rawFrame = vs.read()
@@ -96,25 +96,23 @@ while fb.gameIsActive:
 
 	# Build output frame, show on screen, and handle user input
 	# Stop loop if the "q" key is pressed
-	fb.log("Update output display begin")
 	fb.buildOutputFrame()
 	cv2.imshow("Output", fb.outputImg)
 	if cv2.waitKey(1) & 0xFF == ord("q"):
 		break
-	fb.log("Update output display end")
 
 
 	# Write frame to output file
 	if writer is not None:
 		writer.write(fb.outputImg)
 
-	fb.log("Main loop end")
-
 
 # Stop timer and display FPS information
 print()
-print("[INFO] Elasped time: {:.2f}".format(fb.elapsedTime))
-print("[INFO] Avg FPS: {:.2f}".format(fb.fps))
+print("Ending Main Script")
+print("Elasped time: {:.2f}".format(fb.elapsedTime))
+print("Avg FPS: {:.2f}".format(fb.fps))
+print()
 
 
 # Do a bit of cleanup
