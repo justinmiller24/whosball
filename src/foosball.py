@@ -200,6 +200,7 @@ class foosball:
 
         # History of foosball position/coordinates
         self.ballPositions = []
+        self.lostBallFrames = 0
         self.projectedPosition = None
 
         # Initialize score to 0-0
