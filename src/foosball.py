@@ -673,9 +673,9 @@ class foosball:
     def _getContours(self, mask):
 
         # Detect object using contours
-        # We are using OpenCV 4.x, so extract contours from the 2nd parameter
-        _, cnts, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        return cnts
+        # We are using OpenCV 4.x, so extract contours from the 1st parameter
+        contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        return contours
 
 
     # Get mask for RED or BLUE players based on foosmenRows array
