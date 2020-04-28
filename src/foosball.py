@@ -675,23 +675,8 @@ class foosball:
     def _getContours(self, mask):
 
         # Detect object using contours
-        cnts = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-        # Extract contours depending on the OpenCV version
-        # Copied from https://github.com/jrosebr1/imutils/blob/master/imutils/convenience.py
-        if len(cnts) == 2:
-            if self.debug:
-                self.log("[REMOVE THIS] Using OpenCV 2.4 or 4.x")
-            cnts = cnts[0]
-        # if the length of the contours tuple is '3' then we are using
-        # either OpenCV v3, v4-pre, or v4-alpha
-        elif len(cnts) == 3:
-            if self.debug:
-                self.log("[REMOVE THIS] Using OpenCV 3.x or v4pre/alpha")
-            cnts = cnts[1]
-        else:
-            self.log("[ERROR] _getContours function did not return the correct result")
-
+        # We are using OpenCV 4.x, so extract contours from the 2nd parameter
+        _, cnts, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         return cnts
 
 
