@@ -194,6 +194,11 @@ class foosball:
         self.tableCoords = [tL, tR, bR, bL]
         self.origCoords = None
 
+        # Create foosmen "masks" for RED and BLUE players
+        # We do this once, so that we don't need to recalculate it on every single frame
+        self.dim["foosmenREDMask"] = self._getMaskForPlayers(self.dim["foosmenRED"])
+        self.dim["foosmenBLUEMask"] = self._getMaskForPlayers(self.dim["foosmenBLUE"])
+
         # Start game
         self.gameIsActive = True
         self.ballIsInPlay = False
@@ -498,27 +503,26 @@ class foosball:
 
         # Set variables based on mode (RED or BLUE)
         if mode == "RED":
-            foosmenRows = self.dim["foosmenRED"]
+            foosmenMask = self.dim["foosmenREDMask"]
             hsvLower = self.dim["foosmenRedHSVLower"]
             hsvUpper = self.dim["foosmenRedHSVUpper"]
             contourRGB = self.dim["foosmenRedContour"]
             rectangleRGB = self.dim["foosmenRedBox"]
         elif mode == "BLUE":
-            foosmenRows = self.dim["foosmenBLUE"]
+            foosmenMask = self.dim["foosmenBLUEMask"]
             hsvLower = self.dim["foosmenBlueHSVLower"]
             hsvUpper = self.dim["foosmenBlueHSVUpper"]
             contourRGB = self.dim["foosmenBlueContour"]
             rectangleRGB = self.dim["foosmenBlueBox"]
         else:
-            self.log("[ERROR] _getMaskForPlayers has invalid value for mode")
+            self.log("[ERROR] Invalid MODE in _detectPlayers function")
             return
 
         # Get mask and apply mask to image
         # Create mask containing "only" the areas with the rods for RED/BLUE foosmen
         # TODO: Reduce processing time by moving the "mask creation" to init() function, since it does not need to be recreated every frame
         origImg = self.frame.copy()
-        playerMask = self._getMaskForPlayers(foosmenRows)
-        maskedImg = cv2.bitwise_and(origImg, playerMask)
+        maskedImg = cv2.bitwise_and(origImg, foosmenMask)
 
         # Create mask based on HSV range for foosmen
         blurred = cv2.GaussianBlur(maskedImg, (11, 11), 0)
