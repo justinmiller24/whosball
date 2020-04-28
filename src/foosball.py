@@ -229,6 +229,9 @@ class foosball:
 
         # Make sure we have at least 3 points to perform calculations
         if len(self.ballPositions) < 3:
+            if self.debug:
+                self.log("[DEBUG] We have less than 3 points, do not calculate projected coordinates")
+                self.projectedPosition = None
             return
 
         # Previous ball position
@@ -349,11 +352,15 @@ class foosball:
 
     # Determine if a goal was scored or not
     def _checkForGoal(self):
-        if self.debug:
-            self.log("[DEBUG] Check for goal begin")
 
         # An actual goal can only happen once
         if self.lostBallFrames > 1:
+            return False
+
+        # An actual goal likely requires some kind of projected position
+        if self.projectedPosition is None:
+            if self.debug:
+                self.log("[DEBUG] Projected Position is None, it is unlikely a goal was scored")
             return False
 
         # Check for score
@@ -363,25 +370,21 @@ class foosball:
 
         # Computer Goal
         if lastKnownX < 10 and lastProjectedX < 10:
-            self.goalScored = True
             self.score[0] += 1
             self.log("[INFO] Goal for WHOSBALL Player, score is now: {}".format(self.score))
+            return True
 
         # Human Goal
         elif lastKnownX > self.dim["xPixels"] - 10 and lastProjectedX > self.dim["xPixels"] - 10:
-            self.goalScored = True
             self.score[1] += 1
             self.log("[INFO] Goal for Human Player, score is now: {}".format(self.score))
+            return True
 
         # No Goal
         else:
             self.log("[INFO] No Goal Scored for either player")
-            self.goalScored = False
 
-        if self.debug:
-            self.log("[DEBUG] Check for goal end")
-
-        return self.goalScored
+        return False
 
 
     # Take current image, perform object recognition,
