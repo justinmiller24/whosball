@@ -436,14 +436,14 @@ class foosball:
             c = max(cnts, key=cv2.contourArea)
             ((x, y), self.radius) = cv2.minEnclosingCircle(c)
             M = cv2.moments(c)
-            foosballPosition = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
-            self.log("[STATUS] Foosball detected: {}".format(foosballPosition))
+            self.foosballPosition = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
+            self.log("[STATUS] Foosball detected: {}".format(self.foosballPosition))
 
             # Add current position to the list of tracked points
-            self._addCurrentPosition(foosballPosition)
+            self._addCurrentPosition(self.foosballPosition)
 
             # Draw centroid
-            cv2.circle(self.outputImg, foosballPosition, 5, (0, 0, 255), -1)
+            cv2.circle(self.outputImg, self.foosballPosition, 5, (0, 0, 255), -1)
 
             # Update list of tracked points
             #self._updateTrackedPoints()
@@ -479,7 +479,7 @@ class foosball:
 
         self.log("[STATUS] Num contours found: {}".format(len(cnts)))
         self.log("[STATUS] Foosball detected: {}".format(self.foosballDetected))
-        self.log("[STATUS] Foosball position: {}".format(self.ballPositions[-1:]))
+        self.log("[STATUS] Foosball position: {}".format(self.foosballPosition))
         self.log("[STATUS] Foosball in play: {}".format(self.ballIsInPlay))
 
         if self.debug:

@@ -62,8 +62,7 @@ while fb.gameIsActive:
 	# Keep processing if foosball was not detected
 	# This usually means a goal was scored
 	# If the ball is occluded, we still track the current (projected) location along with a timeout counter
-	if fb.ballPositions[-1:] is not None:
-	#if fb.foosballPosition is not None:
+	if fb.foosballPosition is not None:
 
 		# At this point, the foosball potiion is known
 		# Determine the tracking method to use
