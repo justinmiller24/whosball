@@ -234,37 +234,24 @@ class foosball:
         if len(self.ballPositions) > self.dim["foosballMaxPositions"]:
             self.ballPositions.pop(0)
 
-        # Make sure we have at least 3 points to perform calculations
-        if len(self.ballPositions) < 3:
+        # If this is the first point, then the next projected position will be the same as the current point
+        if len(self.ballPositions) < 2:
             if self.debug:
-                self.log("[DEBUG] We have less than 3 points, do not calculate projected coordinates")
-                self.projectedPosition = None
-            return
+                self.log("[DEBUG] We only have one point. Projected position will be the same.")
+            self.deltaX = 0
+            self.deltaY = 0
 
-        # Previous ball position
-        #lastPosition = self.ballPositions[-2:][0]
-        #origX = lastPosition[0]
-        #origY = lastPosition[1]
+        # If we only have two points, then calculate deltas between the last 2 known points
+        elif len(self.ballPositions) < 3:
+            self.deltaX = (self.ballPositions[-1:][0][0] - self.ballPositions[-2:][0][0]) / 1
+            self.deltaY = (self.ballPositions[-1:][0][1] - self.ballPositions[-2:][0][1]) / 1
 
-        # Current ball position
-        #currPosition = self.ballPositions[-1:][0]
-        #destX = currPosition[0]
-        #destY = currPosition[1]
+        # Otherwise, calculate deltas based on last 3 known points
+        else:
+            self.deltaX = (self.ballPositions[-1:][0][0] - self.ballPositions[-3:][0][0]) / 2
+            self.deltaY = (self.ballPositions[-1:][0][1] - self.ballPositions[-3:][0][1]) / 2
 
-        # Deltas
-        #deltaX = destX - origX
-        #deltaY = destY - origY
-
-
-        # Calculate motion and projected trajectory based on the last 3 coordinates
-        #prevX, prevY = self.ballPositions[-3:][0]
-        #currX, currY = self.ballPositions[-1:][0]
-
-        # Use average of the last 2 x/y slopes
-        self.deltaX = (self.ballPositions[-1:][0][0] - self.ballPositions[-3:][0][0]) / 2
-        self.deltaY = (self.ballPositions[-1:][0][1] - self.ballPositions[-3:][0][1]) / 2
-
-        # Ignore unless there is "significant" movement
+        # Ignore deltas unless there is "significant" movement
         if abs(self.deltaX) + abs(self.deltaY) < 2:
             if self.debug:
                 self.log("[DEBUG] Ignore insignificant movement for projected positions")
@@ -365,7 +352,7 @@ class foosball:
             return False
 
         # An actual goal likely requires some kind of projected position
-        lastProjectedX = self._getProjectedX()
+        lastProjectedX = self.getProjectedX()
         if lastProjectedX is None:
             if self.debug:
                 self.log("[DEBUG] Projected Position is None, it is unlikely a goal was scored")
@@ -401,10 +388,10 @@ class foosball:
         return False
 
 
-    def determineMotorMovement(self):
-        if self.debug:
-            self.log("[DEBUG] Determine motor movement begin")
-            self.log("[DEBUG] Determine motor movement end")
+    #def determineMotorMovement(self):
+        #if self.debug:
+            #self.log("[DEBUG] Determine motor movement begin")
+            #self.log("[DEBUG] Determine motor movement end")
 
 
     #def determineTrackingMethod(self):
@@ -687,25 +674,18 @@ class foosball:
         return self.frame
 
 
-    def foosmenTakeover(self):
-        if self.debug:
-            self.log("[DEBUG] Foosmen takeover begin")
-            self.log("[DEBUG] Foosmen takeover end")
-
-
     # Determine which foosmen row is closest to the foosball
-    def getClosestRow(self):
+    def getClosestRow(self, projectedX = None):
         if self.debug:
             self.log("[DEBUG] Get Closest Row begin")
 
-        # If no projected coordinate exists, set to first row
-        projectedX = self._getProjectedX()
+        # If no projected coordinate exists, set to last row
         if projectedX is None:
-            self.getClosestRow = 0
+            self.getClosestRow = 7
 
         # Otherwise, loop through all rows to determine which is closest to the projected X coordinate
         else:
-            self.closestRow = 0
+            self.closestRow = 7
             min = self.dim["xPixels"]
 
             # Loop through foosball rows and determine which is closest to X-coordinate of the foosball's current position
@@ -716,6 +696,8 @@ class foosball:
 
         if self.debug:
             self.log("[DEBUG] Get Closest Row end")
+
+        return self.closestRow
 
 
     # Get contours
@@ -755,7 +737,7 @@ class foosball:
 
 
     # Get projected X coordinate of ball, if it exists
-    def _getProjectedX(self):
+    def getProjectedX(self):
         if self.projectedPosition is None:
             self.projectedX = None
         else:
@@ -785,10 +767,10 @@ class foosball:
 
     # Move MotorKit motors
     # https://learn.adafruit.com/adafruit-dc-and-stepper-motor-hat-for-raspberry-pi/using-stepper-motors
-    def moveMotors(self):
-        if self.debug:
-            self.log("[DEBUG] Move motors begin")
-            self.log("[DEBUG] Move motors end")
+    #def moveMotors(self):
+        #if self.debug:
+            #self.log("[DEBUG] Move motors begin")
+            #self.log("[DEBUG] Move motors end")
 
         #self.motors.kit1.stepper1.onestep()
 
