@@ -54,18 +54,21 @@ while fb.gameIsActive:
 	# Use ArUco markers to identify table boundaries and crop image
 	fb.findTable()
 
-	# Detect players and foosball
+	# Find location of players
 	fb.findPlayers("RED")
 	fb.findPlayers("BLUE")
+
+	# Find location of the foosball
 	fb.findBall()
 
-	# Keep processing if foosball was not detected
-	# This usually means a goal was scored
-	# If the ball is occluded, we still track the current (projected) location along with a timeout counter
+	# Only continue if the location of the foosball is known
+	# Note: this includes "projected" coordinates, even in the case of ball occlusion
 	if fb.foosballPosition is not None:
 
-		# At this point, the foosball potiion is known
-		# Determine the tracking method to use
+		# Find out which row is most likely to control the ball next
+		fb.getClosestRow()
+
+		# Determine which tracking method to use
 		fb.determineTrackingMethod()
 
 		# Calculate the target position of the foosmen rows based on the tracking method

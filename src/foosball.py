@@ -53,12 +53,12 @@ class foosball:
             # There are 8 foosball rods, each one measures 5/8" in diameter
             # The total distance across all 8 rods is 40 7/16"
             # This means the distance between two rods is 40 7/16" / (8 - 1) * 2.54 * pxPerCm
-            '_rodWidth': 8.55,                      # Foosball rod width (in pixels)
-            '_rodSpacing': 79.09,                   # Foosball rod spacing (in pixels)
+            '_rowWidth': 8.55,                      # Foosball rod width (in pixels)
+            '_rowSpacing': 79.09,                   # Foosball rod spacing (in pixels)
 
             # Each foosmen rod has a bumper on each end that measures 1 1/4" in width
             # This creates a "space" and is the minimum between each end foosmen and the wall
-            'rodMargin': 17,                        # Foosmen rod bumper (rounded down, in pixels)
+            'rowMargin': 17,                        # Foosmen rod bumper (rounded down, in pixels)
 
             # The rods are centered on the table, so we calculate the x coordinate of each rod
             # The rods take up a total width of (rodSpacing * (numRods - 1) + rodWidth)
@@ -66,7 +66,7 @@ class foosball:
             # Total rod spacing = (640px - (79.09 * 7 + 8.55)) / 2 = 38.91px (on each end)
             # The first rod is located at 38.91px + (rodWidth / 2) = 43.185px
             # Each additional rod is located an additional "rodSpacing" (79.09px) apart
-            'rodPosition': [43.19, 122.28, 201.37, 280.46, 359.55, 438.64, 517.73, 596.82],
+            'rowPosition': [43.19, 122.28, 201.37, 280.46, 359.55, 438.64, 517.73, 596.82],
             'foosmenRED': np.array([43.19, 122.28, 280.46, 438.64], dtype="float32"),
             'foosmenBLUE': np.array([201.37, 359.55, 517.73, 596.82], dtype="float32"),
 
@@ -363,15 +363,21 @@ class foosball:
             return False
 
         # An actual goal likely requires some kind of projected position
-        if self.projectedPosition is None:
+        lastProjectedX = self._getProjectedX()
+        if lastProjectedX is None:
             if self.debug:
                 self.log("[DEBUG] Projected Position is None, it is unlikely a goal was scored")
             return False
 
+        # Make sure Y-coordinate is between the upper/lower bounds of goal
+        lastProjectedY = self.projectedPosition[1]
+        if lastProjectedY < self.dim["goalLower"] or lastProjectedY > self.dim["goalUpper"]:
+            if self.debug:
+                self.log("[DEBUG] Projected Y coordinate is not within goal lower/upper bounds")
+            return False
+
         # Check for score
-        # Use average of the last 2 x/y slopes
         lastKnownX = self.ballPositions[-1:][0][0]
-        lastProjectedX = self.projectedPosition[0]
 
         # Computer Goal
         if lastKnownX < 10 and lastProjectedX < 10:
@@ -387,7 +393,8 @@ class foosball:
 
         # No Goal
         else:
-            self.log("[INFO] No Goal Scored for either player")
+            if self.debug:
+                self.log("[DEBUG] No goal scored for either player")
 
         return False
 
@@ -503,7 +510,7 @@ class foosball:
                 return
 
             # At this point, we know the ball is likely occluded
-            self.log("[INFO] The ball is likely occluded. Determine projected coordinates.")
+            self.log("[INFO] The ball is likely occluded. Determine p coordinates.")
             self.log("[INFO] The last known projected coordinates were: {}".format(self.projectedPosition))
 
         self.log("[INFO] Num contours found: {}".format(len(cnts)))
@@ -680,6 +687,31 @@ class foosball:
             self.log("[DEBUG] Foosmen takeover end")
 
 
+    # Determine which foosmen row is closest to the foosball
+    def getClosestRow(self):
+        if self.debug:
+            self.log("[DEBUG] Get Closest Row begin")
+
+        # If no projected coordinate exists, set to first row
+        projectedX = self._getProjectedX()
+        if projectedX is None:
+            self.getClosestRow = 0
+
+        # Otherwise, loop through all rows to determine which is closest to the projected X coordinate
+        else:
+            self.closestRow = 0
+            min = self.dim["xPixels"]
+
+            # Loop through foosball rows and determine which is closest to X-coordinate of the foosball's current position
+            for row in range(self.dim["rowPosition"]):
+                if abs(self.dim["rowPosition"][row] - projectedX) < min:
+                    min = abs(self.dim["rowPosition"][row] - projectedX)
+                    self.closestRow = row
+
+        if self.debug:
+            self.log("[DEBUG] Get Closest Row end")
+
+
     # Get contours
     def _getContours(self, mask):
 
@@ -708,26 +740,22 @@ class foosball:
         return mask
 
 
-    # Determine which foosmen row is closest to the foosball
-    def _getClosestRow(self, x):
-        closestRow = 0
-        min = self.dim["xPixels"]
-
-        # Loop through foosball rows and determine which is closest to X-coordinate of the foosball's current position
-        for row in range(self.dim["rodPosition"]):
-            if abs(self.dim["rodPosition"][row] - x) < min:
-                min = abs(self.dim["rodPosition"][row] - x)
-                closestRow = row
-
-        return closestRow
-
-
     # Get motor with position "i"
     def getMotor(self, i):
         if self.debug:
             self.log("[DEBUG] Get Motor [{}]".format(i))
 
         return self.motors[i]
+
+
+    # Get projected X coordinate of ball, if it exists
+    def _getProjectedX(self):
+        if self.projectedPosition is None:
+            self.projectedX = None
+        else:
+            self.projectedX = self.projectedPosition[0]
+
+        return self.projectedX
 
 
     # Linear interpolation between two points (x1, y1) and (x2, y2) and evaluates
