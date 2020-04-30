@@ -52,12 +52,12 @@ while fb.gameIsActive:
 	fb.readFrame(rawFrame)
 
 	# Use ArUco markers to identify table boundaries and crop image
-	fb.detectTable()
+	fb.findTable()
 
 	# Detect players and foosball
-	fb.detectPlayers("RED")
-	fb.detectPlayers("BLUE")
-	fb.detectFoosball()
+	fb.findPlayers("RED")
+	fb.findPlayers("BLUE")
+	fb.findBall()
 
 	# Keep processing if foosball was not detected
 	# This usually means a goal was scored

@@ -392,9 +392,29 @@ class foosball:
         return False
 
 
+    def determineMotorMovement(self):
+        if self.debug:
+            self.log("[DEBUG] Determine motor movement begin")
+            self.log("[DEBUG] Determine motor movement end")
+
+
+    def determineTrackingMethod(self):
+        if self.debug:
+            self.log("[DEBUG] Determine tracking method begin")
+
+        self.trackingMethod = "Defense"
+
+        self.log("[INFO] Tracking method: {}".format(self.trackingMethod))
+
+        if self.debug:
+            self.log("[DEBUG] Determine tracking method end")
+
+        return self.trackingMethod
+
+
     # Take current image, perform object recognition,
     # and convert this information into the coordinate of the foosball
-    def detectFoosball(self):
+    def findBall(self):
         if self.debug:
             self.log("[DEBUG] Detect Foosball begin")
 
@@ -497,7 +517,7 @@ class foosball:
 
     # Take current image, perform object recognition,
     # and convert this information into the coordinates of the RED and BLUE players
-    def detectPlayers(self, mode):
+    def findPlayers(self, mode):
         if self.debug:
             self.log("[DEBUG] Detect players begin")
 
@@ -515,7 +535,7 @@ class foosball:
             contourRGB = self.dim["foosmenBlueContour"]
             rectangleRGB = self.dim["foosmenBlueBox"]
         else:
-            self.log("[ERROR] Invalid MODE in _detectPlayers function")
+            self.log("[ERROR] Invalid MODE in _findPlayers function")
             return
 
         # Get mask and apply mask to image
@@ -557,9 +577,12 @@ class foosball:
 
     # Detect ArUco markers and transform perspective
     # This effectively crops the frame to just show the foosball table
-    def detectTable(self):
+    def findTable(self):
         if self.debug:
             self.log("[DEBUG] Detect table begin")
+
+        # Save last frame
+        #self.lastFrame = self.frame
 
         origImg = self.rawFrame.copy()
 
@@ -649,26 +672,6 @@ class foosball:
             self.log("[DEBUG] Detect table end")
 
         return self.frame
-
-
-    def determineMotorMovement(self):
-        if self.debug:
-            self.log("[DEBUG] Determine motor movement begin")
-            self.log("[DEBUG] Determine motor movement end")
-
-
-    def determineTrackingMethod(self):
-        if self.debug:
-            self.log("[DEBUG] Determine tracking method begin")
-
-        self.trackingMethod = "Defense"
-
-        self.log("[INFO] Tracking method: {}".format(self.trackingMethod))
-
-        if self.debug:
-            self.log("[DEBUG] Determine tracking method end")
-
-        return self.trackingMethod
 
 
     def foosmenTakeover(self):
