@@ -151,13 +151,14 @@ class foosball:
         #self.motors[3]['rotationalMotor'] = MotorKit(address=0x67).stepper2
 
         # Tracking Methods
-        self.trackingMethods = ['Offense', 'Defense']
-        self.trackingMethod = "Defense"
+        #self.trackingMethods = ['Offense', 'Defense']
+        #self.trackingMethod = "Defense"
 
         # Variable to determine if a game is currently in progress or not
         # This can be toggled at any time to STOP or PAUSE play
         self.gameIsActive = False
         self.ballIsInPlay = False
+        self.foosballDetected = False
 
         # Track frames and time so that we can display FPS
         self.startTime = None
@@ -202,6 +203,7 @@ class foosball:
         # Start game
         self.gameIsActive = True
         self.ballIsInPlay = False
+        self.foosballDetected = False
 
         # History of foosball position/coordinates
         self.ballPositions = []
@@ -405,18 +407,18 @@ class foosball:
             self.log("[DEBUG] Determine motor movement end")
 
 
-    def determineTrackingMethod(self):
-        if self.debug:
-            self.log("[DEBUG] Determine tracking method begin")
+    #def determineTrackingMethod(self):
+        #if self.debug:
+            #self.log("[DEBUG] Determine tracking method begin")
 
-        self.trackingMethod = "Defense"
+        #self.trackingMethod = "Defense"
 
-        self.log("[INFO] Tracking method: {}".format(self.trackingMethod))
+        #self.log("[INFO] Tracking method: {}".format(self.trackingMethod))
 
-        if self.debug:
-            self.log("[DEBUG] Determine tracking method end")
+        #if self.debug:
+            #self.log("[DEBUG] Determine tracking method end")
 
-        return self.trackingMethod
+        #return self.trackingMethod
 
 
     # Take current image, perform object recognition,
@@ -424,6 +426,10 @@ class foosball:
     def findBall(self):
         if self.debug:
             self.log("[DEBUG] Detect Foosball begin")
+
+        # If the foosball was previously detected, localize the search to save overall computation time
+        if self.foosballDetected:
+            self.log("[TODO] Foosball was previously detected. Localize search to save time here...")
 
         origImg = self.frame.copy()
         self.outputImg = self.frame.copy()

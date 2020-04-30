@@ -69,7 +69,7 @@ while fb.gameIsActive:
 		fb.getClosestRow()
 
 		# Determine which tracking method to use
-		fb.determineTrackingMethod()
+		#fb.determineTrackingMethod()
 
 		# Calculate the target position of the foosmen rows based on the tracking method
 
