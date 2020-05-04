@@ -76,7 +76,7 @@ while fb.gameIsActive:
 		continue
 
 	# At this point, we can calculate the most likely position of the ball in the next frame
-    projectedX = fb.getProjectedX()
+	projectedX = fb.getProjectedX()
 
 
 	##########################################################################
