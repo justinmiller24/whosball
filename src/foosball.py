@@ -27,7 +27,7 @@ class foosball:
             # This is an aspect ratio of 1.76 which is about 16x9
             # We will convert all frames to 640px x 360px for processing
             'width': 640,                           # Table width (in pixels) -- this is the x max
-            'heigh': 360,                           # Table height (in pixels) -- this is the y max
+            'height': 360,                          # Table height (in pixels) -- this is the y max
 
             # The number of pixels per cm is constant (640 px / 118.745 cm)
             # This means 5.39 pixels represents 1 cm of actual distance on the table
