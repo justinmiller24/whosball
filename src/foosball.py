@@ -17,7 +17,7 @@ class foosball:
 
         # Create a dictionary with pre-calculated values for faster lookup
         # Attributes prefixed with an underscore (_) are needed for calculation only
-        self.dim = {
+        self.vars = {
 
             # The foosball table measures 46.75" (length) x 26.5" (width)
             # This is 118.745cm (width) x 67.31cm (height), based on our camera
@@ -119,7 +119,7 @@ class foosball:
             ])
         }
         if self.debug:
-            self.log(self.dim)
+            self.log(self.vars)
 
         # Motors and Motor Limits
         # This is the maximum position for the motors in each rod
@@ -129,7 +129,7 @@ class foosball:
         #for i in range(4):
             #self.motors = np.append(self.motors, {
                 #'linearMotor': None,
-                #'linearMotorLimit': self.dim['_maxHeight'] - (self.foosmen[i]['players'] - 1) * self.foosmen[i]['spacing'] - 2 * self.table['margin'],
+                #'linearMotorLimit': self.vars['_maxHeight'] - (self.foosmen[i]['players'] - 1) * self.foosmen[i]['spacing'] - 2 * self.table['margin'],
                 #'rotationalMotor': None,
             #})
 
@@ -197,8 +197,8 @@ class foosball:
 
         # Create foosmen "masks" for RED and BLUE players
         # We do this once, so that we don't need to recalculate it on every single frame
-        self.dim["foosmenREDMask"] = self._getMaskForPlayers(self.dim["foosmenRED"])
-        self.dim["foosmenBLUEMask"] = self._getMaskForPlayers(self.dim["foosmenBLUE"])
+        self.vars["foosmenREDMask"] = self._getMaskForPlayers(self.vars["foosmenRED"])
+        self.vars["foosmenBLUEMask"] = self._getMaskForPlayers(self.vars["foosmenBLUE"])
 
         # Start game
         self.gameIsActive = True
@@ -231,7 +231,7 @@ class foosball:
 
         # Add current foosball position to array, and make sure we have no more than X items
         self.ballPositions.append(pos)
-        if len(self.ballPositions) > self.dim["foosballMaxPositions"]:
+        if len(self.ballPositions) > self.vars["foosballMaxPositions"]:
             self.ballPositions.pop(0)
 
         # If this is the first point, then the next projected position will be the same as the current point
@@ -265,12 +265,12 @@ class foosball:
         # Project goal on next frame
         if self.projectedPosition[0] < 0:
             self.log("[INFO] Projected Goal: WHOSBALL Player")
-        elif self.projectedPosition[0] > self.dim["xPixels"]:
+        elif self.projectedPosition[0] > self.vars["xPixels"]:
             self.log("[INFO] Projected Goal: Human Player")
 
         # Calculate distance (in cm), velocity, and direction -- for visual display only
         distancePX = math.sqrt(self.deltaX * self.deltaX + self.deltaY * self.deltaY)
-        self.distance = distancePX / self.dim["pxPerCm"]
+        self.distance = distancePX / self.vars["pxPerCm"]
 
         # Velocity
         # Use FPS if avaialble, otherwise default to 30fps
@@ -360,7 +360,7 @@ class foosball:
 
         # Make sure Y-coordinate is between the upper/lower bounds of goal
         lastProjectedY = self.projectedPosition[1]
-        if lastProjectedY < self.dim["goalLower"] or lastProjectedY > self.dim["goalUpper"]:
+        if lastProjectedY < self.vars["goalLower"] or lastProjectedY > self.vars["goalUpper"]:
             if self.debug:
                 self.log("[DEBUG] Projected Y coordinate is not within goal lower/upper bounds")
             return False
@@ -375,7 +375,7 @@ class foosball:
             return True
 
         # Human Goal
-        elif lastKnownX > self.dim["xPixels"] - 10 and lastProjectedX > self.dim["xPixels"] - 10:
+        elif lastKnownX > self.vars["xPixels"] - 10 and lastProjectedX > self.vars["xPixels"] - 10:
             self.score[1] += 1
             self.log("[INFO] Goal for Human Player, score is now: {}".format(self.score))
             return True
@@ -431,7 +431,7 @@ class foosball:
         # Opening erodes an image and then dilates the eroded image, using the same structuring
         # element for both operations. This is useful for removing small objects from an image
         # while preserving the shape and size of larger objects in the image.
-        mask = cv2.inRange(self.hsv, self.dim["foosballHSVLower"], self.dim["foosballHSVUpper"])
+        mask = cv2.inRange(self.hsv, self.vars["foosballHSVLower"], self.vars["foosballHSVUpper"])
         mask = cv2.erode(mask, None, iterations=4)
         mask = cv2.dilate(mask, None, iterations=4)
         self.mask3 = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
@@ -523,17 +523,17 @@ class foosball:
 
         # Set variables based on mode (RED or BLUE)
         if mode == "RED":
-            foosmenMask = self.dim["foosmenREDMask"]
-            hsvLower = self.dim["foosmenRedHSVLower"]
-            hsvUpper = self.dim["foosmenRedHSVUpper"]
-            contourRGB = self.dim["foosmenRedContour"]
-            rectangleRGB = self.dim["foosmenRedBox"]
+            foosmenMask = self.vars["foosmenREDMask"]
+            hsvLower = self.vars["foosmenRedHSVLower"]
+            hsvUpper = self.vars["foosmenRedHSVUpper"]
+            contourRGB = self.vars["foosmenRedContour"]
+            rectangleRGB = self.vars["foosmenRedBox"]
         elif mode == "BLUE":
-            foosmenMask = self.dim["foosmenBLUEMask"]
-            hsvLower = self.dim["foosmenBlueHSVLower"]
-            hsvUpper = self.dim["foosmenBlueHSVUpper"]
-            contourRGB = self.dim["foosmenBlueContour"]
-            rectangleRGB = self.dim["foosmenBlueBox"]
+            foosmenMask = self.vars["foosmenBLUEMask"]
+            hsvLower = self.vars["foosmenBlueHSVLower"]
+            hsvUpper = self.vars["foosmenBlueHSVUpper"]
+            contourRGB = self.vars["foosmenBlueContour"]
+            rectangleRGB = self.vars["foosmenBlueBox"]
         else:
             self.log("[ERROR] Invalid MODE in _findPlayers function")
             return
@@ -563,7 +563,7 @@ class foosball:
             #self.playersBlue = players
 
         # Overlay contour and rectangle over each player
-        self.playersImg = np.zeros((self.dim["yPixels"], self.dim["xPixels"], 3), dtype="uint8")
+        self.playersImg = np.zeros((self.vars["yPixels"], self.vars["xPixels"], 3), dtype="uint8")
         for i in players:
 
             # Get coordinates of bounding rectangle and draw rectangle on output image
@@ -661,8 +661,8 @@ class foosball:
         # original image. This type of transformation was chosen because it preserves straight lines.
         # To do this, we first compute the transformational matrix (M) and then apply it to the original image.
         # The resulting frame will have an aspect ratio identical to the size (in pixels) of the foosball playing field
-        w = self.dim['xPixels']
-        h = self.dim['yPixels']
+        w = self.vars['xPixels']
+        h = self.vars['yPixels']
         self.origCoords = np.array(self.tableCoords, dtype="float32")
         finalCoords = np.array([(0,0), (w-1,0), (w-1,h-1), (0,h-1)], dtype="float32")
         M = cv2.getPerspectiveTransform(self.origCoords, finalCoords)
@@ -686,12 +686,12 @@ class foosball:
         # Otherwise, loop through all rows to determine which is closest to the projected X coordinate
         else:
             self.closestRow = 7
-            min = self.dim["xPixels"]
+            min = self.vars["xPixels"]
 
             # Loop through foosball rows and determine which is closest to X-coordinate of the foosball's current position
-            for row in range(self.dim["rowPosition"]):
-                if abs(self.dim["rowPosition"][row] - projectedX) < min:
-                    min = abs(self.dim["rowPosition"][row] - projectedX)
+            for row in range(self.vars["rowPosition"]):
+                if abs(self.vars["rowPosition"][row] - projectedX) < min:
+                    min = abs(self.vars["rowPosition"][row] - projectedX)
                     self.closestRow = row
 
         if self.debug:
@@ -714,12 +714,12 @@ class foosball:
         if self.debug:
             self.log("[DEBUG] Get Mask for Mode begin")
 
-        mask = np.zeros((self.dim["yPixels"], self.dim["xPixels"], 3), dtype="uint8")
+        mask = np.zeros((self.vars["yPixels"], self.vars["xPixels"], 3), dtype="uint8")
 
         # Add "whitelabel" mask for each rod containing foosmen with matching color
         for rod in foosmenRows:
             # Create "vertical strips" that are 2 x "foosmenHeight" pixels wide, spanning entire frame (0 to yMax height)
-            cv2.rectangle(mask, (int(rod - self.dim["foosmenHeight"]), 0), (int(rod + self.dim["foosmenHeight"]), self.dim["yPixels"]), (255, 255, 255), -1)
+            cv2.rectangle(mask, (int(rod - self.vars["foosmenHeight"]), 0), (int(rod + self.vars["foosmenHeight"]), self.vars["yPixels"]), (255, 255, 255), -1)
         mask = cv2.resize(mask, mask.shape[1::-1])
 
         if self.debug:
