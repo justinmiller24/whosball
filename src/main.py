@@ -38,8 +38,8 @@ fb = foosball(args["debug"]).start()
 # Record video output to file
 writer = None
 if args["output"]:
-	h = fb.vars["yPixels"] * 2 + (20 * 3) + (8 * 2)
-	w = fb.vars["xPixels"] * 2 + 8
+	h = fb.vars["height"] * 2 + (20 * 3) + (8 * 2)
+	w = fb.vars["width"] * 2 + 8
 	fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
 	writer = cv2.VideoWriter(args["output"], fourcc, 30, (w, h), True)
 

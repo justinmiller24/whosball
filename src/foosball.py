@@ -26,10 +26,8 @@ class foosball:
 
             # This is an aspect ratio of 1.76 which is about 16x9
             # We will convert all frames to 640px x 360px for processing
-            'xPixels': 640,                         # Max width (in pixels)
-            #'xPixels': 320,                         # Max width (in pixels)
-            'yPixels': 360,                         # Max height (in pixels)
-            #'yPixels': 180,                         # Max height (in pixels)
+            'width': 640,                           # Table width (in pixels) -- this is the x max
+            'heigh': 360,                           # Table height (in pixels) -- this is the y max
 
             # The number of pixels per cm is constant (640 px / 118.745 cm)
             # This means 5.39 pixels represents 1 cm of actual distance on the table
@@ -265,7 +263,7 @@ class foosball:
         # Project goal on next frame
         if self.projectedPosition[0] < 0:
             self.log("[INFO] Projected Goal: WHOSBALL Player")
-        elif self.projectedPosition[0] > self.vars["xPixels"]:
+        elif self.projectedPosition[0] > self.vars["width"]:
             self.log("[INFO] Projected Goal: Human Player")
 
         # Calculate distance (in cm), velocity, and direction -- for visual display only
@@ -375,7 +373,7 @@ class foosball:
             return True
 
         # Human Goal
-        elif lastKnownX > self.vars["xPixels"] - 10 and lastProjectedX > self.vars["xPixels"] - 10:
+        elif lastKnownX > self.vars["width"] - 10 and lastProjectedX > self.vars["width"] - 10:
             self.score[1] += 1
             self.log("[INFO] Goal for Human Player, score is now: {}".format(self.score))
             return True
@@ -563,7 +561,7 @@ class foosball:
             #self.playersBlue = players
 
         # Overlay contour and rectangle over each player
-        self.playersImg = np.zeros((self.vars["yPixels"], self.vars["xPixels"], 3), dtype="uint8")
+        self.playersImg = np.zeros((self.vars["height"], self.vars["width"], 3), dtype="uint8")
         for i in players:
 
             # Get coordinates of bounding rectangle and draw rectangle on output image
@@ -661,8 +659,8 @@ class foosball:
         # original image. This type of transformation was chosen because it preserves straight lines.
         # To do this, we first compute the transformational matrix (M) and then apply it to the original image.
         # The resulting frame will have an aspect ratio identical to the size (in pixels) of the foosball playing field
-        w = self.vars['xPixels']
-        h = self.vars['yPixels']
+        w = self.vars['width']
+        h = self.vars['height']
         self.origCoords = np.array(self.tableCoords, dtype="float32")
         finalCoords = np.array([(0,0), (w-1,0), (w-1,h-1), (0,h-1)], dtype="float32")
         M = cv2.getPerspectiveTransform(self.origCoords, finalCoords)
@@ -686,7 +684,7 @@ class foosball:
         # Otherwise, loop through all rows to determine which is closest to the projected X coordinate
         else:
             self.closestRow = 7
-            min = self.vars["xPixels"]
+            min = self.vars["width"]
 
             # Loop through foosball rows and determine which is closest to X-coordinate of the foosball's current position
             for row in range(self.vars["rowPosition"]):
@@ -714,12 +712,12 @@ class foosball:
         if self.debug:
             self.log("[DEBUG] Get Mask for Mode begin")
 
-        mask = np.zeros((self.vars["yPixels"], self.vars["xPixels"], 3), dtype="uint8")
+        mask = np.zeros((self.vars["height"], self.vars["width"], 3), dtype="uint8")
 
         # Add "whitelabel" mask for each rod containing foosmen with matching color
         for rod in foosmenRows:
             # Create "vertical strips" that are 2 x "foosmenHeight" pixels wide, spanning entire frame (0 to yMax height)
-            cv2.rectangle(mask, (int(rod - self.vars["foosmenHeight"]), 0), (int(rod + self.vars["foosmenHeight"]), self.vars["yPixels"]), (255, 255, 255), -1)
+            cv2.rectangle(mask, (int(rod - self.vars["foosmenHeight"]), 0), (int(rod + self.vars["foosmenHeight"]), self.vars["height"]), (255, 255, 255), -1)
         mask = cv2.resize(mask, mask.shape[1::-1])
 
         if self.debug:
