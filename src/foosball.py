@@ -148,10 +148,6 @@ class foosball:
         #self.motors[3]['linearMotor'] = MotorKit(address=0x67).stepper1
         #self.motors[3]['rotationalMotor'] = MotorKit(address=0x67).stepper2
 
-        # Tracking Methods
-        #self.trackingMethods = ['Offense', 'Defense']
-        #self.trackingMethod = "Defense"
-
         # Variable to determine if a game is currently in progress or not
         # This can be toggled at any time to STOP or PAUSE play
         self.gameIsActive = False
@@ -384,26 +380,6 @@ class foosball:
                 self.log("[DEBUG] No goal scored for either player")
 
         return False
-
-
-    #def determineMotorMovement(self):
-        #if self.debug:
-            #self.log("[DEBUG] Determine motor movement begin")
-            #self.log("[DEBUG] Determine motor movement end")
-
-
-    #def determineTrackingMethod(self):
-        #if self.debug:
-            #self.log("[DEBUG] Determine tracking method begin")
-
-        #self.trackingMethod = "Defense"
-
-        #self.log("[INFO] Tracking method: {}".format(self.trackingMethod))
-
-        #if self.debug:
-            #self.log("[DEBUG] Determine tracking method end")
-
-        #return self.trackingMethod
 
 
     # Take current image, perform object recognition,
