@@ -83,11 +83,7 @@ while fb.gameIsActive:
 	# This section rotates the forward rows UP or DOWN depending on location #
 	##########################################################################
 
-	# Calculate the motor positions required to put the tracking foosmen in the desired location
-	# Determine the amount of movement needed for each of the linear and rotational motors to move to desired position
-	# Move the motors based on the desired position
-
-	# Behind midfield row
+	# The foosball is behind the midfield row
 	if projectedX < fb.vars["foosmenRED"][2]:
 		fb.log("[INFO] Ball is behind midfield row")
 		fb.log("[MOTOR] Move midfield row and offense row UP")
@@ -96,7 +92,7 @@ while fb.gameIsActive:
 			#fb.motor4.setPositionUp()
 			#time.sleep(2.0)
 
-	# Between midfield row and offense row
+	# The foosball is between the midfield row and the offense row
 	elif projectedX < fb.vars["foosmenRED"][3]:
 		fb.log("[INFO] Ball is between midfield row and offense row")
 		fb.log("[MOTOR] Move midfield row DOWN and intercept")
@@ -109,7 +105,7 @@ while fb.gameIsActive:
 			#fb.motor4.setPositionUp()
 			#time.sleep(2.0)
 
-	# Ahead of offense row
+	# The foosball is ahead of the offense row
 	else:
 		fb.log("[INFO] Ball is ahead of offense row")
 		fb.log("[MOTOR] Move midfield row and offense row DOWN and intercept")
@@ -124,8 +120,10 @@ while fb.gameIsActive:
 
 
 	##########################################################################
-	# This section determines which row is in control of the ball            #
-	# and kicks the players, if our team is in control of the ball           #
+	# This section determines which row is in control of the ball,           #
+	# calculates the position(s) required for each row,                      #
+	# detemines the amount of movement needed for each motor,                #
+	# and moves the motors based on the desired position/reaction            #
 	##########################################################################
 
 	# Find out which foosmen row is most likely to control the ball next
