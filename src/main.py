@@ -59,18 +59,21 @@ while fb.gameIsActive:
 	rawFrame = vs.read()
 	fb.readFrame(rawFrame)
 
-	# Use ArUco markers to identify table boundaries and crop image
+	# Because the camera or table can move during play, we place ArUco markers
+	# in each corner of the foosball table and then detect them in real time.
+	# This allows us to effectively place "boundary points" in each corner and
+	# then crop our live stream to these specific points.
 	fb.findTable()
 
-	# Find location of players
+	# Find location of the players
 	fb.findPlayers("RED")
 	fb.findPlayers("BLUE")
 
 	# Find location of the foosball
 	fb.findBall()
 
-	# Only continue if the location of the foosball is known
-	# Note: this includes "projected" coordinates, even in the case of ball occlusion
+	# Only continue if the location of the foosball is known. One note, this
+	# includes "projected" coordinates in the event that the ball is occluded.
 	if fb.foosballPosition is None:
 		fb.log("[INFO] No projected position, continue loop")
 		continue
