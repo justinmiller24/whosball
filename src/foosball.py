@@ -502,15 +502,12 @@ class foosball:
             hsvUpper = self.vars["foosmenRedHSVUpper"]
             contourRGB = self.vars["foosmenRedContour"]
             rectangleRGB = self.vars["foosmenRedBox"]
-        elif mode == "BLUE":
+        else:
             foosmenMask = self.vars["foosmenBLUEMask"]
             hsvLower = self.vars["foosmenBlueHSVLower"]
             hsvUpper = self.vars["foosmenBlueHSVUpper"]
             contourRGB = self.vars["foosmenBlueContour"]
             rectangleRGB = self.vars["foosmenBlueBox"]
-        else:
-            self.log("[ERROR] Invalid MODE in _findPlayers function")
-            return
 
         # Get mask and apply mask to image
         # Create mask containing "only" the areas with the rods for RED/BLUE foosmen
@@ -531,11 +528,6 @@ class foosball:
         # Detect foosmen using contours
         players = self._getContours(mask)
 
-        #if mode == "RED":
-            #self.playersRed = players
-        #elif mode == "BLUE":
-            #self.playersBlue = players
-
         # Overlay contour and rectangle over each player
         self.playersImg = np.zeros((self.vars["height"], self.vars["width"], 3), dtype="uint8")
         for i in players:
@@ -554,9 +546,6 @@ class foosball:
     def findTable(self):
         if self.debug:
             self.log("[DEBUG] Detect table begin")
-
-        # Save last frame
-        #self.lastFrame = self.frame
 
         origImg = self.rawFrame.copy()
 
@@ -635,12 +624,10 @@ class foosball:
         # original image. This type of transformation was chosen because it preserves straight lines.
         # To do this, we first compute the transformational matrix (M) and then apply it to the original image.
         # The resulting frame will have an aspect ratio identical to the size (in pixels) of the foosball playing field
-        w = self.vars['width']
-        h = self.vars['height']
         self.origCoords = np.array(self.tableCoords, dtype="float32")
-        finalCoords = np.array([(0,0), (w-1,0), (w-1,h-1), (0,h-1)], dtype="float32")
+        finalCoords = np.array([(0, 0), (self.vars['width'] - 1, 0), (self.vars['width'] - 1, self.vars['height'] - 1), (0, self.vars['height'] - 1)], dtype="float32")
         M = cv2.getPerspectiveTransform(self.origCoords, finalCoords)
-        self.frame = cv2.warpPerspective(origImg, M, (w, h))
+        self.frame = cv2.warpPerspective(origImg, M, (self.vars['width'], self.vars['height']))
 
         if self.debug:
             self.log("[DEBUG] Detect table end")
@@ -703,11 +690,11 @@ class foosball:
 
 
     # Get motor with position "i"
-    def getMotor(self, i):
-        if self.debug:
-            self.log("[DEBUG] Get Motor [{}]".format(i))
+    #def getMotor(self, i):
+        #if self.debug:
+            #self.log("[DEBUG] Get Motor [{}]".format(i))
 
-        return self.motors[i]
+        #return self.motors[i]
 
 
     # Get projected X coordinate of ball, if it exists
@@ -722,7 +709,7 @@ class foosball:
 
     # Linear interpolation between two points (x1, y1) and (x2, y2) and evaluates
     # the function at point xi
-    def interpolate(self, xi, x2, y2, x1, y1):
+    def _interpolate(self, xi, x2, y2, x1, y1):
         if self.debug:
             self.log("[DEBUG] Interpolate begin")
 
