@@ -477,7 +477,7 @@ class foosball:
                 return
 
             # At this point, we know the ball is likely occluded
-            self.log("[INFO] The ball is likely occluded. Determine p coordinates.")
+            self.log("[INFO] The ball is likely occluded. Determine projected coordinates.")
             self.log("[INFO] The last known projected coordinates were: {}".format(self.projectedPosition))
 
         self.log("[INFO] Num contours found: {}".format(len(cnts)))
@@ -511,7 +511,6 @@ class foosball:
 
         # Get mask and apply mask to image
         # Create mask containing "only" the areas with the rods for RED/BLUE foosmen
-        # TODO: Reduce processing time by moving the "mask creation" to init() function, since it does not need to be recreated every frame
         origImg = self.frame.copy()
         maskedImg = cv2.bitwise_and(origImg, foosmenMask)
 
@@ -523,7 +522,6 @@ class foosball:
         mask = cv2.inRange(hsv, hsvLower, hsvUpper)
         mask = cv2.erode(mask, None, iterations=4)
         mask = cv2.dilate(mask, None, iterations=4)
-        #self.foosmenMask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
 
         # Detect foosmen using contours
         players = self._getContours(mask)
