@@ -74,96 +74,94 @@ while fb.gameIsActive:
 
 	# Only continue if the location of the foosball is known. One note, this
 	# includes "projected" coordinates in the event that the ball is occluded.
-	if fb.foosballPosition is None:
-		fb.log("[INFO] No projected position, continue loop")
-		continue
+	if fb.foosballPosition is not None:
 
-	# At this point, we can calculate the most likely position of the ball in the next frame
-	projectedX = fb.getProjectedX()
+		# Calculate the most likely position of the ball in the next frame
+		projectedX = fb.getProjectedX()
 
 
-	##########################################################################
-	# This section rotates the forward rows UP or DOWN depending on location #
-	##########################################################################
+		##########################################################################
+		# This section rotates the forward rows UP or DOWN depending on location #
+		##########################################################################
 
-	# The foosball is behind the midfield row
-	if projectedX < fb.vars["foosmenRED"][2]:
-		fb.log("[INFO] Ball is behind midfield row")
-		fb.log("[MOTOR] Move midfield row and offense row UP")
-		#if fb.motor3.isPositionDown or fb.motor4.isPositionDown:
-			#fb.motor3.setPositionUp()
-			#fb.motor4.setPositionUp()
-			#time.sleep(2.0)
+		# The foosball is behind the midfield row
+		if projectedX < fb.vars["foosmenRED"][2]:
+			fb.log("[INFO] Ball is behind midfield row")
+			fb.log("[MOTOR] Move midfield row and offense row UP")
+			#if fb.motor3.isPositionDown or fb.motor4.isPositionDown:
+				#fb.motor3.setPositionUp()
+				#fb.motor4.setPositionUp()
+				#time.sleep(2.0)
 
-	# The foosball is between the midfield row and the offense row
-	elif projectedX < fb.vars["foosmenRED"][3]:
-		fb.log("[INFO] Ball is between midfield row and offense row")
-		fb.log("[MOTOR] Move midfield row DOWN and intercept")
+		# The foosball is between the midfield row and the offense row
+		elif projectedX < fb.vars["foosmenRED"][3]:
+			fb.log("[INFO] Ball is between midfield row and offense row")
+			fb.log("[MOTOR] Move midfield row DOWN and intercept")
 
-		# Intercept with midfield row
-		#fb.motor3.intercept(getPositionHere...)
+			# Intercept with midfield row
+			#fb.motor3.intercept(getPositionHere...)
 
-		#if fb.motor3.isPositionUp or fb.motor4.isPositionDown:
-			#fb.motor3.setPositionDown()
-			#fb.motor4.setPositionUp()
-			#time.sleep(2.0)
+			#if fb.motor3.isPositionUp or fb.motor4.isPositionDown:
+				#fb.motor3.setPositionDown()
+				#fb.motor4.setPositionUp()
+				#time.sleep(2.0)
 
-	# The foosball is ahead of the offense row
-	else:
-		fb.log("[INFO] Ball is ahead of offense row")
-		fb.log("[MOTOR] Move midfield row and offense row DOWN and intercept")
+		# The foosball is ahead of the offense row
+		else:
+			fb.log("[INFO] Ball is ahead of offense row")
+			fb.log("[MOTOR] Move midfield row and offense row DOWN and intercept")
 
-		# Intercept with offense row
-		#fb.motor4.intercept(getPositionHere...)
+			# Intercept with offense row
+			#fb.motor4.intercept(getPositionHere...)
 
-		#if fb.motor3.isPositionUp or fb.motor4.isPositionUp:
-			#fb.motor3.setPositionDown()
-			#fb.motor4.setPositionDown()
-			#time.sleep(2.0)
-
-
-	##########################################################################
-	# This section determines which row is in control of the ball,           #
-	# calculates the position(s) required for each row,                      #
-	# detemines the amount of movement needed for each motor,                #
-	# and moves the motors based on the desired position/reaction            #
-	##########################################################################
-
-	# Find out which foosmen row is most likely to control the ball next
-	closestRow = fb.getClosestRow(projectedX)
-
-	# Goalie
-	if closestRow == 0 and projectedX >= fb.vars["foosmenRED"][0]:
-		fb.log("[INFO] Goal row is in control of the ball")
-		fb.log("[MOTOR] Goal row KICK!")
-		#fb.motor1.kick()
-
-	# Defense
-	elif closestRow == 1 and projectedX >= fb.vars["foosmenRED"][1]:
-		fb.log("[INFO] Defense row is in control of the ball")
-		fb.log("[MOTOR] Defense row KICK!")
-		#fb.motor2.kick()
-
-	# Midfield
-	elif closestRow == 3 and projectedX >= fb.vars["foosmenRED"][2]:
-		fb.log("[INFO] Midfield row is in control of the ball")
-		fb.log("[MOTOR] Midfield row KICK!")
-		#fb.motor3.kick()
-
-	# Offense
-	elif closestRow == 5 and projectedX >= fb.vars["foosmenRED"][3]:
-		fb.log("[INFO] Offense row is in control of the ball")
-		fb.log("[MOTOR] Offense row KICK!")
-		#fb.motor3.kick()
+			#if fb.motor3.isPositionUp or fb.motor4.isPositionUp:
+				#fb.motor3.setPositionDown()
+				#fb.motor4.setPositionDown()
+				#time.sleep(2.0)
 
 
-	##########################################################################
-	# This section moves the defensive rows laterally to intercept the ball  #
-	##########################################################################
+		##########################################################################
+		# This section determines which row is in control of the ball,           #
+		# calculates the position(s) required for each row,                      #
+		# detemines the amount of movement needed for each motor,                #
+		# and moves the motors based on the desired position/reaction            #
+		##########################################################################
 
-	#fb.motor1.intercept(getPositionHere...)
-	#fb.motor2.intercept(getPositionHere...)
-	#c.move(3,(yInterceptPosition / pixelsPerInch) - 8.75);
+		# Find out which foosmen row is most likely to control the ball next
+		closestRow = fb.getClosestRow(projectedX)
+
+		# Goalie
+		if closestRow == 0 and projectedX >= fb.vars["foosmenRED"][0]:
+			fb.log("[INFO] Goal row is in control of the ball")
+			fb.log("[MOTOR] Goal row KICK!")
+			#fb.motor1.kick()
+
+		# Defense
+		elif closestRow == 1 and projectedX >= fb.vars["foosmenRED"][1]:
+			fb.log("[INFO] Defense row is in control of the ball")
+			fb.log("[MOTOR] Defense row KICK!")
+			#fb.motor2.kick()
+
+		# Midfield
+		elif closestRow == 3 and projectedX >= fb.vars["foosmenRED"][2]:
+			fb.log("[INFO] Midfield row is in control of the ball")
+			fb.log("[MOTOR] Midfield row KICK!")
+			#fb.motor3.kick()
+
+		# Offense
+		elif closestRow == 5 and projectedX >= fb.vars["foosmenRED"][3]:
+			fb.log("[INFO] Offense row is in control of the ball")
+			fb.log("[MOTOR] Offense row KICK!")
+			#fb.motor3.kick()
+
+
+		##########################################################################
+		# This section moves the defensive rows laterally to intercept the ball  #
+		##########################################################################
+
+		#fb.motor1.intercept(getPositionHere...)
+		#fb.motor2.intercept(getPositionHere...)
+		#c.move(3,(yInterceptPosition / pixelsPerInch) - 8.75);
 
 
 	##########################################################################
