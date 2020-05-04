@@ -650,7 +650,7 @@ class foosball:
             min = self.vars["width"]
 
             # Loop through foosball rows and determine which is closest to X-coordinate of the foosball's current position
-            for row in range(self.vars["rowPosition"]):
+            for row in range(len(self.vars["rowPosition"])):
                 if abs(self.vars["rowPosition"][row] - projectedX) < min:
                     min = abs(self.vars["rowPosition"][row] - projectedX)
                     self.closestRow = row
