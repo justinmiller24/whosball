@@ -161,16 +161,9 @@ class foosball:
         self.numFrames = 0
         self.fps = None
 
-        # Output Log Messages
-        self.log("[INFO] Initialize Table")
-        self.log("[INFO] Game Is Active: {}".format(self.gameIsActive))
-        self.log("[INFO] Ball Is In Play: {}".format(self.ballIsInPlay))
-
 
     # Start game
     def start(self):
-        if self.debug:
-            self.log("[DEBUG] Start function begin")
 
         # Initialize motors and all I/O ports
         # This includes calibration of the motors for linear and rotational motion
@@ -210,9 +203,6 @@ class foosball:
 
         # Start timer
         self.startTime = datetime.datetime.now()
-
-        if self.debug:
-            self.log("[DEBUG] Start function end")
 
         return self
 
