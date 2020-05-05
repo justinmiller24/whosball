@@ -206,7 +206,7 @@ class foosball:
         self.projectedPosition = None
 
         # Initialize score to 0-0
-        self.score = (0, 0)
+        self.score = [0, 0]
 
         # Start timer
         self.startTime = datetime.datetime.now()
