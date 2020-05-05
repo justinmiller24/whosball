@@ -25,19 +25,23 @@ args = vars(ap.parse_args())
 
 
 ##########################################################################
-# This section initializes the camera, video, foosball table, and motors #
+# This section initializes the camera, foosball table, and motors        #
 ##########################################################################
 
 # Initialize camera and allow time to warm up
+print("Initialize camera")
 vs = videoStream().start()
 time.sleep(2.0)
 
 # Initialize foosball game
+print("Initialize table")
+print("Initialize motors")
 fb = foosball(args["debug"]).start()
 
 # Record video output to file
 writer = None
 if args["output"]:
+	print("Initialize video output")
 	h = fb.vars["height"] * 2 + (20 * 3) + (8 * 2)
 	w = fb.vars["width"] * 2 + 8
 	fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
@@ -45,6 +49,8 @@ if args["output"]:
 
 
 # Main loop
+print("Starting Game...")
+time.sleep(1.0)
 while fb.gameIsActive:
 	print()
 	fb.log("[INFO] Main loop begin")
