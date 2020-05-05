@@ -307,10 +307,10 @@ class foosball:
         # Show other key metrics
         metrics = {
             "Detected": self.foosballDetected,
-            "Projected": self.projectedPosition,
+            #"Projected": self.projectedPosition,
             "Radius": self.radius,
             #"Distance (cm)": self.distance,
-            #"Velocity (m/s)": self.velocity,
+            "Velocity (m/s)": self.velocity,
             "FPS": self.fps,
         }
         for key in metrics:
