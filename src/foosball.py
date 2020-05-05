@@ -290,29 +290,31 @@ class foosball:
             self.log("[DEBUG] Update display begin")
 
         # Build output
-        out = np.zeros((self.vars["height"] + 100, self.vars["width"], 3), dtype="uint8")
+        out = np.zeros((self.vars["height"] + 120, self.vars["width"], 3), dtype="uint8")
 
         # Output image
         out[0:self.vars["height"], 0:self.vars["width"]] = self.outputImg
 
         # Current score
-        vPos = self.vars["height"] + 10
+        vPos = self.vars["height"] + 20
         cv2.putText(out, "Score: %s".format(self.score), (10, vPos), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
 
         # Current ball position
-        vPos += 15
+        vPos += 18
         cDisplay = ("{}".format(self.foosballPosition)) if self.foosballPosition is not None else "-"
-        cv2.putText(out, "Position: %s" % cDisplay, (10, vPos), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+        cv2.putText(out, "Ball Position: %s" % cDisplay, (10, vPos), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
 
         # Show other key metrics
         metrics = {
-            "Processing": self.fps,
+            "Detected": self.foosballDetected,
+            "Projected": self.projectedPosition,
             "Radius": self.radius,
-            "Distance (cm)": self.distance,
-            "Velocity (m/s)": self.velocity,
+            #"Distance (cm)": self.distance,
+            #"Velocity (m/s)": self.velocity,
+            "FPS": self.fps,
         }
         for key in metrics:
-            vPos += 15
+            vPos += 18
             display1 = ("%2.1f" % metrics[key]) if metrics[key] is not None else "-"
             display2 = "%s: %s" % (key, display1)
             cv2.putText(out, display2, (10, vPos), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
