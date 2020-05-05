@@ -277,11 +277,11 @@ class foosball:
         # Direction
         # Calculate number degrees between two points
         # Calculate arc tangent (in radians) and convert to degrees
-        degrees_temp = math.atan2(self.deltaX, self.deltaY) / math.pi * 180
-        if degrees_temp < 0:
-            self.degrees = 360 + degrees_temp
-        else:
-            self.degrees = degrees_temp
+        #degrees_temp = math.atan2(self.deltaX, self.deltaY) / math.pi * 180
+        #if degrees_temp < 0:
+            #self.degrees = 360 + degrees_temp
+        #else:
+            #self.degrees = degrees_temp
 
 
     # Function to update video display
@@ -289,48 +289,33 @@ class foosball:
         if self.debug:
             self.log("[DEBUG] Update display begin")
 
-        images = [self.frame, self.mask3, self.contoursImg, self.outputImg]
+        # Build output
+        out = np.zeros((self.vars["height"] + 100, self.vars["width"], 3), dtype="uint8")
 
+        # Output image
+        out[0:self.vars["height"], 0:self.vars["width"]] = self.outputImg
 
-        # Grab dimensions of first image
-        (h, w) = images[0].shape[:2]
+        # Current score
+        vPos = self.vars["height"] + 10
+        cv2.putText(out, "Score: %s".format(self.score), (10, vPos), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
 
-        # Build multiview display
-        padW = 8
-        padH = 20
-        mvHeight = (h * 2) + (padH * 3) + (padW * 2)
-        mvWidth = w * 2 + padW
-        out = np.zeros((mvHeight, mvWidth, 3), dtype="uint8")
-
-        # Top Left
-        cv2.putText(out, "Original", (w // 2 - 35, 15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-        out[padH:h+padH, 0:w] = images[0]
-
-        # Top Right
-        cv2.putText(out, "Mask", (w + w // 2 - 30, 15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-        out[padH:h+padH, w+padW:w*2+padW] = images[1]
-
-        # Bottom Left
-        cv2.putText(out, "Contours", (w // 2 - 35, 20+h+3+15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-        out[h+3+padH+padH:h*2+3+padH+padH, 0:w] = images[2]
-
-        # Bottom Right
-        cv2.putText(out, "Final", (w + w // 2 - 30, 20+h+3+15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-        out[h+3+padH+padH:h*2+3+padH+padH, w+padW:w*2+padW] = images[3]
-
-        # Bottom
+        # Current ball position
+        vPos += 15
         cDisplay = ("{}".format(self.foosballPosition)) if self.foosballPosition is not None else "-"
-        rDisplay = ("%2.1f" % self.radius) if self.radius is not None else "-"
-        dDisplay = ("%2.1f cm" % self.distance) if self.distance is not None else "-"
-        aDisplay = ("%2.1f" % self.degrees) if self.degrees is not None else "-"
-        vDisplay = ("%2.1f m/s" % self.velocity) if self.velocity is not None else "-"
-        fDisplay = ("%2.1f" % self.fps) if self.fps is not None else "-"
-        cv2.putText(out, "Center: %s" % cDisplay, (90, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-        cv2.putText(out, "Radius: %s" % rDisplay, (290, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-        cv2.putText(out, "Distance: %s" % dDisplay, (420, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-        cv2.putText(out, "Direction: %s" % aDisplay, (620, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-        cv2.putText(out, "Velocity: %s" % vDisplay, (820, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-        cv2.putText(out, "FPS: %s" % fDisplay, (1020, mvHeight - 5), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+        cv2.putText(out, "Position: %s" % cDisplay, (10, vPos), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+
+        # Show other key metrics
+        metrics = {
+            "Processing": self.fps,
+            "Radius": self.radius,
+            "Distance (cm)": self.distance,
+            "Velocity (m/s)": self.velocity,
+        }
+        for key in metrics:
+            vPos += 15
+            display1 = ("%2.1f" % metrics[key]) if metrics[key] is not None else "-"
+            display2 = "%s: %s" % (key, display1)
+            cv2.putText(out, display2, (10, vPos), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
 
         if self.debug:
             self.log("[DEBUG] Update display end")
@@ -425,7 +410,7 @@ class foosball:
 
         self.radius = None
         self.distance = None
-        self.degrees = None
+        #self.degrees = None
         self.velocity = None
 
         # Ensure at least one contour was found

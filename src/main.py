@@ -182,16 +182,17 @@ while fb.gameIsActive:
 	cv2.moveWindow("Raw", 1250, 100)
 	cv2.imshow("Raw", origImg)
 
+
 	# Build output frame, show on screen, and handle user input
 	# Stop loop if the "q" key is pressed
-	fb.buildOutputFrame()
-	cv2.imshow("Output", fb.outputImg)
+	out = fb.buildOutputFrame()
+	cv2.imshow("Output", out)
 	if cv2.waitKey(1) & 0xFF == ord("q"):
 		break
 
 	# Write frame to output file
 	if writer is not None:
-		writer.write(fb.outputImg)
+		writer.write(out)
 
 
 # Stop timer and display FPS information
