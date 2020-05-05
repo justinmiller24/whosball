@@ -719,6 +719,12 @@ class foosball:
         return ret
 
 
+    # Determine if the ball position of the foosball is currently known
+    # This returns true, even in the case of ball occlusion
+    def isKnownBallPosition(self):
+        return self.foosballPosition is not None
+
+
     # Print output message to console
     def log(self, msg):
         print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), msg)

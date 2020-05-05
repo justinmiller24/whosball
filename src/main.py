@@ -72,9 +72,8 @@ while fb.gameIsActive:
 	# Find location of the foosball
 	fb.findBall()
 
-	# Only continue if the location of the foosball is known. One note, this
-	# includes "projected" coordinates in the event that the ball is occluded.
-	if fb.foosballPosition is not None:
+	# Only continue if the location of the foosball is currently known
+	if fb.isKnownBallPosition():
 
 		# Calculate the most likely position of the ball in the next frame
 		projectedX = fb.getProjectedX()
