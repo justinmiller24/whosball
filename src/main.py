@@ -11,9 +11,9 @@
 import argparse
 import cv2
 import time
+from camera import videoStream
 from foosball import Foosball
-from foosmen import Foosmen
-from video import videoStream
+from players import Foosmen
 
 print("Starting Main Script")
 
