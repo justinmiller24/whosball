@@ -329,11 +329,9 @@ class Foosball:
         origImg = self.frame.copy()
         self.outputImg = self.frame.copy()
 
-        # HSV, Grayscale, Edges
+        # Convert to HSV color range
         self.blurred = cv2.GaussianBlur(origImg, (11, 11), 0)
         self.hsv = cv2.cvtColor(self.blurred, cv2.COLOR_BGR2HSV)
-        #gray = cv2.cvtColor(origImg, cv2.COLOR_RGB2GRAY)
-        #self.gray3 = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
 
         # Create mask and perform morphological "opening" to remove small blobs in mask.
         # Opening erodes an image and then dilates the eroded image, using the same structuring
@@ -342,7 +340,7 @@ class Foosball:
         mask = cv2.inRange(self.hsv, self.vars["foosballHSVLower"], self.vars["foosballHSVUpper"])
         mask = cv2.erode(mask, None, iterations=4)
         mask = cv2.dilate(mask, None, iterations=4)
-        self.mask3 = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
+        #self.mask3 = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
 
         # Find contours in mask and initialize the current center (x, y) of the ball
         cnts = self._getContours(mask)
@@ -448,7 +446,7 @@ class Foosball:
         origImg = self.frame.copy()
         maskedImg = cv2.bitwise_and(origImg, foosmenMask)
 
-        # Create mask based on HSV range for foosmen
+        # Convert to HSV color range
         blurred = cv2.GaussianBlur(maskedImg, (11, 11), 0)
         hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
 
