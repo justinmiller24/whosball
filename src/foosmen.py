@@ -15,7 +15,7 @@ import datetime
 class Foosmen:
 
     # Initialize foosmen rod
-    def __init__(self, id, rodLength, numPlayers, playerSpacing, playerWidth, playerHeight):
+    def __init__(self, id, numPlayers, playerSpacing, rodLength, playerWidth, playerHeight):
 
         # The ID of each foosmen row goes from left to right (0-7)
         self.id = id
@@ -75,25 +75,21 @@ class Foosmen:
         # Initialize the 1st hat on the default address (0x60)
         # Board 0: Address = 0x60 Offset = binary 0000 (no jumpers required)
         if self.id == 0:
-            self.computerPlayer = True
             motorAddr = 0x60
 
         # Initialize the 2nd hat on the default address (0x61)
         # Board 1: Address = 0x61 Offset = binary 0001 (bridge A0)
         elif self.id == 1:
-            self.computerPlayer = True
             motorAddr = 0x61
 
         # Initialize the 3rd hat on the default address (0x63)
         # Board 2: Address = 0x62 Offset = binary 0010 (bridge A1, the one above A0)
         elif self.id == 3:
-            self.computerPlayer = True
             motorAddr = 0x62
 
         # Initialize the 4th hat on the default address (0x67)
         # Board 4: Address = 0x64 Offset = binary 0100 (bridge A2, middle jumper)
         elif self.id == 5:
-            self.computerPlayer = True
             motorAddr = 0x64
 
         else:
@@ -111,11 +107,19 @@ class Foosmen:
         self.motors.stepper2.release()
 
         # Warm up motors
-        print("[INFO] Warm up motors")
-        for i in range(100):
+        self.log("[INFO] Warm up linear motors")
+        for i in range(25):
             self.motors.stepper1.onestep(direction=stepper.FORWARD, style=stepper.SINGLE)
-        for i in range(100):
+        for i in range(25):
             self.motors.stepper1.onestep(direction=stepper.BACKWARD, style=stepper.SINGLE)
+
+        self.log("[INFO] Warm up rotational motors")
+        for i in range(50):
+            self.motors.stepper2.onestep(direction=stepper.FORWARD, style=stepper.SINGLE)
+        for i in range(100):
+            self.motors.stepper2.onestep(direction=stepper.BACKWARD, style=stepper.SINGLE)
+        for i in range(50):
+            self.motors.stepper2.onestep(direction=stepper.FORWARD, style=stepper.SINGLE)
 
         return self
 
