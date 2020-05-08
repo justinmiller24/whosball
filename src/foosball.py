@@ -566,6 +566,7 @@ class Foosball:
 
 
     # Determine which foosmen row is closest to the foosball
+    # Rows 0, 1, 3, and 5 are controlled by the automated player
     def getClosestRow(self, projectedX = None):
         if self.debug:
             self.log("[DEBUG] Get Closest Row begin")
