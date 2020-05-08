@@ -251,29 +251,20 @@ class Foosball:
         # Output image
         out[0:self.vars["height"], 0:self.vars["width"]] = self.outputImg
 
-        # Current score
-        vPos = self.vars["height"] + 20
-        cv2.putText(out, "Score: %s".format(self.score), (10, vPos), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-
-        # Current ball position
-        vPos += 18
-        cDisplay = ("{}".format(self.foosballPosition)) if self.foosballPosition is not None else "-"
-        cv2.putText(out, "Ball Position: %s" % cDisplay, (10, vPos), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
-
-        # Show other key metrics
+        # Key metrics
         metrics = {
+            "Score": ("%s".format(self.score)),
             "Detected": self.foosballDetected,
+            "Position": ("{}".format(self.foosballPosition)) if self.foosballPosition is not None else "-",
             #"Projected": self.projectedPosition,
-            "Radius": self.radius,
-            #"Distance (cm)": self.distance,
-            "Velocity (m/s)": self.velocity,
-            "FPS": self.fps,
+            "Radius": ("%2.1f" % self.radius) if self.radius is not None else "-",
+            #"Distance": ("%2.1f cm" % self.distance) if self.distance is not None else "-",
+            "Velocity": ("%2.1f m/s" % self.velocity) if self.velocity is not None else "-",
+            "FPS": ("%2.1f" % self.fps) if self.fps is not None else "-",
         }
         for key in metrics:
             vPos += 18
-            display1 = ("%2.1f" % metrics[key]) if metrics[key] is not None else "-"
-            display2 = "%s: %s" % (key, display1)
-            cv2.putText(out, display2, (10, vPos), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+            cv2.putText(out, "%s: %s" % (key, metricks[key]), (10, vPos), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
 
         if self.debug:
             self.log("[DEBUG] Update display end")
