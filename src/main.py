@@ -11,7 +11,8 @@
 import argparse
 import cv2
 import time
-from foosball import foosball
+from foosball import Foosball
+from foosmen import Foosmen
 from video import videoStream
 
 print("Starting Main Script")
@@ -35,7 +36,15 @@ time.sleep(2.0)
 
 # Initialize foosball game
 print("Initialize game")
-fb = foosball(args["debug"]).start()
+fb = Foosball(args["debug"]).start()
+
+# Initialize motors
+#  Foosmen __init__(self, id, numPlayers, playerSpacing, rodLength, playerWidth, playerHeight):
+print("Initialize foosmen and motors")
+row1 = Foosmen(0, 3, fb.vars["row0"][0], fb.vars["row0"][1], fb.vars["foosmenWidth"], fb.vars["foosmenHeight"]).start()
+row2 = Foosmen(1, 2, fb.vars["row1"][0], fb.vars["row1"][1], fb.vars["foosmenWidth"], fb.vars["foosmenHeight"]).start()
+row3 = Foosmen(3, 5, fb.vars["row2"][0], fb.vars["row2"][1], fb.vars["foosmenWidth"], fb.vars["foosmenHeight"]).start()
+row4 = Foosmen(5, 3, fb.vars["row3"][0], fb.vars["row3"][1], fb.vars["foosmenWidth"], fb.vars["foosmenHeight"]).start()
 
 # Record video output to file
 writer = None
@@ -73,62 +82,26 @@ while fb.gameIsActive:
 	# Find location of the foosball
 	fb.findBall()
 
-	# Only continue if the location of the foosball is currently known
+	# Only continue if the location of the foosball is known
 	if fb.isKnownBallPosition():
-
-		# Calculate the most likely position of the ball in the next frame
-		projectedX = fb.getProjectedX()
-
-
-		##########################################################################
-		# This section rotates the forward rows UP or DOWN depending on location #
-		##########################################################################
-
-		# The foosball is behind the midfield row
-		if projectedX < fb.vars["foosmenRED"][2]:
-			fb.log("[INFO] Ball is behind midfield row")
-			fb.log("[MOTOR] Move midfield row and offense row UP")
-			#if fb.motor3.isPositionDown or fb.motor4.isPositionDown:
-				#fb.motor3.setPositionUp()
-				#fb.motor4.setPositionUp()
-				#time.sleep(2.0)
-
-		# The foosball is between the midfield row and the offense row
-		elif projectedX < fb.vars["foosmenRED"][3]:
-			fb.log("[INFO] Ball is between midfield row and offense row")
-			fb.log("[MOTOR] Move midfield row DOWN and intercept")
-
-			# Intercept with midfield row
-			#fb.motor3.intercept(getPositionHere...)
-
-			#if fb.motor3.isPositionUp or fb.motor4.isPositionDown:
-				#fb.motor3.setPositionDown()
-				#fb.motor4.setPositionUp()
-				#time.sleep(2.0)
-
-		# The foosball is ahead of the offense row
-		else:
-			fb.log("[INFO] Ball is ahead of offense row")
-			fb.log("[MOTOR] Move midfield row and offense row DOWN and intercept")
-
-			# Intercept with offense row
-			#fb.motor4.intercept(getPositionHere...)
-
-			#if fb.motor3.isPositionUp or fb.motor4.isPositionUp:
-				#fb.motor3.setPositionDown()
-				#fb.motor4.setPositionDown()
-				#time.sleep(2.0)
 
 
 		##########################################################################
 		# This section determines which row is in control of the ball,           #
 		# calculates the position(s) required for each row,                      #
-		# detemines the amount of movement needed for each motor,                #
-		# and moves the motors based on the desired position/reaction            #
+		# detemines the movement(s) needed for each row,                         #
+		# and sends a signal to move the motor(s) based on the movement needed.  #
 		##########################################################################
+
+		# Calculate the most likely position of the ball in the next frame
+		projectedX = fb.getProjectedX()
 
 		# Find out which foosmen row is most likely to control the ball next
 		closestRow = fb.getClosestRow(projectedX)
+
+		#fb.motor1.intercept(getPositionHere...)
+		#fb.motor2.intercept(getPositionHere...)
+		#c.move(3,(yInterceptPosition / pixelsPerInch) - 8.75);
 
 		# Goalie
 		if closestRow == 0 and projectedX >= fb.vars["foosmenRED"][0]:
@@ -153,15 +126,6 @@ while fb.gameIsActive:
 			fb.log("[INFO] Offense row is in control of the ball")
 			fb.log("[MOTOR] Offense row KICK!")
 			#fb.motor3.kick()
-
-
-		##########################################################################
-		# This section moves the defensive rows laterally to intercept the ball  #
-		##########################################################################
-
-		#fb.motor1.intercept(getPositionHere...)
-		#fb.motor2.intercept(getPositionHere...)
-		#c.move(3,(yInterceptPosition / pixelsPerInch) - 8.75);
 
 
 	##########################################################################
