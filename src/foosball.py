@@ -1,5 +1,8 @@
-from adafruit_motorkit import MotorKit
-from collections import deque
+#########################
+# Automated Foosball    #
+#########################
+
+# import the necessary packages
 import cv2
 import cv2.aruco as aruco
 import datetime
@@ -8,7 +11,7 @@ import numpy as np
 import time
 
 
-class foosball:
+class Foosball:
 
     # Initialize table
     def __init__(self, debug=False):
@@ -90,10 +93,10 @@ class foosball:
             # The second row (defense) has 2 men, spaced 9 5/8" apart, and 13 3/8" of linear movement
             # The third row (midfield) has 5 men, spaced 5" apart, and 4 1/4" of linear movement
             # The fourth row (offense) has 3 men, spaced 7 1/8" apart, and 8 1/2" of linear movement
-            '_row0': (97.54, 116.37),               # Spacing, linear movement (in pixels)
-            '_row1': (131.77, 183.11),              # Spacing, linear movement (in pixels)
-            '_row2': (68.45, 58.18),                # Spacing, linear movement (in pixels)
-            '_row3': (97.54, 116.37),               # Spacing, linear movement (in pixels)
+            'row0': (97.54, 116.37),                # Spacing, linear movement (in pixels)
+            'row1': (131.77, 183.11),               # Spacing, linear movement (in pixels)
+            'row2': (68.45, 58.18),                 # Spacing, linear movement (in pixels)
+            'row3': (97.54, 116.37),                # Spacing, linear movement (in pixels)
 
             # Calculate the lower and upper bounds for each foosmen
             'foosmen': np.array([
@@ -119,35 +122,6 @@ class foosball:
         if self.debug:
             self.log(self.vars)
 
-        # Motors and Motor Limits
-        # This is the maximum position for the motors in each rod
-        #test = {'linearMotor': None, 'rotationalMotor': None, 'linearMotorLimit': None}
-
-        self.motors = np.array([])
-        #for i in range(4):
-            #self.motors = np.append(self.motors, {
-                #'linearMotor': None,
-                #'linearMotorLimit': self.vars['_maxHeight'] - (self.foosmen[i]['players'] - 1) * self.foosmen[i]['spacing'] - 2 * self.table['margin'],
-                #'rotationalMotor': None,
-            #})
-
-        # Initialize the 1st hat on the default address (0x60)
-        # Initialize the 2nd hat on the default address (0x61)
-        # Initialize the 3rd hat on the default address (0x63)
-        # Initialize the 4th hat on the default address (0x67)
-
-        # Stepper motors are available as stepper1 and stepper2
-        # stepper1 is made up of the M1 and M2 terminals
-        # stepper2 is made up of the M3 and M4 terminals
-        #self.motors[0]['linearMotor'] = MotorKit().stepper1
-        #self.motors[0]['rotationalMotor'] = MotorKit().stepper2
-        #self.motors[1]['linearMotor'] = MotorKit(address=0x61).stepper1
-        #self.motors[1]['rotationalMotor'] = MotorKit(address=0x61).stepper2
-        #self.motors[2]['linearMotor'] = MotorKit(address=0x63).stepper1
-        #self.motors[2]['rotationalMotor'] = MotorKit(address=0x63).stepper2
-        #self.motors[3]['linearMotor'] = MotorKit(address=0x67).stepper1
-        #self.motors[3]['rotationalMotor'] = MotorKit(address=0x67).stepper2
-
         # Variable to determine if a game is currently in progress or not
         # This can be toggled at any time to STOP or PAUSE play
         self.gameIsActive = False
@@ -164,14 +138,6 @@ class foosball:
 
     # Start game
     def start(self):
-
-        # Initialize motors and all I/O ports
-        # This includes calibration of the motors for linear and rotational motion
-        #self.motors = None
-
-        # Initialize goal interrupt service routine (ISR)
-        # If a goal is detected, this helps us keep track of score and reset for the next ball drop
-        #self.goalDetect = False
 
         # Initialize table coordinates
         # Define coordinates for foosball table in top-left, top-right, bottom-left, and bottom-right order
@@ -705,16 +671,6 @@ class foosball:
     # Print output message to console
     def log(self, msg):
         print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), msg)
-
-
-    # Move MotorKit motors
-    # https://learn.adafruit.com/adafruit-dc-and-stepper-motor-hat-for-raspberry-pi/using-stepper-motors
-    #def moveMotors(self):
-        #if self.debug:
-            #self.log("[DEBUG] Move motors begin")
-            #self.log("[DEBUG] Move motors end")
-
-        #self.motors.kit1.stepper1.onestep()
 
 
     # Save new frame and update FPS data
