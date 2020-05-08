@@ -41,10 +41,10 @@ fb = Foosball(args["debug"]).start()
 # Initialize motors
 #  Foosmen __init__(self, id, numPlayers, playerSpacing, rodLength, playerWidth, playerHeight):
 print("Initialize foosmen and motors")
-row1 = Foosmen(0, 3, fb.vars["row0"][0], fb.vars["row0"][1], fb.vars["foosmenWidth"], fb.vars["foosmenHeight"]).start()
-row2 = Foosmen(1, 2, fb.vars["row1"][0], fb.vars["row1"][1], fb.vars["foosmenWidth"], fb.vars["foosmenHeight"]).start()
-row3 = Foosmen(3, 5, fb.vars["row2"][0], fb.vars["row2"][1], fb.vars["foosmenWidth"], fb.vars["foosmenHeight"]).start()
-row4 = Foosmen(5, 3, fb.vars["row3"][0], fb.vars["row3"][1], fb.vars["foosmenWidth"], fb.vars["foosmenHeight"]).start()
+f0 = Foosmen(0, 3, fb.vars["row0"][0], fb.vars["row0"][1], fb.vars["foosmenWidth"], fb.vars["foosmenHeight"]).start()
+f1 = Foosmen(1, 2, fb.vars["row1"][0], fb.vars["row1"][1], fb.vars["foosmenWidth"], fb.vars["foosmenHeight"]).start()
+f3 = Foosmen(3, 5, fb.vars["row2"][0], fb.vars["row2"][1], fb.vars["foosmenWidth"], fb.vars["foosmenHeight"]).start()
+f5 = Foosmen(5, 3, fb.vars["row3"][0], fb.vars["row3"][1], fb.vars["foosmenWidth"], fb.vars["foosmenHeight"]).start()
 
 # Record video output to file
 writer = None
@@ -99,33 +99,29 @@ while fb.gameIsActive:
 		# Find out which foosmen row is most likely to control the ball next
 		closestRow = fb.getClosestRow(projectedX)
 
-		#fb.motor1.intercept(getPositionHere...)
-		#fb.motor2.intercept(getPositionHere...)
-		#c.move(3,(yInterceptPosition / pixelsPerInch) - 8.75);
-
 		# Goalie
 		if closestRow == 0 and projectedX >= fb.vars["foosmenRED"][0]:
 			fb.log("[INFO] Goal row is in control of the ball")
 			fb.log("[MOTOR] Goal row KICK!")
-			#fb.motor1.kick()
+			f0.rotateTo(75)
 
 		# Defense
 		elif closestRow == 1 and projectedX >= fb.vars["foosmenRED"][1]:
 			fb.log("[INFO] Defense row is in control of the ball")
 			fb.log("[MOTOR] Defense row KICK!")
-			#fb.motor2.kick()
+			f1.rotateTo(75)
 
 		# Midfield
 		elif closestRow == 3 and projectedX >= fb.vars["foosmenRED"][2]:
 			fb.log("[INFO] Midfield row is in control of the ball")
 			fb.log("[MOTOR] Midfield row KICK!")
-			#fb.motor3.kick()
+			f3.rotateTo(75)
 
 		# Offense
 		elif closestRow == 5 and projectedX >= fb.vars["foosmenRED"][3]:
 			fb.log("[INFO] Offense row is in control of the ball")
 			fb.log("[MOTOR] Offense row KICK!")
-			#fb.motor3.kick()
+			f5.rotateTo(75)
 
 
 	##########################################################################
