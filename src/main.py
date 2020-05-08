@@ -38,13 +38,20 @@ time.sleep(2.0)
 print("Initialize game")
 fb = Foosball(args["debug"]).start()
 
-# Initialize motors
-#  Foosmen __init__(self, id, numPlayers, playerSpacing, rodLength, playerWidth, playerHeight):
-print("Initialize foosmen and motors")
-f0 = Foosmen(0, 3, fb.vars["row0"][0], fb.vars["row0"][1], fb.vars["foosmenWidth"], fb.vars["foosmenHeight"]).start()
-f1 = Foosmen(1, 2, fb.vars["row1"][0], fb.vars["row1"][1], fb.vars["foosmenWidth"], fb.vars["foosmenHeight"]).start()
-f3 = Foosmen(3, 5, fb.vars["row2"][0], fb.vars["row2"][1], fb.vars["foosmenWidth"], fb.vars["foosmenHeight"]).start()
-f5 = Foosmen(5, 3, fb.vars["row3"][0], fb.vars["row3"][1], fb.vars["foosmenWidth"], fb.vars["foosmenHeight"]).start()
+# Initialize players and motors
+print("Initialize players and motors")
+# Goalie
+# The 1st row has 3 men, spaced 7 1/8" apart, and 8 1/2" of linear movement
+f0 = Foosmen(0, 3, fb.vars["row0"][0], fb.vars["row0"][1], fb.vars["foosmenWidth"]).start()
+# Defense
+# The 2nd row has 2 men, spaced 9 5/8" apart, and 13 3/8" of linear movement
+f1 = Foosmen(1, 2, fb.vars["row1"][0], fb.vars["row1"][1], fb.vars["foosmenWidth"]).start()
+# Midfield
+# The 3rd row has 5 men, spaced 5" apart, and 4 1/4" of linear movement
+f3 = Foosmen(3, 5, fb.vars["row2"][0], fb.vars["row2"][1], fb.vars["foosmenWidth"]).start()
+# Offense
+# The 4th row has 3 men, spaced 7 1/8" apart, and 8 1/2" of linear movement
+f5 = Foosmen(5, 3, fb.vars["row3"][0], fb.vars["row3"][1], fb.vars["foosmenWidth"]).start()
 
 # Record video output to file
 writer = None

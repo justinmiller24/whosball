@@ -15,7 +15,7 @@ import datetime
 class Foosmen:
 
     # Initialize foosmen rod
-    def __init__(self, id, numPlayers, playerSpacing, rodLength, playerWidth, playerHeight):
+    def __init__(self, id, numPlayers, playerSpacing, rodLength, playerWidth):
 
         # The ID of each foosmen row goes from left to right (0-7)
         self.id = id
@@ -42,9 +42,6 @@ class Foosmen:
         # The width of each player, in pixels
         self.playerWidth = playerWidth
 
-        # The length of each player, in pixels (note: this goes in each direction)
-        self.playerHeight = playerHeight
-
         # Each row of foosmen can operate in an "offensive" or "defensive" mode
         # Initiate to "defensive" until the ball position is known or changes
         self.mode = "DEFENSE"
@@ -56,8 +53,8 @@ class Foosmen:
         self.stepsPerRevolution = 200
 
         # The motors will be initialized later
-        self.linearMotor = None
-        self.rotationalMotor = None
+        #self.linearMotor = None
+        #self.rotationalMotor = None
 
 
     # Initialize motors and warm up
@@ -100,8 +97,8 @@ class Foosmen:
         # "stepper2" is made up of the M3 and M4 terminals
         self.motors = MotorKit(address=motorAddr)
 
-        self.linearMotor = self.motors.stepper1
-        self.rotationalMotor = self.motors.stepper2
+        #self.linearMotor = self.motors.stepper1
+        #self.rotationalMotor = self.motors.stepper2
 
         self.motors.stepper1.release()
         self.motors.stepper2.release()
