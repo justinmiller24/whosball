@@ -620,14 +620,6 @@ class Foosball:
         return mask
 
 
-    # Get motor with position "i"
-    #def getMotor(self, i):
-        #if self.debug:
-            #self.log("[DEBUG] Get Motor [{}]".format(i))
-
-        #return self.motors[i]
-
-
     # Get projected X coordinate of ball, if it exists
     def getProjectedX(self):
         if self.projectedPosition is None:
@@ -640,16 +632,8 @@ class Foosball:
 
     # Linear interpolation between two points (x1, y1) and (x2, y2) and evaluates
     # the function at point xi
-    def _interpolate(self, xi, x2, y2, x1, y1):
-        if self.debug:
-            self.log("[DEBUG] Interpolate begin")
-
-        ret = (xi - x1) * (y2 - y1) / (x2 - x1) + y1
-
-        if self.debug:
-            self.log("[DEBUG] Interpolate end")
-
-        return ret
+    #def _interpolate(self, xi, x2, y2, x1, y1):
+        #return (xi - x1) * (y2 - y1) / (x2 - x1) + y1
 
 
     # Determine if the ball position of the foosball is currently known
