@@ -210,12 +210,7 @@ class Foosball:
             self.deltaY = 0
 
         # Calculate which wall the ball will hit next, assuming it continues uninterrupted
-        else:
-            self._getIntersectingWallPosition()
-            if self.projectedWallPosition is not None:
-                self.log("[INFO] Intersecting wall coordinates: {}".format(self.projectedWallPosition))
-            else:
-                self.log("[ERROR] SOMETHING WENT WRONG!!! Need to update formula.")
+        self._getIntersectingWallPosition()
 
         # Calculate projected next coordinate
         self.projectedPosition = (self.ballPositions[-1:][0][0] + self.deltaX, self.ballPositions[-1:][0][1] + self.deltaY)
@@ -412,6 +407,11 @@ class Foosball:
 
             # Draw centroid
             cv2.circle(self.outputImg, self.foosballPosition, 5, (0, 0, 255), -1)
+
+            # Draw projected coordinates between current position and wall
+            if self.projectedWallPosition is not None:
+                cv2.line(self.outputImg, self.foosballPosition, self.projectedWallPosition, (255,0,0), 5)
+                self.log("[INFO] Intersecting wall coordinates: {}".format(self.projectedWallPosition))
 
             # Update list of tracked points
             #self._updateTrackedPoints()
@@ -677,10 +677,11 @@ class Foosball:
                 if self.debug:
                     self.log("[DEBUG] Projected wall intersection is TOP wall at coordinates: {}".format(self.projectedWallPosition))
 
-        # Something went wrong
+        # The ball is not moving
         else:
             self.projectedWallPosition = None
-            self.log("[ERROR] Could not identify projected WALL coordinates")
+            if self.debug:
+                self.log("[DEBUG] No projected wall intersection, the ball is not currently moving")
 
 
     # Get mask for RED or BLUE players based on foosmenRows array
