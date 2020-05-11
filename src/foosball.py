@@ -163,6 +163,7 @@ class Foosball:
         self.lostBallFrames = 0
         self.foosballPosition = None
         self.projectedPosition = None
+        self.projectedWallPosition = None
 
         # Initialize score to 0-0
         self.score = [0, 0]
