@@ -254,27 +254,48 @@ class Foosball:
             self.log("[DEBUG] Update display begin")
 
         # Build output
-        out = np.zeros((self.vars["height"] + 144, self.vars["width"], 3), dtype="uint8")
-        vPos = self.vars["height"] + 5
+        out = np.zeros((self.vars["height"] + 124, self.vars["width"], 3), dtype="uint8")
+        vPos = self.vars["height"] + 4
 
         # Output image
         out[0:self.vars["height"], 0:self.vars["width"]] = self.outputImg
+
+        font = cv2.FONT_HERSHEY_PLAIN
 
         # Key metrics
         metrics = {
             "Score": self.score,
             "In Play": self.ballIsInPlay,
             "Detected": self.foosballDetected,
-            "Position": ("{}".format(self.foosballPosition)) if self.foosballPosition is not None else "-",
+            #"Position": ("{}".format(self.foosballPosition)) if self.foosballPosition is not None else "-",
             #"Projected": self.projectedPosition,
             "Radius": ("%2.1f" % self.radius) if self.radius is not None else "-",
             #"Distance": ("%2.1f cm" % self.distance) if self.distance is not None else "-",
             "Velocity": ("%2.1f m/s" % self.velocity) if self.velocity is not None else "-",
             "FPS": ("%2.1f" % self.fps) if self.fps is not None else "-",
         }
+        metricsRight = {
+            "Current": ("{}".format(self.foosballPosition)) if self.foosballPosition is not None else "-",
+            "Projected": ("{}".format(self.projectedPosition)) if self.projectedPosition is not None else "-",
+            "Wall": ("{}".format(self.projectedWallPosition)) if self.projectedWallPosition is not None else "-",
+        }
         for key in metrics:
             vPos += 18
-            cv2.putText(out, "%s: %s" % (key, metrics[key]), (10, vPos), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+            cv2.putText(out, "%s: %s" % (key, metrics[key]), (10, vPos), font, 1, (255, 255, 255), 1)
+
+        vPos = self.vars["height"] + 4
+
+        for key in metricsRight:
+            vPos += 18
+
+            # get boundary of this text
+            textsize = cv2.getTextSize(metricsRight[key], font, 1, 2)[0]
+
+            # get coords based on boundary
+            textX = self.vars["width"] - textsize[0] - 10
+
+            # add text centered on image
+            cv2.putText(out, "%s: %s" % (key, metricsRight[key]), (textX, vPos), font, 1, (255, 255, 255), 1)
 
         if self.debug:
             self.log("[DEBUG] Update display end")
