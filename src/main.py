@@ -42,16 +42,16 @@ fb = Foosball(args["debug"]).start()
 print("Initialize players and motors")
 # Goalie
 # The 1st row has 3 men, spaced 7 1/8" apart, and 8 1/2" of linear movement
-f0 = Foosmen(0, 3, fb.vars["row0"][0], fb.vars["row0"][1], fb.vars["foosmenWidth"]).start()
+#f0 = Foosmen(0, 3, fb.vars["row0"][0], fb.vars["row0"][1], fb.vars["foosmenWidth"]).start()
 # Defense
 # The 2nd row has 2 men, spaced 9 5/8" apart, and 13 3/8" of linear movement
-f1 = Foosmen(1, 2, fb.vars["row1"][0], fb.vars["row1"][1], fb.vars["foosmenWidth"]).start()
+#f1 = Foosmen(1, 2, fb.vars["row1"][0], fb.vars["row1"][1], fb.vars["foosmenWidth"]).start()
 # Midfield
 # The 3rd row has 5 men, spaced 5" apart, and 4 1/4" of linear movement
-f3 = Foosmen(3, 5, fb.vars["row2"][0], fb.vars["row2"][1], fb.vars["foosmenWidth"]).start()
+#f3 = Foosmen(3, 5, fb.vars["row2"][0], fb.vars["row2"][1], fb.vars["foosmenWidth"]).start()
 # Offense
 # The 4th row has 3 men, spaced 7 1/8" apart, and 8 1/2" of linear movement
-f5 = Foosmen(5, 3, fb.vars["row3"][0], fb.vars["row3"][1], fb.vars["foosmenWidth"]).start()
+#f5 = Foosmen(5, 3, fb.vars["row3"][0], fb.vars["row3"][1], fb.vars["foosmenWidth"]).start()
 
 # Record video output to file
 writer = None
@@ -110,25 +110,25 @@ while fb.gameIsActive:
 		if closestRow == 0 and projectedX >= fb.vars["foosmenRED"][0]:
 			fb.log("[INFO] Goal row is in control of the ball")
 			fb.log("[MOTOR] Goal row KICK!")
-			f0.rotateTo(75)
+			#f0.rotateTo(75)
 
 		# Defense
 		elif closestRow == 1 and projectedX >= fb.vars["foosmenRED"][1]:
 			fb.log("[INFO] Defense row is in control of the ball")
 			fb.log("[MOTOR] Defense row KICK!")
-			f1.rotateTo(75)
+			#f1.rotateTo(75)
 
 		# Midfield
 		elif closestRow == 3 and projectedX >= fb.vars["foosmenRED"][2]:
 			fb.log("[INFO] Midfield row is in control of the ball")
 			fb.log("[MOTOR] Midfield row KICK!")
-			f3.rotateTo(75)
+			#f3.rotateTo(75)
 
 		# Offense
 		elif closestRow == 5 and projectedX >= fb.vars["foosmenRED"][3]:
 			fb.log("[INFO] Offense row is in control of the ball")
 			fb.log("[MOTOR] Offense row KICK!")
-			f5.rotateTo(75)
+			#f5.rotateTo(75)
 
 
 	##########################################################################

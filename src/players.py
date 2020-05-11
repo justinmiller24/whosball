@@ -90,7 +90,9 @@ class Foosmen:
             motorAddr = 0x64
 
         else:
-            self.log("[ERROR] Could not initializing motors")
+            self.log("[ERROR] Could not initialize motors")
+            return
+
 
         # Stepper motors are available as stepper1 and stepper2
         # "stepper1" is made up of the M1 and M2 terminals
