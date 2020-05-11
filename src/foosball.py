@@ -348,7 +348,7 @@ class Foosball:
 
         # Find and display contours
         (h, w) = origImg.shape[:2]
-        self.outputImg = np.zeros((h, w, 3), dtype="uint8")
+        #self.outputImg = np.zeros((h, w, 3), dtype="uint8")
         for c in cnts:
             #perimeter = cv2.arcLength(c, True)
             epsilon = 0.04 * cv2.arcLength(c, True)
