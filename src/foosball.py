@@ -290,13 +290,14 @@ class Foosball:
             vPos += 18
 
             # get boundary of this text
-            textsize = cv2.getTextSize(metricsRight[key], font, 1, 2)[0]
+            text = "%s: %s" % (key, metricsRight[key])
+            textsize = cv2.getTextSize(text, font, 1, 2)[0]
 
             # get coords based on boundary
             textX = self.vars["width"] - textsize[0] - 10
 
             # add text centered on image
-            cv2.putText(out, "%s: %s" % (key, metricsRight[key]), (textX, vPos), font, 1, (255, 255, 255), 1)
+            cv2.putText(out, text, (textX, vPos), font, 1, (255, 255, 255), 1)
 
         if self.debug:
             self.log("[DEBUG] Update display end")
