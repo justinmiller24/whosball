@@ -247,14 +247,14 @@ class Foosball:
 
         # Build output
         out = np.zeros((self.vars["height"] + 120, self.vars["width"], 3), dtype="uint8")
-        vPos = self.vars["height"] + 20
+        vPos = self.vars["height"] + 5
 
         # Output image
         out[0:self.vars["height"], 0:self.vars["width"]] = self.outputImg
 
         # Key metrics
         metrics = {
-            "Score": ("%s".format(self.score)),
+            "Score": self.score,
             "Detected": self.foosballDetected,
             "Position": ("{}".format(self.foosballPosition)) if self.foosballPosition is not None else "-",
             #"Projected": self.projectedPosition,
