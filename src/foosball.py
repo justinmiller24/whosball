@@ -246,8 +246,8 @@ class Foosball:
             self.log("[DEBUG] Update display begin")
 
         # Build output
-        out = np.zeros((self.vars["height"] + 124, self.vars["width"], 3), dtype="uint8")
-        vPos = self.vars["height"] + 4
+        out = np.zeros((self.vars["height"] + 144, self.vars["width"], 3), dtype="uint8")
+        vPos = self.vars["height"] + 5
 
         # Output image
         out[0:self.vars["height"], 0:self.vars["width"]] = self.outputImg
@@ -255,6 +255,7 @@ class Foosball:
         # Key metrics
         metrics = {
             "Score": self.score,
+            "In Play": self.ballIsInPlay,
             "Detected": self.foosballDetected,
             "Position": ("{}".format(self.foosballPosition)) if self.foosballPosition is not None else "-",
             #"Projected": self.projectedPosition,
@@ -325,7 +326,7 @@ class Foosball:
 
         # If the foosball was previously detected, localize the search to save overall computation time
         if self.foosballDetected:
-            self.log("[TODO] Foosball was previously detected. Localize search to save time here...")
+            self.log("[INFO] TODO: Foosball was previously detected. Localize search to save time here...")
 
         origImg = self.frame.copy()
         self.outputImg = self.frame.copy()
@@ -362,6 +363,7 @@ class Foosball:
         self.velocity = None
 
         # Ensure at least one contour was found
+        self.log("[INFO] Number of contours found: {}".format(len(cnts)))
         if len(cnts) > 0:
 
             self.foosballDetected = True
@@ -373,7 +375,6 @@ class Foosball:
             ((x, y), self.radius) = cv2.minEnclosingCircle(c)
             M = cv2.moments(c)
             self.foosballPosition = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
-            self.log("[INFO] Foosball detected: {}".format(self.foosballPosition))
 
             # Add current position to the list of tracked points
             self._addCurrentPosition(self.foosballPosition)
@@ -394,29 +395,26 @@ class Foosball:
 
             # Increase counter of how many frames the foosball has been undetected
             self.lostBallFrames += 1
+            self.log("[INFO] Number of lost ball frames: {}".format(self.lostBallFrames))
 
             # Check for case #1 -- the foosball was not in play previously
             # If this is the case, there's probably nothing else to do until the next play starts
             if not self.ballIsInPlay:
                 self.log("[INFO] The ball was not in play previously, continue with loop")
-                #self.ballIsInPlay = False
                 return
 
             # At this point, we know the ball was in play previously
             # Check for case #2 -- the foosball was in play previously and a goal just occurred
-            if self._checkForGoal():
+            elif self._checkForGoal():
                 self.log("[INFO] The ball was in play and it looks like a goal occurred!")
-                #self.ballIsInPlay = False
-                return
 
             # At this point, we know the ball is likely occluded
-            self.log("[INFO] The ball is likely occluded. Determine projected coordinates.")
-            self.log("[INFO] The last known projected coordinates were: {}".format(self.projectedPosition))
+            else:
+                self.log("[INFO] The ball is likely occluded. Last known projected coordinates: {}".format(self.projectedPosition))
 
-        self.log("[INFO] Num contours found: {}".format(len(cnts)))
         self.log("[INFO] Foosball detected: {}".format(self.foosballDetected))
         self.log("[INFO] Foosball position: {}".format(self.foosballPosition))
-        self.log("[INFO] Foosball in play: {}".format(self.ballIsInPlay))
+        self.log("[INFO] Projected position: {}".format(self.projectedPosition))
 
         if self.debug:
             self.log("[DEBUG] Detect Foosball end")
