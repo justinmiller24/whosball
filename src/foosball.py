@@ -621,7 +621,7 @@ class Foosball:
         # The ball is heading towards our goal (LEFT)
         if self.deltaX < 0:
             wallX = 0
-            wallY = self._interpolate(0, wallX, x2, y2, x1, y1)
+            wallY = self._interpolate(wallX, x2, y2, x1, y1)
             if wallY >= 0 and wallY <= self.vars["height"]:
                 self.projectedWallPosition = [wallX, int(wallY)]
                 if self.debug:
@@ -630,7 +630,7 @@ class Foosball:
         # The ball is heading towards our opponent's goal (RIGHT)
         elif self.deltaX > 0:
             wallX = self.vars["width"]
-            wallY = self._interpolate(0, wallX, x2, y2, x1, y1)
+            wallY = self._interpolate(wallX, x2, y2, x1, y1)
             if wallY >= 0 and wallY <= self.vars["height"]:
                 self.projectedWallPosition = [wallX, int(wallY)]
                 if self.debug:
@@ -639,7 +639,7 @@ class Foosball:
         # The ball is heading towards our side (DOWN)
         elif self.deltaY < 0:
             wallY = 0
-            wallX = self._interpolate(0, wallY, y2, x2, y1, x1)
+            wallX = self._interpolate(wallY, y2, x2, y1, x1)
             if wallX >= 0 and wallX <= self.vars["width"]:
                 self.projectedWallPosition = [wallX, int(wallY)]
                 if self.debug:
@@ -648,7 +648,7 @@ class Foosball:
         # The ball is heading towards our opponent's side (UP)
         elif self.deltaY > 0:
             wallY = self.vars["height"]
-            wallX = self._interpolate(0, wallY, y2, x2, y1, x1)
+            wallX = self._interpolate(wallY, y2, x2, y1, x1)
             if wallX >= 0 and wallX <= self.vars["width"]:
                 self.projectedWallPosition = [wallX, int(wallY)]
                 if self.debug:
