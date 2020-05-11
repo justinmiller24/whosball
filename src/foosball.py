@@ -664,7 +664,7 @@ class Foosball:
             wallY = 0
             wallX = self._interpolate(wallY, y2, x2, y1, x1)
             if wallX >= 0 and wallX <= self.vars["width"]:
-                self.projectedWallPosition = (wallX, int(wallY))
+                self.projectedWallPosition = (int(wallX), wallY)
                 if self.debug:
                     self.log("[DEBUG] Projected wall intersection is BOTTOM wall at coordinates: {}".format(self.projectedWallPosition))
 
@@ -673,7 +673,7 @@ class Foosball:
             wallY = self.vars["height"]
             wallX = self._interpolate(wallY, y2, x2, y1, x1)
             if wallX >= 0 and wallX <= self.vars["width"]:
-                self.projectedWallPosition = (wallX, int(wallY))
+                self.projectedWallPosition = (int(wallX), wallY)
                 if self.debug:
                     self.log("[DEBUG] Projected wall intersection is TOP wall at coordinates: {}".format(self.projectedWallPosition))
 
