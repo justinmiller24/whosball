@@ -363,7 +363,7 @@ class Foosball:
         self.velocity = None
 
         # Ensure at least one contour was found
-        self.log("[INFO] Number of contours found: {}".format(len(cnts)))
+        self.log("[INFO] Contours found: {}".format(len(cnts)))
         if len(cnts) > 0:
 
             self.foosballDetected = True
