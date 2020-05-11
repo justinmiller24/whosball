@@ -246,8 +246,8 @@ class Foosball:
             self.log("[DEBUG] Update display begin")
 
         # Build output
-        out = np.zeros((self.vars["height"] + 120, self.vars["width"], 3), dtype="uint8")
-        vPos = self.vars["height"] + 5
+        out = np.zeros((self.vars["height"] + 124, self.vars["width"], 3), dtype="uint8")
+        vPos = self.vars["height"] + 4
 
         # Output image
         out[0:self.vars["height"], 0:self.vars["width"]] = self.outputImg
