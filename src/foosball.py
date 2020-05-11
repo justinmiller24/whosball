@@ -74,7 +74,7 @@ class Foosball:
             # The foosmen are centered on each rod, but each rod (row) has a different number of men
             # There are 13 total foosmen, each with a unique ID from left to right and top to bottom
             # Each foosmen kicks the ball with feet that measure 1" in width
-            '_foosmenWidth': 14,                    # Foosmen width (rounded up, in pixels)
+            'foosmenWidth': 14,                     # Foosmen width (rounded up, in pixels)
             'foosmenHeight': 36,                    # Foosmen height (how far they "span" in either direction)
 
             # RED players
