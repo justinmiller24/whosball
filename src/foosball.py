@@ -265,7 +265,7 @@ class Foosball:
         }
         for key in metrics:
             vPos += 18
-            cv2.putText(out, "%s: %s" % (key, metricks[key]), (10, vPos), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+            cv2.putText(out, "%s: %s" % (key, metrics[key]), (10, vPos), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
 
         if self.debug:
             self.log("[DEBUG] Update display end")
