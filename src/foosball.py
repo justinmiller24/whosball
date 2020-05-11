@@ -247,6 +247,7 @@ class Foosball:
 
         # Build output
         out = np.zeros((self.vars["height"] + 120, self.vars["width"], 3), dtype="uint8")
+        vPos = self.vars["height"] + 20
 
         # Output image
         out[0:self.vars["height"], 0:self.vars["width"]] = self.outputImg
