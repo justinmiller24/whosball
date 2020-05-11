@@ -208,6 +208,14 @@ class Foosball:
             self.deltaX = 0
             self.deltaY = 0
 
+        # Calculate which wall the ball will hit next, assuming it continues uninterrupted
+        else:
+            self._getIntersectingWallPosition()
+            if self.projectedWallPosition is not None:
+                self.log("[INFO] Intersecting wall coordinates: {}".format(self.projectedWallPosition))
+            else:
+                self.log("[ERROR] SOMETHING WENT WRONG!!! Need to update formula.")
+
         # Calculate projected next coordinate
         self.projectedPosition = [self.ballPositions[-1:][0][0] + self.deltaX, self.ballPositions[-1:][0][1] + self.deltaY]
         self.log("[INFO] Projected next position is: {}".format(self.projectedPosition))
@@ -600,6 +608,58 @@ class Foosball:
         return contours
 
 
+    # Determine which WALL the foosball will hit next
+    # We use linear interpolation, along with the latest coordinates, to calculate this
+    def _getIntersectingWallPosition(self):
+
+        # Calculate latest two coordinates for interpolation
+        x2 = self.ballPositions[-1:][0][0]
+        y2 = self.ballPositions[-1:][0][1]
+        x1 = x2 - self.deltaX
+        y1 = y2 - self.deltaY
+
+        # The ball is heading towards our goal (LEFT)
+        if self.deltaX < 0:
+            wallX = 0
+            wallY = self._interpolate(0, wallX, x2, y2, x1, y1)
+            if wallY >= 0 and wallY <= self.vars["height"]:
+                self.projectedWallPosition = [wallX, int(wallY)]
+                if self.debug:
+                    self.log("[DEBUG] Projected wall intersection is LEFT wall at coordinates: {}".format(self.projectedWallPosition))
+
+        # The ball is heading towards our opponent's goal (RIGHT)
+        elif self.deltaX > 0:
+            wallX = self.vars["width"]
+            wallY = self._interpolate(0, wallX, x2, y2, x1, y1)
+            if wallY >= 0 and wallY <= self.vars["height"]:
+                self.projectedWallPosition = [wallX, int(wallY)]
+                if self.debug:
+                    self.log("[DEBUG] Projected wall intersection is RIGHT wall at coordinates: {}".format(self.projectedWallPosition))
+
+        # The ball is heading towards our side (DOWN)
+        elif self.deltaY < 0:
+            wallY = 0
+            wallX = self._interpolate(0, wallY, y2, x2, y1, x1)
+            if wallX >= 0 and wallX <= self.vars["width"]:
+                self.projectedWallPosition = [wallX, int(wallY)]
+                if self.debug:
+                    self.log("[DEBUG] Projected wall intersection is BOTTOM wall at coordinates: {}".format(self.projectedWallPosition))
+
+        # The ball is heading towards our opponent's side (UP)
+        elif self.deltaY > 0:
+            wallY = self.vars["height"]
+            wallX = self._interpolate(0, wallY, y2, x2, y1, x1)
+            if wallX >= 0 and wallX <= self.vars["width"]:
+                self.projectedWallPosition = [wallX, int(wallY)]
+                if self.debug:
+                    self.log("[DEBUG] Projected wall intersection is TOP wall at coordinates: {}".format(self.projectedWallPosition))
+
+        # Something went wrong
+        else:
+            self.projectedWallPosition = None
+            self.log("[ERROR] Could not identify projected WALL coordinates")
+
+
     # Get mask for RED or BLUE players based on foosmenRows array
     def _getMaskForPlayers(self, foosmenRows):
         if self.debug:
@@ -629,10 +689,10 @@ class Foosball:
         return self.projectedX
 
 
-    # Linear interpolation between two points (x1, y1) and (x2, y2) and evaluates
-    # the function at point xi
-    #def _interpolate(self, xi, x2, y2, x1, y1):
-        #return (xi - x1) * (y2 - y1) / (x2 - x1) + y1
+    # We use linear interpolation between two points (x1, y1) and (x2, y2)
+    # to determine the future intersection point (xi, yi) for a fixed xi
+    def _interpolate(self, xi, x2, y2, x1, y1):
+        return (xi - x1) * (y2 - y1) / (x2 - x1) + y1
 
 
     # Determine if the ball position of the foosball is currently known
