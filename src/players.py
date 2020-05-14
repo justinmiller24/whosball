@@ -52,10 +52,6 @@ class Foosmen:
         # The number of steps per revolution (360 degrees), used for rotational motion
         self.stepsPerRevolution = 200
 
-        # The motors will be initialized later
-        #self.linearMotor = None
-        #self.rotationalMotor = None
-
 
     # Initialize motors and warm up
     def start(self):
