@@ -130,9 +130,9 @@ while fb.gameIsActive:
 	##########################################################################
 	#
 	# Assumptions:
-	# - We know where the table, foosball, and players currently are
-	# - The foosball can be controlled by only row at a time, at most
-	# - We are able to move all 4 rows in both axes (linear and rotational) simultaneously
+	# 1. We know where the table, foosball, and players currently are
+	# 2. The foosball can be controlled by at most one row at a time
+	# 3. We are able to move both axes (linear and rotational) of all 4 rows simultaneously
 	#
 	# DEFENSE
 	# 1. Direct or indirect (bounce) shot on goal
