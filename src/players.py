@@ -178,6 +178,7 @@ class Foosmen:
         self.motors.stepper1.release()
         self.motors.stepper2.release()
 
+
     # Move rotational motor one step BACKWARD
     def rotateBackward(self):
 
