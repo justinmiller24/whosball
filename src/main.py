@@ -148,7 +148,7 @@ while fb.gameIsActive:
 	#    c. Midfield moves to block man-to-man with opponent's midfield row
 	#    d. Offense
 	#       i. If ball is controlled by their defense, our offense attempts to block the ball (same yPos as ball)
-	#       ii. Otherwise, move offensive to center position
+	#       ii. Otherwise, move offense to center position
 	#
 	# OFFENSE
 	# 4. Determine controlling row and move controlling row to ball
