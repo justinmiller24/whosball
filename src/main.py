@@ -170,6 +170,7 @@ while fb.gameIsActive:
 	# 8. There is not a direct path between ball and opponent's goal, and our goalie or 2-rod is in control
 	#    a. Determine widest opening between opponent's offensive players
 	#    b. Attempt pass between widest opening
+	#    c. If goalie was in control, move 2-rod row out of the way (so we don't block our own pass)
 	#    c. Move midfield row to receive pass at intercepting point
 	#    d. All other rows assume default defensive position (see #3)
 	#
