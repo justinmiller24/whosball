@@ -171,8 +171,8 @@ while fb.gameIsActive:
 	#    a. Determine widest opening between opponent's offensive players
 	#    b. Attempt pass between widest opening
 	#    c. If goalie was in control, move 2-rod row out of the way (so we don't block our own pass)
-	#    c. Move midfield row to receive pass at intercepting point
-	#    d. All other rows assume default defensive position (see #3)
+	#    d. Move midfield row to receive pass at intercepting point
+	#    e. All other rows assume default defensive position (see #3)
 	#
 	# HOLDING
 	# 9. Neither player is in control of the ball
