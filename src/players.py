@@ -91,13 +91,11 @@ class Foosmen:
 
 
         # Stepper motors are available as stepper1 and stepper2
-        # "stepper1" is made up of the M1 and M2 terminals
-        # "stepper2" is made up of the M3 and M4 terminals
+        # stepper1 is made up of the M1 and M2 terminals and used for linear motion
+        # stepper2 is made up of the M3 and M4 terminals and used for rotational motion
         self.motors = MotorKit(address=motorAddr)
 
-        #self.linearMotor = self.motors.stepper1
-        #self.rotationalMotor = self.motors.stepper2
-
+        # Release motors so they can spin freely
         self.motors.stepper1.release()
         self.motors.stepper2.release()
 
@@ -174,6 +172,11 @@ class Foosmen:
             for i in range(numSteps):
                 self.moveBackward()
 
+
+    # Release motors so they can spin freely
+    def releaseMotors(self):
+        self.motors.stepper1.release()
+        self.motors.stepper2.release()
 
     # Move rotational motor one step BACKWARD
     def rotateBackward(self):

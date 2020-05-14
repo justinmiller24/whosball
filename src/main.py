@@ -48,10 +48,10 @@ print("Initialize players and motors")
 #f1 = Foosmen(1, 2, fb.vars["row1"][0], fb.vars["row1"][1], fb.vars["foosmenWidth"]).start()
 # Midfield
 # The 3rd row has 5 men, spaced 5" apart, and 4 1/4" of linear movement
-#f3 = Foosmen(3, 5, fb.vars["row2"][0], fb.vars["row2"][1], fb.vars["foosmenWidth"]).start()
+#f2 = Foosmen(2, 5, fb.vars["row2"][0], fb.vars["row2"][1], fb.vars["foosmenWidth"]).start()
 # Offense
 # The 4th row has 3 men, spaced 7 1/8" apart, and 8 1/2" of linear movement
-#f5 = Foosmen(5, 3, fb.vars["row3"][0], fb.vars["row3"][1], fb.vars["foosmenWidth"]).start()
+#f3 = Foosmen(3, 3, fb.vars["row3"][0], fb.vars["row3"][1], fb.vars["foosmenWidth"]).start()
 
 # Record video output to file
 writer = None
@@ -274,6 +274,11 @@ print("Elasped time: {:.2f}".format(fb.elapsedTime))
 print("Avg FPS: {:.2f}".format(fb.fps))
 print()
 
+# Release motors
+#f0.releaseMotors()
+#f1.releaseMotors()
+#f2.releaseMotors()
+#f3.releaseMotors()
 
 # Do a bit of cleanup
 # Stop camera, video file, and destroy all windows
