@@ -217,10 +217,10 @@ class Foosball:
         self.log("[INFO] Projected next position is: {}".format(self.projectedPosition))
 
         # Project goal on next frame
-        if self.projectedPosition[0] < 0:
-            self.log("[INFO] Projected Goal: WHOSBALL Player")
-        elif self.projectedPosition[0] > self.vars["width"]:
-            self.log("[INFO] Projected Goal: Human Player")
+        #if self.projectedPosition[0] < 0:
+            #self.log("[INFO] Projected Goal: WHOSBALL Player")
+        #elif self.projectedPosition[0] > self.vars["width"]:
+            #self.log("[INFO] Projected Goal: Human Player")
 
         # Calculate distance (in cm), velocity, and direction -- for visual display only
         distancePX = math.sqrt(self.deltaX * self.deltaX + self.deltaY * self.deltaY)
@@ -631,6 +631,20 @@ class Foosball:
         return contours
 
 
+    # Determine intersecting y-coordinate based on x-coordinate
+    def getIntersectingCoordinate(self, xPos):
+
+        # Calculate latest two coordinates for interpolation
+        x2 = self.ballPositions[-1:][0][0]
+        y2 = self.ballPositions[-1:][0][1]
+        x1 = x2 - self.deltaX
+        y1 = y2 - self.deltaY
+
+        yPos = self._interpolate(xPos, x2, y2, x1, y1)
+
+        return int(yPos)
+
+
     # Determine which WALL the foosball will hit next
     # We use linear interpolation, along with the latest coordinates, to calculate this
     def _getIntersectingWallPosition(self):
@@ -721,8 +735,8 @@ class Foosball:
 
     # Determine if the ball position of the foosball is currently known
     # This returns true, even in the case of ball occlusion
-    def isKnownBallPosition(self):
-        return self.foosballPosition is not None
+    #def isKnownBallPosition(self):
+        #return self.foosballPosition is not None
 
 
     # Print output message to console
