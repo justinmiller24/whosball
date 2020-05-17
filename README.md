@@ -23,22 +23,21 @@ Regarding strategy, part of the program will need to determine how to respond ba
 * The foosball can be controlled by, at most, one row at a time.
 ```
 
-Assuming these 3 conditions are met, the Automated Foosball Table will attempt a DEFENSIVE strategy first, followed by an OFFENSIVE strategy, followed by a HOLDING pattern. At a detailed level, this looks like the following:
+Assuming these 3 conditions are met, the Automated Foosball Table will attempt a DEFENSIVE strategy first, followed by an OFFENSIVE strategy, followed by a HOLDING pattern. At a high level, this looks like the following:
 
 > Defense
 ```
-1. Respond to foosball moving towards our goal
-2. Position players in optimal defensive position
+* Respond to opponent's shot on our goal.
+* Position players in an optimal defensive position.
 ```
 
 > Offense
 ```
-3. Take direct shot on opponent's goal
-4. Pass ball towards offensive row
-5. Take shot on goal
+* Pass foosball towards our offensive row.
+* Take shot on opponent's goal.
 ```
 
 > Holding
 ```
-6. If neither player is in control of the ball, pause and use a timer to determine next step
+* If neither player controls the foosball, pause and set timeout to determine the next step.
 ```
