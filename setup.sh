@@ -79,9 +79,6 @@ sudo apt install -y i2c-tools python3-smbus
 # Install CircuitPython helper library for DC and Stepper Motors
 pip3 install --upgrade adafruit-circuitpython-motorkit
 
-# Increase default I2C bus speed
-# https://www.raspberrypi-spy.co.uk/2018/02/change-raspberry-pi-i2c-bus-speed/
-
 
 #########################
 # FINISH SETUP          #
