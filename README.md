@@ -24,12 +24,12 @@ Assuming these 3 conditions are met, the Automated Foosball Table will attempt a
 
 ```
 [DEFENSE]
-* Respond to opponent's shot on our goal.
+* Respond to foosball moving towards our goal.
 * Position players in an optimal defensive position.
 
 [OFFENSE]
 * Pass foosball towards our offensive row.
-* Take shot on opponent's goal.
+* Take a shot towards the opponent's goal.
 
 [HOLDING]
 * Pause and set a timeout to determine our next step.
