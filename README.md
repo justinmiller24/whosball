@@ -11,9 +11,9 @@ The basic setup will be a foosball table and a camera connected to a Raspberry P
 Regarding strategy, part of the program will need to determine how to respond based on the current conditions of the game. This requires the following assumptions:
 
 ```
-1. The computer can detect and track the table, foosball, and players at all times.
-2. The foosball can be controlled by, at most, one row at a time.
-3. The computer is able to move both motors (linear and rotational) on all 4 rows independently and simultaneously.
+* The computer can detect and track the table, foosball, and players at all times.
+* The foosball can be controlled by, at most, one row at a time.
+* The computer is able to move both motors (linear and rotational) on all 4 rows simultaneously.
 ```
 
 Assuming these 3 conditions are met, the Automated Foosball Table will always attempt a DEFENSIVE strategy first, followed by an OFFENSIVE strategy second, followed by a HOLDING pattern until something changes.
