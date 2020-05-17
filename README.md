@@ -25,19 +25,15 @@ Regarding strategy, part of the program will need to determine how to respond ba
 
 Assuming these 3 conditions are met, the Automated Foosball Table will attempt a DEFENSIVE strategy first, followed by an OFFENSIVE strategy, followed by a HOLDING pattern. At a high level, this looks like the following:
 
-> Defense
 ```
+[DEFENSE]
 * Respond to opponent's shot on our goal.
 * Position players in an optimal defensive position.
-```
 
-> Offense
-```
+[OFFENSE]
 * Pass foosball towards our offensive row.
 * Take shot on opponent's goal.
-```
 
-> Holding
-```
-* If neither player controls the foosball, pause and set timeout to determine the next step.
+[HOLDING]
+* Pause and set a timeout to determine our next step.
 ```
