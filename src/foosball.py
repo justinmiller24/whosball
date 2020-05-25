@@ -80,14 +80,14 @@ class Foosball:
             # RED players
             'foosmenRedHSVLower': (170, 0, 0),      # Foosmen lower bound (HSV)
             'foosmenRedHSVUpper': (180, 255, 255),  # Foosmen upper bound (HSV)
-            'foosmenRedContour': (255, 100, 100),   # Foosmen contour highlight color
-            'foosmenRedBox': (255, 0, 0),           # Foosmen bounding box color
+            'foosmenRedContour': (100, 100, 255),   # Foosmen contour highlight color
+            'foosmenRedBox': (0, 0, 255),           # Foosmen bounding box color
 
             # BLUE players
             'foosmenBlueHSVLower': (85, 0, 0),      # Foosmen lower bound (HSV)
             'foosmenBlueHSVUpper': (110, 255, 255), # Foosmen upper bound (HSV)
-            'foosmenBlueContour': (100, 100, 255),  # Foosmen contour highlight color
-            'foosmenBlueBox': (0, 0, 255),          # Foosmen bounding box color
+            'foosmenBlueContour': (255, 100, 100),  # Foosmen contour highlight color
+            'foosmenBlueBox': (255, 0, 0),          # Foosmen bounding box color
 
             # The first row (goalie) has 3 men, spaced 7 1/8" apart, and 8 1/2" of linear movement
             # The second row (defense) has 2 men, spaced 9 5/8" apart, and 13 3/8" of linear movement
