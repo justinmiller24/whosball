@@ -489,13 +489,13 @@ class Foosball:
         players = self._getContours(mask)
 
         # Overlay contour and rectangle over each player
-        self.playersImg = np.zeros((self.vars["height"], self.vars["width"], 3), dtype="uint8")
+        #self.playersImg = np.zeros((self.vars["height"], self.vars["width"], 3), dtype="uint8")
         for i in players:
 
             # Get coordinates of bounding rectangle and draw rectangle on output image
             x, y, w, h = cv2.boundingRect(i)
-            cv2.drawContours(self.playersImg, [i], -1, contourRGB, -1)
-            cv2.rectangle(self.playersImg, (x, y), (x + w, y + h), rectangleRGB, 2)
+            cv2.drawContours(self.outputImg, [i], -1, contourRGB, -1)
+            cv2.rectangle(self.outputImg, (x, y), (x + w, y + h), rectangleRGB, 2)
 
         if self.debug:
             self.log("[DEBUG] Detect players end")
