@@ -47,8 +47,8 @@ class Foosball:
 
             # The foosball measures 1 3/8" in diameter
             'foosballWidth': 18,                    # Foosball width and height (rounded down, in pixels)
-            'foosballHSVLower': (15, 0, 0),         # Foosball lower bound (HSV)
-            'foosballHSVUpper': (35, 255, 255),     # Foosball upper bound (HSV)
+            'foosballHSVLower': (25, 50, 150),      # Foosball lower bound (HSV)
+            'foosballHSVUpper': (35, 100, 255),     # Foosball upper bound (HSV)
             'foosballMaxPositions': 30,             # The maximum number of "coordinates" to track
 
             # There are 8 foosball rods, each one measures 5/8" in diameter
@@ -78,8 +78,8 @@ class Foosball:
             'foosmenHeight': 36,                    # Foosmen height (how far they "span" in either direction)
 
             # RED players
-            'foosmenRedHSVLower': (170, 0, 0),      # Foosmen lower bound (HSV)
-            'foosmenRedHSVUpper': (180, 255, 255),  # Foosmen upper bound (HSV)
+            'foosmenRedHSVLower': (0, 0, 0),        # Foosmen lower bound (HSV)
+            'foosmenRedHSVUpper': (10, 255, 255),   # Foosmen upper bound (HSV)
             'foosmenRedContour': (100, 100, 255),   # Foosmen contour highlight color
             'foosmenRedBox': (0, 0, 255),           # Foosmen bounding box color
 
