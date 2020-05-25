@@ -472,10 +472,10 @@ class Foosball:
         # Get mask and apply mask to image
         # Create mask containing "only" the areas with the rods for RED/BLUE foosmen
         origImg = self.frame.copy()
-        maskedImg = cv2.bitwise_and(origImg, foosmenMask)
+        #maskedImg = cv2.bitwise_and(origImg, foosmenMask)
 
         # Convert to HSV color range
-        blurred = cv2.GaussianBlur(maskedImg, (11, 11), 0)
+        blurred = cv2.GaussianBlur(origImg, (11, 11), 0)
         hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
 
         # Create color mask for foosmen and perform erosions and dilation to remove small blobs in mask
