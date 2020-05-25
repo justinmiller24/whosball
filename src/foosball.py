@@ -78,8 +78,10 @@ class Foosball:
             'foosmenHeight': 36,                    # Foosmen height (how far they "span" in either direction)
 
             # RED players
-            'foosmenRedHSVLower': (0, 0, 0),        # Foosmen lower bound (HSV)
-            'foosmenRedHSVUpper': (10, 255, 255),   # Foosmen upper bound (HSV)
+            'foosmenRedHSV1Lower': (0, 0, 0),       # Foosmen lower bound (HSV)
+            'foosmenRedHSV1Upper': (10, 255, 255),  # Foosmen upper bound (HSV)
+            'foosmenRedHSV2Lower': (170, 0, 0),     # Foosmen lower bound (HSV)
+            'foosmenRedHSV2Upper': (180, 255, 255), # Foosmen upper bound (HSV)
             'foosmenRedContour': (100, 100, 255),   # Foosmen contour highlight color
             'foosmenRedBox': (0, 0, 255),           # Foosmen bounding box color
 
@@ -460,14 +462,10 @@ class Foosball:
         # Set variables based on mode (RED or BLUE)
         if mode == "RED":
             foosmenMask = self.vars["foosmenREDMask"]
-            hsvLower = self.vars["foosmenRedHSVLower"]
-            hsvUpper = self.vars["foosmenRedHSVUpper"]
             contourRGB = self.vars["foosmenRedContour"]
             rectangleRGB = self.vars["foosmenRedBox"]
         else:
             foosmenMask = self.vars["foosmenBLUEMask"]
-            hsvLower = self.vars["foosmenBlueHSVLower"]
-            hsvUpper = self.vars["foosmenBlueHSVUpper"]
             contourRGB = self.vars["foosmenBlueContour"]
             rectangleRGB = self.vars["foosmenBlueBox"]
 
@@ -481,7 +479,12 @@ class Foosball:
         hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
 
         # Create color mask for foosmen and perform erosions and dilation to remove small blobs in mask
-        mask = cv2.inRange(hsv, hsvLower, hsvUpper)
+        if mode == "RED":
+            mask1 = cv2.inRange(hsv, self.vars["foosmenRedHSV1Lower"], self.vars["foosmenRedHSV1Upper"])
+            mask2 = cv2.inRange(hsv, self.vars["foosmenRedHSV2Lower"], self.vars["foosmenRedHSV2Upper"])
+            mask = cv2.bitwise_or(mask1, mask2)
+        else:
+            mask = cv2.inRange(hsv, self.vars["foosmenBlueHSVLower"], self.vars["foosmenBlueHSVUpper"])
         mask = cv2.erode(mask, None, iterations=4)
         mask = cv2.dilate(mask, None, iterations=4)
 
