@@ -58,7 +58,7 @@ writer = None
 if args["output"]:
 	print("Initialize video output")
 	fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
-	writer = cv2.VideoWriter(args["output"], fourcc, 30, (fb.vars["width"], fb.vars["height"] + 120), True)
+	writer = cv2.VideoWriter(args["output"], fourcc, 30, (fb.vars["width"], fb.vars["height"] + 124), True)
 
 
 # Main loop
