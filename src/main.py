@@ -82,12 +82,12 @@ while fb.gameIsActive:
 	# then crop our live stream to these specific points.
 	fb.findTable()
 
+	# Find location of the foosball
+	fb.findBall()
+
 	# Find location of the players
 	fb.findPlayers("RED")
 	fb.findPlayers("BLUE")
-
-	# Find location of the foosball
-	fb.findBall()
 
 
 	##########################################################################
