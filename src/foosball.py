@@ -378,10 +378,16 @@ class Foosball:
         # Find and display contours
         (h, w) = origImg.shape[:2]
         #self.outputImg = np.zeros((h, w, 3), dtype="uint8")
+
         for c in cnts:
             #perimeter = cv2.arcLength(c, True)
             epsilon = 0.04 * cv2.arcLength(c, True)
             approx = cv2.approxPolyDP(c, epsilon, True)
+
+            # If we only have one contour, show number of points in approximation
+            if len(cnts) == 1:
+                self.log("[INFO] Only one contour... APPROX is  {}".format(len(approx)))
+            
             #if len(approx) > 5:
             cv2.drawContours(self.outputImg, [c], -1, (36, 255, 12), -1)
 
