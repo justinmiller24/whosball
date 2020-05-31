@@ -48,7 +48,8 @@ class Foosball:
             # The foosball measures 1 3/8" in diameter
             'foosballWidth': 18,                    # Foosball width and height (rounded down, in pixels)
             'foosballHSVLower': (25, 30, 150),      # Foosball lower bound (HSV)
-            'foosballHSVUpper': (45, 100, 255),      # Foosball upper bound (HSV)
+            'foosballHSVUpper': (45, 100, 255),     # Foosball upper bound (HSV)
+            'foosballContour': (36, 255, 12),       # Foosball contour highlight color
             'foosballMaxPositions': 30,             # The maximum number of "coordinates" to track
 
             # There are 8 foosball rods, each one measures 5/8" in diameter
@@ -368,45 +369,41 @@ class Foosball:
         # element for both operations. This is useful for removing small objects from an image
         # while preserving the shape and size of larger objects in the image.
         mask = cv2.inRange(self.hsv, self.vars["foosballHSVLower"], self.vars["foosballHSVUpper"])
-        mask = cv2.erode(mask, None, iterations=4)
-        mask = cv2.dilate(mask, None, iterations=4)
-        #self.mask3 = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
-
-        # Find contours in mask and initialize the current center (x, y) of the ball
-        cnts = self._getContours(mask)
-
-        # Find and display contours
-        (h, w) = origImg.shape[:2]
-        #self.outputImg = np.zeros((h, w, 3), dtype="uint8")
-
-        for c in cnts:
-            #perimeter = cv2.arcLength(c, True)
-            epsilon = 0.04 * cv2.arcLength(c, True)
-            approx = cv2.approxPolyDP(c, epsilon, True)
-
-            # If we only have one contour, show number of points in approximation
-            if len(cnts) == 1:
-                self.log("[INFO] Only one contour... APPROX is  {}".format(len(approx)))
-            
-            #if len(approx) > 5:
-            cv2.drawContours(self.outputImg, [c], -1, (36, 255, 12), -1)
+        mask = cv2.erode(mask, None, iterations=2)
+        mask = cv2.dilate(mask, None, iterations=2)
 
         self.radius = None
         self.distance = None
         #self.degrees = None
         self.velocity = None
 
-        # Ensure at least one contour was found
-        self.log("[INFO] Contours found: {}".format(len(cnts)))
+        # Find largest contour in mask
+        cnts = self._getContours(mask)
+        # Sort from largest to smallest
+        #cnts = sorted(cnts, key=cv2.contourArea, reverse=True)
+        #if self.debug:
+            #self.log("[DEBUG] Contours found: {}".format(len(cnts)))
+
         if len(cnts) > 0:
+            c = max(cnts, key=cv2.contourArea)
+
+            # Draw on output image
+            #for c in cnts:
+            cv2.drawContours(self.outputImg, c, -1, self.vars["foosballContour"], 3)
+
+            # Draw contours on output image
+            #perimeter = cv2.arcLength(c, True)
+            #epsilon = 0.04 * perimeter
+            #approx = cv2.approxPolyDP(c, epsilon, True)
+            #cv2.drawContours(self.outputImg, [c], -1, (36, 255, 12), -1)
 
             self.foosballDetected = True
             self.ballIsInPlay = True
 
             # Find the largest contour in the mask and use this to
             # compute the minimum enclosing circle and centroid
-            c = max(cnts, key=cv2.contourArea)
-            ((x, y), self.radius) = cv2.minEnclosingCircle(c)
+            #c = max(cnts, key=cv2.contourArea)
+            #((x, y), self.radius) = cv2.minEnclosingCircle(c)
             M = cv2.moments(c)
             self.foosballPosition = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
 
@@ -414,7 +411,7 @@ class Foosball:
             self._addCurrentPosition(self.foosballPosition)
 
             # Draw centroid
-            cv2.circle(self.outputImg, self.foosballPosition, 5, (0, 0, 255), -1)
+            #cv2.circle(self.outputImg, self.foosballPosition, 5, (0, 0, 255), -1)
 
             # Draw projected coordinates between current position and wall
             if self.projectedWallPosition is not None:
