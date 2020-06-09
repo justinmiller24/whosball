@@ -34,3 +34,5 @@ Assuming these 3 conditions are met, the Automated Foosball Table will attempt a
 [HOLDING]
 * Pause and set a timeout to determine our next step.
 ```
+
+A detailed version of this strategy can be found [here](media/strategy.pdf).
