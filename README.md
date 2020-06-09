@@ -22,4 +22,6 @@ Regarding strategy, part of the program will need to determine how to respond ba
 * The foosball can be controlled by, at most, one row at a time.
 ```
 
-Assuming these 3 conditions are met, the Automated Foosball Table will attempt a DEFENSIVE strategy first, followed by an OFFENSIVE strategy, followed by a HOLDING pattern. A detailed version of the strategy can be found [here](media/strategy.pdf).
+Assuming these 3 conditions are met, the Automated Foosball Table will attempt a DEFENSIVE strategy first, followed by an OFFENSIVE strategy, followed by a HOLDING pattern.
+
+A detailed version of the strategy can be found [here](media/strategy.pdf).
