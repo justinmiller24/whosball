@@ -8,7 +8,9 @@ The end goal is to complete a working prototype of a foosball table that is capa
 
 
 ## Setup
-The basic setup will be a foosball table and a camera connected to a Raspberry Pi. This will allow for image detection to be able to detect the position and velocity of the foosball in real time. This information will be fed into the main script, which will be running 24/7 and will allow the Raspberry Pi to control linear and rotary motors that are connected to the rods on one side of the foosball table.
+The basic setup will be a foosball table and a camera connected to a Raspberry Pi. This will allow for image detection to be able to detect the position and velocity of the foosball in real time. This information will serve as input to the main script, which in turn, will control the motors connected to the each rod to actually move the players. Each rod has two motors attached, one for linear motion (lateral) and one for rotational motion (kicking).
+
+The main AI script will track everything in real time, so we can also output a "preview" of what the computer sees, as seen here:
 
 ![Screenshot](media/screenshot.png)
 
