@@ -2,7 +2,7 @@
 ## Background
 Every year, I accept an annual challenge. In past years, this has been anything from running a marathon (2007) or 1/2 ironman (2010), to a food challenge (2012), or even trying out for American Ninja Warrior (2018). According to [StrengthsFinder](https://www.gallup.com/cliftonstrengths/en/252137/home.aspx), Learner is my #1 strength, so the goal is to continually push myself into new areas so I can continue to learn and grow.
 
-This year (2020), I've accepted the challenge to build an Automated Foosball Table. This will allow me to gain working knowledge of Python, OpenCV (computer vision), and Artificial Intelligence (AI). In addition, it will allow me to brush up on other areas including robotics, physics, mechanical engineering, and programming. As an added benefit, it will also allow my oldest daughter (6 yr) to be able to play foosball any time she wants, even when I'm not available.
+This year (2020), I've accepted the challenge to build an Automated Foosball Table. This will allow me to gain working knowledge of Python, OpenCV (computer vision), and Artificial Intelligence (AI). In addition, it will allow me to brush up on other areas including robotics, physics, mechanical engineering, and programming. As an added benefit, it will also allow my 6 yr old daughter to be able to play foosball any time she wants, even when I'm not available.
 
 The end goal is to complete a working prototype of a foosball table that is capable of beating a human at the game of foosball by midnight on Dec 31, 2020.
 
