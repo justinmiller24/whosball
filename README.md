@@ -10,6 +10,8 @@ The end goal is to complete a working prototype of a foosball table that is capa
 ## Setup
 The basic setup will be a foosball table and a camera connected to a Raspberry Pi. This will allow for image detection to be able to detect the position and velocity of the foosball in real time. This information will be fed into the main script, which will be running 24/7 and will allow the Raspberry Pi to control linear and rotary motors that are connected to the rods on one side of the foosball table.
 
+![Screenshot](media/screenshot.png)
+
 
 ## Strategy
 Regarding strategy, part of the program will need to determine how to respond based on the current conditions of the game. This requires the following assumptions:
@@ -20,19 +22,4 @@ Regarding strategy, part of the program will need to determine how to respond ba
 * The foosball can be controlled by, at most, one row at a time.
 ```
 
-Assuming these 3 conditions are met, the Automated Foosball Table will attempt a DEFENSIVE strategy first, followed by an OFFENSIVE strategy, followed by a HOLDING pattern. At a high level, this looks like the following:
-
-```
-[DEFENSE]
-* Respond to foosball moving towards our goal.
-* Position players in an optimal defensive position.
-
-[OFFENSE]
-* Pass foosball towards our offensive row.
-* Take a shot towards the opponent's goal.
-
-[HOLDING]
-* Pause and set a timeout to determine our next step.
-```
-
-A detailed version of this strategy can be found [here](media/strategy.pdf).
+Assuming these 3 conditions are met, the Automated Foosball Table will attempt a DEFENSIVE strategy first, followed by an OFFENSIVE strategy, followed by a HOLDING pattern. A detailed version of the strategy can be found [here](media/strategy.pdf).
