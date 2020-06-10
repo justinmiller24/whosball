@@ -18,6 +18,4 @@ To detect the foosball and the players, we convert every frame into the [HSV col
 
 ![Screenshot](media/screenshot.png)
 
-All of this information is fed into the AI portion of the script, which is responsible for the strategy and determine how to respond based on the current conditions of the game. This information is processed and translated into motor movement, which then sends specific commands to each of the eight motors in order to move the players. A detailed version of the strategy can be found [here](media/strategy.pdf).
-
-![Basic Setup](media/img2.png)
+This information is fed into the AI portion of the script, which is responsible for strategy and determining how to respond based on the current conditions of the game. The response for each row of players (foosmen) is translated into motor movement, which sends specific commands to each of the eight motors responsible for moving the players. A detailed version of the strategy can be found [here](media/strategy.pdf).
