@@ -1,10 +1,8 @@
 
 ## Background
-Every year, I accept an annual challenge. In past years, this has been anything from learning to juggle (2003) to running a [marathon](https://www.wdwmagic.com/events/walt-disney-world-marathon.htm) (2007) or [1/2 ironman](https://www.ironman.com/im703-races) (2010), to the [Buffalo Wild Wings' Blazin' Challenge](https://www.buffalowildwings.com/en/food/sauces/blazin-side-of-sauce/) (2012), or even trying out for [American Ninja Warrior](https://www.nbc.com/american-ninja-warrior) (2018). I'm a problem solver by nature, so the goal is to continually push myself into new areas so I can continue to learn and grow.
+Every year, I accept an annual challenge. In past years, this has been anything from learning to juggle (2003) to running the [Disney Marathon](https://www.wdwmagic.com/events/walt-disney-world-marathon.htm) (2007) or [Half Ironman](https://www.ironman.com/im703-races) (2010), to the [Buffalo Wild Wings' Blazin' Challenge](https://www.buffalowildwings.com/en/food/sauces/blazin-side-of-sauce/) (2012), or even trying out for [American Ninja Warrior](https://www.nbc.com/american-ninja-warrior) (2018). I'm a problem solver by nature, so the goal is to continually push myself into new areas so I can continue to learn and grow.
 
-For 2020, I accepted the challenge to build an automated foosball table. Imagine a normal game of foosball, except your opponent is a computer. This will allow me to gain working knowledge of Python, OpenCV (computer vision), and Artificial Intelligence (AI). In addition, it will allow me to brush up on other areas including robotics, physics, mechanical engineering, and programming. As an added benefit, it will also allow my 6 yr old daughter to be able to play foosball any time she wants, even when I'm not available.
-
-The end goal is to complete a working prototype of a foosball table that is capable of beating a human at the game of foosball by midnight on Dec 31, 2020.
+For 2020, I accepted the challenge to build an automated foosball table. Imagine a normal game of [foosball](https://en.wikipedia.org/wiki/Table_football), except your opponent is a computer. I accepted this challenge because it will allow me to gain working knowledge of Python, OpenCV (computer vision), and Artificial Intelligence (AI). In addition, it will expand my knowledge in other areas including robotics, physics, and mechanical engineering. The end goal is to complete a working prototype of a foosball table that is capable of beating a human at the game of foosball by midnight on Dec 31, 2020.
 
 
 ## Setup
