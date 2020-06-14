@@ -311,11 +311,11 @@ class Foosball:
             return False
 
         # An actual goal likely requires some kind of projected position
-        lastProjectedX = self.getProjectedX()
-        if lastProjectedX is None:
-            if self.debug:
-                self.log("[DEBUG] Projected Position is None, it is unlikely a goal was scored")
-            return False
+        #lastProjectedX = self.getProjectedX()
+        #if lastProjectedX is None:
+            #if self.debug:
+                #self.log("[DEBUG] Projected Position is None, it is unlikely a goal was scored")
+            #return False
 
         # Make sure Y-coordinate is between the upper/lower bounds of goal
         lastProjectedY = self.projectedPosition[1]
@@ -603,29 +603,46 @@ class Foosball:
 
     # Determine which foosmen row is closest to the foosball
     # Rows 0, 1, 3, and 5 are controlled by the automated player
-    def getClosestRow(self, projectedX = None):
+    def getClosestRow(self, xPos):
         if self.debug:
             self.log("[DEBUG] Get Closest Row begin")
 
-        # If no projected coordinate exists, set to last row
-        if projectedX is None:
-            self.getClosestRow = 7
+        # Loop through all rows to determine which is closest to xPos
+        closestRow = -1
+        min = self.vars["width"]
 
-        # Otherwise, loop through all rows to determine which is closest to the projected X coordinate
-        else:
-            self.closestRow = 7
-            min = self.vars["width"]
-
-            # Loop through foosball rows and determine which is closest to X-coordinate of the foosball's current position
-            for row in range(len(self.vars["rowPosition"])):
-                if abs(self.vars["rowPosition"][row] - projectedX) < min:
-                    min = abs(self.vars["rowPosition"][row] - projectedX)
-                    self.closestRow = row
+        # Loop through foosball rows and determine which is closest to X-coordinate of the foosball's current position
+        for row in range(len(self.vars["rowPosition"])):
+            if abs(self.vars["rowPosition"][row] - xPos) < min:
+                min = abs(self.vars["rowPosition"][row] - xPos)
+                closestRow = row
 
         if self.debug:
             self.log("[DEBUG] Get Closest Row end")
 
-        return self.closestRow
+        return closestRow
+
+
+    # Determine which foosmen row is closest to the foosball
+    # Rows 0, 1, 3, and 5 are controlled by the automated player
+    def getControllingRow(self):
+        if self.debug:
+            self.log("[DEBUG] Get Controlling Row begin")
+
+        # Loop through all rows to determine which is closest to current xPos
+        xPos = fb.currentPosition[0]
+        self.controllingRow = -1
+
+        # Loop through rows to determine if ball is within boundaries of any row
+        for row in range(len(self.vars["rowPosition"])):
+            if abs(self.vars["rowPosition"][row] - xPos) < self.vars["foosmenHeight"]:
+                self.controllingRow = row
+                break
+
+        if self.debug:
+            self.log("[DEBUG] Get Controlling Row end")
+
+        return self.controllingRow
 
 
     # Get contours
@@ -638,7 +655,7 @@ class Foosball:
 
 
     # Determine intersecting y-coordinate based on x-coordinate
-    def getIntersectingCoordinate(self, xPos):
+    def getIntersectingY(self, xPos):
 
         # Calculate latest two coordinates for interpolation
         x2 = self.ballPositions[-1:][0][0]
@@ -724,7 +741,7 @@ class Foosball:
 
 
     # Get projected X coordinate of ball, if it exists
-    def getProjectedX(self):
+    def (self):
         if self.projectedPosition is None:
             self.projectedX = None
         else:

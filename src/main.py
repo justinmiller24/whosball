@@ -40,18 +40,23 @@ fb = Foosball(args["debug"]).start()
 
 # Initialize players and motors
 print("Initialize players and motors")
+players = [None] * 8
 # Goalie
 # The 1st row has 3 men, spaced 7 1/8" apart, and 8 1/2" of linear movement
-#f0 = Foosmen(0, 3, fb.vars["row0"][0], fb.vars["row0"][1], fb.vars["foosmenWidth"]).start()
+#players[0] = Foosmen(0, 3, fb.vars["row0"][0], fb.vars["row0"][1], fb.vars["foosmenWidth"]).start()
 # Defense
 # The 2nd row has 2 men, spaced 9 5/8" apart, and 13 3/8" of linear movement
-#f1 = Foosmen(1, 2, fb.vars["row1"][0], fb.vars["row1"][1], fb.vars["foosmenWidth"]).start()
+#players[1] = Foosmen(1, 2, fb.vars["row1"][0], fb.vars["row1"][1], fb.vars["foosmenWidth"]).start()
 # Midfield
 # The 3rd row has 5 men, spaced 5" apart, and 4 1/4" of linear movement
-#f2 = Foosmen(2, 5, fb.vars["row2"][0], fb.vars["row2"][1], fb.vars["foosmenWidth"]).start()
+#players[3] = Foosmen(2, 5, fb.vars["row2"][0], fb.vars["row2"][1], fb.vars["foosmenWidth"]).start()
 # Offense
 # The 4th row has 3 men, spaced 7 1/8" apart, and 8 1/2" of linear movement
-#f3 = Foosmen(3, 3, fb.vars["row3"][0], fb.vars["row3"][1], fb.vars["foosmenWidth"]).start()
+#players[5] = Foosmen(3, 3, fb.vars["row3"][0], fb.vars["row3"][1], fb.vars["foosmenWidth"]).start()
+
+# Timer for number of frames in holding pattern
+idleFrames = 0
+
 
 # Record video output to file
 writer = None
@@ -123,148 +128,104 @@ while fb.gameIsActive:
 
 
 	##########################################################################
-	# This section determines how to respond based on current conditions.    #
-	# We attempt a DEFENSIVE strategy first. If no possibilities exist here, #
-	# then attempt an OFFENSIVE strategy. If no possibilities exist here,    #
-	# then we continue in a HOLDING pattern until something changes.         #
-	##########################################################################
-	#
-	# Assumptions:
-	# 1. We know where the table, foosball, and players currently are
-	# 2. The foosball can be controlled by at most one row at a time
-	# 3. We are able to move both axes (linear and rotational) of all 4 rows simultaneously
-	#
-	# DEFENSE
-	# 1. Direct or indirect (bounce) shot on goal
-	#    a. For all rows in between ball and goal, if they can intercept, move to intercept
-	#    b. For all rows in between ball and goal, if they can not intercept, leave still
-	#    c. For all rows not in between ball and goal, assume default defensive position (see #3)
-	# 2. Direct or indirect (bounce) shot moving towards us
-	#    a. For all rows in between ball and path of ball, find the closest row that can intercept, and intercept
-	#    b. For all other rows (not the closest row), assume default defensive position (see #3)
-	# 3. Other player is in control of the ball (this is the "default" defensive position)
-	#    a. Goalie moves to middle of goal
-	#    b. 2-rod moves to either just above/below goalie, depending on yPos of ball
-	#    c. Midfield moves to block man-to-man with opponent's midfield row
-	#    d. Offense
-	#       i. If ball is controlled by their defense, our offense attempts to block the ball (same yPos as ball)
-	#       ii. Otherwise, move offense to center position
-	#
-	# OFFENSE
-	# 4. Determine controlling row and move controlling row to ball
-	# 5. There is a direct or indirect (bounce) path between ball and opponent's goal
-	#    a. Shoot in direct or indirect (bounce) path towards opponent's goal
-	#    b. Move any rows in between shooting row and opponent's goal out of the way (so we don't block our own shot)
-	#    c. All other rows assume default defensive position (see #3)
-	# 6. There is not a direct path between ball and opponent's goal, and our offense is in control
-	#    a. Randomly select one of the following:
-	#       i. Attempt lateral pass to next player and move player to receive
-	#       ii. Determine widest opening between opponent's 2-rod/goalie and goal, and attempt pass to intercepting point
-	#       iii. Take shot on goal anyway
-	#    b. All other rows assume default defensive position (see #3)
-	# 7. There is not a direct path between ball and opponent's goal, and our midfield is in control
-	#    a. Determine widest opening between opponent's midfielders
-	#    b. Attempt pass between widest opening
-	#    c. Move offensive row to receive pass at intercepting point
-	#    d. All other rows assume default defensive position (see #3)
-	# 8. There is not a direct path between ball and opponent's goal, and our goalie or 2-rod is in control
-	#    a. Determine widest opening between opponent's offensive players
-	#    b. Attempt pass between widest opening
-	#    c. If goalie was in control, move 2-rod row out of the way (so we don't block our own pass)
-	#    d. Move midfield row to receive pass at intercepting point
-	#    e. All other rows assume default defensive position (see #3)
-	#
-	# HOLDING
-	# 9. Neither player is in control of the ball
-	#    a. Reset / increment timer to track number of frames
-	# 10. If we hit a certain threshold, pause game and show warning/error for user to intervene
-	#
+	# Determine how to respond based on current conditions                   #
 	##########################################################################
 
+	# Determine closest row to ball and closest row to future position of ball (next 3 frames)
+	closestRow = fb.getClosestRow(fb.currentPosition[0])
+	fb.getControllingRow()
+	projectedRow = fb.getClosestRow(fb.currentPosition[0] + 3 * fb.deltaX)
 
 
+	# Check if ball is coming towards us and will change possession within next 3 frames
+	if projectedRow < closestRow:
 
-	# Check if the ball is coming towards us
-	#if fb.deltaX < 0:
+		# Reset counter
+		idleFrames = 0
 
-		# Check if ball is heading towards the LEFT wall
-		#if fb.projectedWallPosition[0] = 0:
+		# Loop through each row.
+		for row in [0, 1, 3, 5]:
 
-			# Check for shot on goal
-			# We calculate this if the LEFT wall is the next intersecting wall
-			# and the intersecting point is between the bounds of the goal
-			#if fb.projectedWallPosition[1] > fb.vars["goalLower"] and fb.projectedWallPosition[1] < fb.vars["goalUpper"]:
-				#fb.log("[INFO] Shot on goal. All rows block if possible!")
+			# For rows in between ball and goal, calculate direct or indirect interception point.
+			if row < closestRow:
 
-				# If the ball is heading towards our goal, find out how many more frames before the ball reaches our goal
-				#numFramesUntilGoal = fb.currentPosition[0] // fb.deltaX
+				# Determine intersecting y-coordinate based on x-coordinate
+				projectedY = fb.getIntersectingY(fb.vars["rowPosition"][row])
 
-				# Move goalie to block
-				#f0.moveTo(fb.projectedWallPosition[1])
+				# If row can intercept, move to intercept. Otherwise, do not move.
+				currentYForRow = 0
+				numFramesUntilRow = (fb.vars["rowPosition"][row] - fb.currentPosition[0] // fb.deltaX
+				yDistanceNeededToMove = abs(fb.currentPosition[1] - projectedY)
+				numFramesNeededToMove = yDistanceNeededToMove // maxYSpeedOfRow
+				if numFramesNeededToMove < numFramesUntilRow:
+					fb.log("[INFO] Row{} move to intercept at {}".format(row, projectedY))
+					players[row].moveTo(projectedY)
+				else:
+					fb.log("[INFO] Row{} not able to intercept at {}, do nothing".format(row, projectedY))
 
-				# Move defense to block, if needed
-				#if fb.currentPosition[0] > fb.vars["foosmenRED"][1]:
-					#f1.moveTo(fb.getIntersectingCoordinate(fb.vars["foosmenRED"][1])
-
-				# Move midfielders to block, if needed
-				#if fb.currentPosition[0] > fb.vars["foosmenRED"][2]:
-					#f2.moveTo(fb.getIntersectingCoordinate(fb.vars["foosmenRED"][2])
-
-				# Move offense to block, if needed
-				#if fb.currentPosition[0] > fb.vars["foosmenRED"][3]:
-					#f3.moveTo(fb.getIntersectingCoordinate(fb.vars["foosmenRED"][3])
-
-
-			# There is not a shot on goal, so this means it will hit the back wall
-			#else:
-				#fb.log("[INFO] Shot towards back wall. Applicable rows try to block.")
+			# For rows not in between ball and goal, move to default defensive position.
+			else:
+				fb.log("[INFO] Row{} not in between ball and goal, move to default position".format(row))
+				players[row].defaultPosition()
 
 
-		# The ball is coming towards us, but will not hit the back wall, so it will
-		# either hit the TOP or BOTTOM wall. Check for this and determine how it will bounce
-		#elif fb.projectedWallPosition[1] = 0 or fb.projectedWallPosition[1] == fb.vars["height"]:
-		#else:
-			#fb.log("[INFO] Shot towards TOP or BOTTOM wall. Determine bounce coordinates and attempt to block.")
+	# Opponent is in control of ball and the ball is not moving towards our goal
+	elif fb.controllingRow in [2, 4, 6, 7]:
+
+		# Reset counter
+		idleFrames = 0
+
+		# Move all rows to default defensive position
+		for row in [0, 1, 3, 5]:
+			players[row].defaultDefensivePosition()
 
 
+	# TODO: build out based on scenario
+	# For now, we basically just calculate the angle between current position and the opponent's goal, and shoot
+	# We are in control of ball and there is a direct or indirect opening between ball and opponent goal
+	# We are in control of ball, no path exists, and our offense is in control of ball
+	# We are in control of ball, no path exists, and our midfield is in control of ball
+	# We are in control of ball, no path exists, and our defense is in control of ball
+	# We are in control of ball, no path exists, and our goalie is in control of ball
+	elif fb.controllingRow in [0, 1, 3, 5]:
+
+		# Reset counter
+		idleFrames = 0
+
+		# Make sure ball will be ahead of players on next frame
+		if fb.projectedPosition[0] >= fb.vars["rowPosition"][fb.controllingRow]:
+
+			# Calculate optimal angle between ball and opponent's goal
+			tempX = self.vars["width"] - fb.currentPosition[0]
+			tempY = self.vars["height"] / 2 - fb.currentPosition[1]
+
+			# Calculate arc tangent (in radians) and convert to degrees
+			angle = math.atan2(tempX, tempY) / math.pi * 180
+
+			fb.log("[INFO] Row{} kick towards opponent goal at angle {}".format(row, angle))
+			players[row].moveAngle(angle)
+
+		else:
+			fb.log("[INFO] Row{} pause, since ball will not be ahead of row on next frame".format(row))
 
 
-	##########################################################################
-	#  Find out which row is in control of the ball,                         #
-	# calculates the position(s) required for each row,                      #
-	# detemines the movement(s) needed for each row,                         #
-	# and sends a signal to move the motor(s) based on the movement needed.  #
-	##########################################################################
+	# Neither player is in control of the ball
+	elif controllingRow is -1:
 
-	# Calculate the most likely position of the ball in the next frame
-	projectedX = fb.getProjectedX()
+		# Increment counter
+		idleFrames = idleFrames + 1
 
-	# Find out which foosmen row is most likely to control the ball next
-	closestRow = fb.getClosestRow(projectedX)
+		# If the number of idle frames exceeds threshold, pause game and show warning/error message
+		if idleFrames > 100:
+			fb.log("[INFO] Number of idle frames exceeds threshold, end game")
+			fb.gameIsActive = False
 
-	# Goalie
-	if closestRow == 0 and projectedX >= fb.vars["foosmenRED"][0]:
-		fb.log("[INFO] Goal row is in control of the ball")
-		fb.log("[MOTOR] Goal row KICK!")
-		#f0.rotateTo(75)
 
-	# Defense
-	elif closestRow == 1 and projectedX >= fb.vars["foosmenRED"][1]:
-		fb.log("[INFO] Defense row is in control of the ball")
-		fb.log("[MOTOR] Defense row KICK!")
-		#f1.rotateTo(75)
-
-	# Midfield
-	elif closestRow == 3 and projectedX >= fb.vars["foosmenRED"][2]:
-		fb.log("[INFO] Midfield row is in control of the ball")
-		fb.log("[MOTOR] Midfield row KICK!")
-		#f3.rotateTo(75)
-
-	# Offense
-	elif closestRow == 5 and projectedX >= fb.vars["foosmenRED"][3]:
-		fb.log("[INFO] Offense row is in control of the ball")
-		fb.log("[MOTOR] Offense row KICK!")
-		#f5.rotateTo(75)
+	# Something went wrong
+	else:
+		fb.log("[INFO] Controlling row: {}".format(controllingRow))
+		fb.log("[INFO] Something went wrong... exiting now")
+		fb.gameIsActive = False
 
 
 # Stop timer and display FPS information
@@ -275,10 +236,9 @@ print("Avg FPS: {:.2f}".format(fb.fps))
 print()
 
 # Release motors
-#f0.releaseMotors()
-#f1.releaseMotors()
-#f2.releaseMotors()
-#f3.releaseMotors()
+for i in [0, 1, 3, 5]:
+	players[i].releaseMotors()
+
 
 # Do a bit of cleanup
 # Stop camera, video file, and destroy all windows
