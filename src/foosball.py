@@ -659,7 +659,7 @@ class Foosball:
 
 
     # Determine intersecting y-coordinate based on x-coordinate
-    def getIntersectingY(self, xPos):
+    def getIntersectingYPos(self, xPos):
 
         # Calculate latest two coordinates for interpolation
         x2 = self.ballPositions[-1:][0][0]
@@ -668,6 +668,12 @@ class Foosball:
         y1 = y2 - self.deltaY
 
         yPos = self._interpolate(xPos, x2, y2, x1, y1)
+
+        # Intersecting yPos is out of bounds
+        while yPos < 0 or yPos > self.vars["height"]:
+            if yPos > self.vars["height"]:
+                yPos -= 2 * self.vars["height"]
+            yPos = abs(yPos)
 
         return int(yPos)
 

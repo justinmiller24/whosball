@@ -146,7 +146,7 @@ while fb.gameIsActive:
 			if row < closestRow:
 
 				# Determine intersecting y-coordinate based on x-coordinate
-				projectedY = fb.getIntersectingY(fb.vars["rowPosition"][row])
+				projectedY = fb.getIntersectingYPos(fb.vars["rowPosition"][row])
 
 				# If row can intercept, move to intercept. Otherwise, do not move.
 				currentYForRow = 0
@@ -173,7 +173,7 @@ while fb.gameIsActive:
 
 		# Move all rows to default defensive position
 		for row in [0, 1, 3, 5]:
-			players[row].defaultDefensivePosition()
+			players[row].defaultPosition()
 
 
 	# TODO: build out based on scenario
