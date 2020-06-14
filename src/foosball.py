@@ -32,6 +32,10 @@ class Foosball:
             'width': 640,                           # Table width (in pixels) -- this is the x max
             'height': 360,                          # Table height (in pixels) -- this is the y max
 
+            # Add additional spacing below picture for output display
+            'outputWidth': 640,                     # Output width is the same as table width
+            'outputHeight': 484,                    # Output height is 124px more than table height
+
             # The number of pixels per cm is constant (640 px / 118.745 cm)
             # This means 5.39 pixels represents 1 cm of actual distance on the table
             'pxPerCm': 5.39,                        # Pixels per cm (ratio)
@@ -253,7 +257,7 @@ class Foosball:
             self.log("[DEBUG] Update display begin")
 
         # Build output
-        out = np.zeros((self.vars["height"] + 124, self.vars["width"], 3), dtype="uint8")
+        out = np.zeros((self.vars["outputHeight"], self.vars["outputWidth"], 3), dtype="uint8")
         vPos = self.vars["height"] + 4
 
         # Output image

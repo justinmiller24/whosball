@@ -14,17 +14,17 @@ import datetime
 
 class Foosmen:
 
-    # Initialize foosmen rod
-    def __init__(self, id, numPlayers, playerSpacing, rodLength, playerWidth):
+    # Initialize foosmen row
+    def __init__(self, id, numPlayers, playerSpacing, rowLength, playerWidth):
 
         # The ID of each foosmen row goes from left to right (0-7)
         self.id = id
 
-        # The maximum position of each foosmen rod
-        self.maxPosition = rodLength
+        # The maximum position of each foosmen row
+        self.maxPosition = rowLength
 
         # The current position is used for linear motion
-        # 0 means the foosmen rod is all the way towards the side with the motors
+        # 0 means the foosmen row is all the way towards the side with the motors
         self.position = 0
 
         # The current angle is used for rotational motion
@@ -33,10 +33,10 @@ class Foosmen:
         # -90 degrees means the players are horizontal and facing downwards
         self.angle = 0
 
-        # The number of foosmen on each rod
+        # The number of foosmen on each row
         self.players = numPlayers
 
-        # The number of pixels between two players on each rod
+        # The number of pixels between two players on each row
         self.playerSpacing = playerSpacing
 
         # The width of each player, in pixels
@@ -93,26 +93,27 @@ class Foosmen:
         # Stepper motors are available as stepper1 and stepper2
         # stepper1 is made up of the M1 and M2 terminals and used for linear motion
         # stepper2 is made up of the M3 and M4 terminals and used for rotational motion
-        self.motors = MotorKit(address=motorAddr)
+        #self.motors = MotorKit(address=motorAddr)
+        self.motors = None
 
         # Release motors so they can spin freely
-        self.motors.stepper1.release()
-        self.motors.stepper2.release()
+        #self.motors.stepper1.release()
+        #self.motors.stepper2.release()
 
         # Warm up motors
         self.log("[INFO] Warm up linear motors")
-        for i in range(25):
-            self.motors.stepper1.onestep(direction=stepper.FORWARD, style=stepper.SINGLE)
-        for i in range(25):
-            self.motors.stepper1.onestep(direction=stepper.BACKWARD, style=stepper.SINGLE)
+        #for i in range(25):
+            #self.motors.stepper1.onestep(direction=stepper.FORWARD, style=stepper.SINGLE)
+        #for i in range(25):
+            #self.motors.stepper1.onestep(direction=stepper.BACKWARD, style=stepper.SINGLE)
 
         self.log("[INFO] Warm up rotational motors")
-        for i in range(50):
-            self.motors.stepper2.onestep(direction=stepper.FORWARD, style=stepper.SINGLE)
-        for i in range(100):
-            self.motors.stepper2.onestep(direction=stepper.BACKWARD, style=stepper.SINGLE)
-        for i in range(50):
-            self.motors.stepper2.onestep(direction=stepper.FORWARD, style=stepper.SINGLE)
+        #for i in range(50):
+            #self.motors.stepper2.onestep(direction=stepper.FORWARD, style=stepper.SINGLE)
+        #for i in range(100):
+            #self.motors.stepper2.onestep(direction=stepper.BACKWARD, style=stepper.SINGLE)
+        #for i in range(50):
+            #self.motors.stepper2.onestep(direction=stepper.FORWARD, style=stepper.SINGLE)
 
         return self
 
@@ -122,13 +123,13 @@ class Foosmen:
 
         # Make sure next position is not out of bounds
         if self.position < self.pixelsPerStep:
-            self.log("[ERROR] Cannot move foosmen rod since it is past min position")
+            self.log("[ERROR] Cannot move foosmen row since it is past min position")
             return
 
         # Move backward one step
         self.position -= self.pixelsPerStep
-        self.motors.stepper1.onestep(direction=stepper.BACKWARD, style=stepper.SINGLE)
-        self.log("[INFO] Move rod {} one step BACKWARD, position is now: {}".format(self.id, self.position))
+        #self.motors.stepper1.onestep(direction=stepper.BACKWARD, style=stepper.SINGLE)
+        self.log("[INFO] Move row {} one step BACKWARD, position is now: {}".format(self.id, self.position))
 
 
     # Move linear motor one step FORWARD
@@ -136,13 +137,13 @@ class Foosmen:
 
         # Make sure next position is not out of bounds
         if self.position + self.pixelsPerStep > self.maxPosition:
-            self.log("[ERROR] Cannot move foosmen rod since it is past max position")
+            self.log("[ERROR] Cannot move foosmen row since it is past max position")
             return
 
         # Move forward one step
         self.position += self.pixelsPerStep
-        self.motors.stepper1.onestep(direction=stepper.FORWARD, style=stepper.SINGLE)
-        self.log("[INFO] Move rod {} one step FORWARD, position is now: {}".format(self.id, self.position))
+        #self.motors.stepper1.onestep(direction=stepper.FORWARD, style=stepper.SINGLE)
+        self.log("[INFO] Move row {} one step FORWARD, position is now: {}".format(self.id, self.position))
 
 
     # Move linear motor to get to specific position
@@ -150,33 +151,33 @@ class Foosmen:
 
         # Make sure new position is different
         if pos == self.position:
-            self.log("[ERROR] No need to move foosmen rod {} since we are already at position: {}".format(self.id, pos))
+            self.log("[ERROR] No need to move foosmen row {} since we are already at position: {}".format(self.id, pos))
             return
 
         # Make sure position is not out of bounds
         if pos > self.maxPosition:
-            self.log("[ERROR] Cannot move foosmen rod {} to position {} since it is past max position: {}".format(self.id, pos, self.maxPosition))
+            self.log("[ERROR] Cannot move foosmen row {} to position {} since it is past max position: {}".format(self.id, pos, self.maxPosition))
             return
 
         # Need to move forward
         if pos > self.position:
             numSteps = int((pos - self.position) * self.pixelsPerStep)
-            self.log("[MOTOR] Move rod {} {} steps FORWARD to position {}".format(self.id, numSteps, pos))
+            self.log("[MOTOR] Move row {} {} steps FORWARD to position {}".format(self.id, numSteps, pos))
             for i in range(numSteps):
                 self.moveForward()
 
         # Need to move backward
         else:
             numSteps = int((self.position - pos) * self.pixelsPerStep)
-            self.log("[MOTOR] Move rod {} {} steps BACKWARD to position {}".format(self.id, numSteps, pos))
+            self.log("[MOTOR] Move row {} {} steps BACKWARD to position {}".format(self.id, numSteps, pos))
             for i in range(numSteps):
                 self.moveBackward()
 
 
     # Release motors so they can spin freely
     def releaseMotors(self):
-        self.motors.stepper1.release()
-        self.motors.stepper2.release()
+        #self.motors.stepper1.release()
+        #self.motors.stepper2.release()
 
 
     # Move rotational motor one step BACKWARD
@@ -186,14 +187,14 @@ class Foosmen:
         # Min angle is -90 degrees
         # There are 200 steps per revolution, so each step is 1.8 degrees
         if self.angle < -88.2:
-            self.log("[ERROR] Cannot rotate foosmen rod since it is past min angle")
+            self.log("[ERROR] Cannot rotate foosmen row since it is past min angle")
             return
 
         # Move backward one step
         # There are 200 steps per revolution, so each step is 1.8 degrees
         self.angle -= (360 / self.stepsPerRevolution)
-        self.motors.stepper2.onestep(direction=stepper.BACKWARD, style=stepper.SINGLE)
-        self.log("[INFO] Rotate rod {} one step BACKWARD, angle is now: {}".format(self.id, self.angle))
+        #self.motors.stepper2.onestep(direction=stepper.BACKWARD, style=stepper.SINGLE)
+        self.log("[INFO] Rotate row {} one step BACKWARD, angle is now: {}".format(self.id, self.angle))
 
 
     # Move rotational motor one step FORWARD
@@ -203,14 +204,14 @@ class Foosmen:
         # Max angle is +90 degrees
         # There are 200 steps per revolution, so each step is 1.8 degrees
         if self.angle > 88.2:
-            self.log("[ERROR] Cannot rotate foosmen rod since it is past max angle")
+            self.log("[ERROR] Cannot rotate foosmen row since it is past max angle")
             return
 
         # Move forward one step
         # There are 200 steps per revolution, so each step is 1.8 degrees
         self.angle += (360 / self.stepsPerRevolution)
-        self.motors.stepper2.onestep(direction=stepper.FORWARD, style=stepper.SINGLE)
-        self.log("[INFO] Rotate rod {} one step FORWARD, angle is now: {}".format(self.id, self.angle))
+        #self.motors.stepper2.onestep(direction=stepper.FORWARD, style=stepper.SINGLE)
+        self.log("[INFO] Rotate row {} one step FORWARD, angle is now: {}".format(self.id, self.angle))
 
 
     # Move rotational motor to get to specific angle
@@ -218,25 +219,25 @@ class Foosmen:
 
         # Make sure new angle is different
         if angle == self.angle:
-            self.log("[ERROR] No need to rotate foosmen rod {} since we are already at angle: {}".format(self.id, angle))
+            self.log("[ERROR] No need to rotate foosmen row {} since we are already at angle: {}".format(self.id, angle))
             return
 
         # Make sure angle is not out of bounds
         if angle < -90 or angle > 90:
-            self.log("[ERROR] Cannot rotate foosmen rod {} to angle {} since it is past min/max angle".format(self.id, angle))
+            self.log("[ERROR] Cannot rotate foosmen row {} to angle {} since it is past min/max angle".format(self.id, angle))
             return
 
         # Need to rotate forward
         if angle > self.angle:
             numSteps = int((angle - self.angle) * self.stepsPerRevolution / 360)
-            self.log("[MOTOR] Rotate rod {} {} steps FORWARD to angle {}".format(self.id, numSteps, angle))
+            self.log("[MOTOR] Rotate row {} {} steps FORWARD to angle {}".format(self.id, numSteps, angle))
             for i in range(numSteps):
                 self.rotateForward()
 
         # Need to rotate backward
         else:
             numSteps = int((self.angle - angle) * self.stepsPerRevolution / 360)
-            self.log("[MOTOR] Rotate rod {} {} steps BACKWARD to angle {}".format(self.id, numSteps, angle))
+            self.log("[MOTOR] Rotate row {} {} steps BACKWARD to angle {}".format(self.id, numSteps, angle))
             for i in range(numSteps):
                 self.rotateBackward()
 

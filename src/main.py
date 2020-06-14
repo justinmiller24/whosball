@@ -39,20 +39,16 @@ print("Initialize game")
 fb = Foosball(args["debug"]).start()
 
 # Initialize players and motors
+# The goalie (0) row has 3 men, spaced 7 1/8" apart, and 8 1/2" of linear movement
+# The defense (1) row has 2 men, spaced 9 5/8" apart, and 13 3/8" of linear movement
+# The midfield (3) row has 5 men, spaced 5" apart, and 4 1/4" of linear movement
+# The offense (5) row has 3 men, spaced 7 1/8" apart, and 8 1/2" of linear movement
 print("Initialize players and motors")
 players = [None] * 8
-# Goalie
-# The 1st row has 3 men, spaced 7 1/8" apart, and 8 1/2" of linear movement
-#players[0] = Foosmen(0, 3, fb.vars["row0"][0], fb.vars["row0"][1], fb.vars["foosmenWidth"]).start()
-# Defense
-# The 2nd row has 2 men, spaced 9 5/8" apart, and 13 3/8" of linear movement
-#players[1] = Foosmen(1, 2, fb.vars["row1"][0], fb.vars["row1"][1], fb.vars["foosmenWidth"]).start()
-# Midfield
-# The 3rd row has 5 men, spaced 5" apart, and 4 1/4" of linear movement
-#players[3] = Foosmen(2, 5, fb.vars["row2"][0], fb.vars["row2"][1], fb.vars["foosmenWidth"]).start()
-# Offense
-# The 4th row has 3 men, spaced 7 1/8" apart, and 8 1/2" of linear movement
-#players[5] = Foosmen(3, 3, fb.vars["row3"][0], fb.vars["row3"][1], fb.vars["foosmenWidth"]).start()
+players[0] = Foosmen(0, 3, fb.vars["row0"][0], fb.vars["row0"][1], fb.vars["foosmenWidth"]).start()
+players[1] = Foosmen(1, 2, fb.vars["row1"][0], fb.vars["row1"][1], fb.vars["foosmenWidth"]).start()
+players[3] = Foosmen(2, 5, fb.vars["row2"][0], fb.vars["row2"][1], fb.vars["foosmenWidth"]).start()
+players[5] = Foosmen(3, 3, fb.vars["row3"][0], fb.vars["row3"][1], fb.vars["foosmenWidth"]).start()
 
 # Timer for number of frames in holding pattern
 idleFrames = 0
@@ -63,7 +59,7 @@ writer = None
 if args["output"]:
 	print("Initialize video output")
 	fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
-	writer = cv2.VideoWriter(args["output"], fourcc, 30, (fb.vars["width"], fb.vars["height"] + 124), True)
+	writer = cv2.VideoWriter(args["output"], fourcc, 30, (fb.vars["outputWidth"], fb.vars["outputHeight"]), True)
 
 
 # Main loop
