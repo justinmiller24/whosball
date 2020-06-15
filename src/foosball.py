@@ -751,7 +751,7 @@ class Foosball:
 
 
     # Get projected X coordinate of ball, if it exists
-    def (self):
+    def getProjectedX(self):
         if self.projectedPosition is None:
             self.projectedX = None
         else:
