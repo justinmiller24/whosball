@@ -150,7 +150,7 @@ while fb.gameIsActive:
 
 				# If row can intercept, move to intercept. Otherwise, do not move.
 				currentYForRow = 0
-				numFramesUntilRow = (fb.vars["rowPosition"][row] - fb.currentPosition[0] // fb.deltaX
+				numFramesUntilRow = (fb.vars["rowPosition"][row] - fb.currentPosition[0]) // fb.deltaX
 				yDistanceNeededToMove = abs(fb.currentPosition[1] - projectedY)
 				numFramesNeededToMove = yDistanceNeededToMove // maxYSpeedOfRow
 				if numFramesNeededToMove < numFramesUntilRow:
