@@ -634,7 +634,7 @@ class Foosball:
             self.log("[DEBUG] Get Controlling Row begin")
 
         # Loop through all rows to determine which is closest to current xPos
-        xPos = fb.currentPosition[0]
+        xPos = self.ballPositions[-1:][0][0]
         self.controllingRow = -1
 
         # Loop through rows to determine if ball is within boundaries of any row
