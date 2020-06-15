@@ -118,6 +118,11 @@ class Foosmen:
         return self
 
 
+    # Set to default defensive position
+    def defaultPosition(self):
+        return
+
+
     # Move linear motor one step BACKWARD
     def moveBackward(self):
 

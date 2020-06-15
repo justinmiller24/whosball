@@ -128,9 +128,10 @@ while fb.gameIsActive:
 	##########################################################################
 
 	# Determine closest row to ball and closest row to future position of ball (next 3 frames)
-	closestRow = fb.getClosestRow(fb.currentPosition[0])
+	currentPosition = fb.ballPositions[-1:][0]
+	closestRow = fb.getClosestRow(currentPosition[0])
 	fb.getControllingRow()
-	projectedRow = fb.getClosestRow(fb.currentPosition[0] + 3 * fb.deltaX)
+	projectedRow = fb.getClosestRow(currentPosition[0] + 3 * fb.deltaX)
 
 
 	# Check if ball is coming towards us and will change possession within next 3 frames
@@ -150,8 +151,8 @@ while fb.gameIsActive:
 
 				# If row can intercept, move to intercept. Otherwise, do not move.
 				currentYForRow = 0
-				numFramesUntilRow = (fb.vars["rowPosition"][row] - fb.currentPosition[0]) // fb.deltaX
-				yDistanceNeededToMove = abs(fb.currentPosition[1] - projectedY)
+				numFramesUntilRow = (fb.vars["rowPosition"][row] - currentPosition[0]) // fb.deltaX
+				yDistanceNeededToMove = abs(currentPosition[1] - projectedY)
 				numFramesNeededToMove = yDistanceNeededToMove // maxYSpeedOfRow
 				if numFramesNeededToMove < numFramesUntilRow:
 					fb.log("[INFO] Row{} move to intercept at {}".format(row, projectedY))
