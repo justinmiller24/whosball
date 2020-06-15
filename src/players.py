@@ -176,6 +176,7 @@ class Foosmen:
 
     # Release motors so they can spin freely
     def releaseMotors(self):
+        return
         #self.motors.stepper1.release()
         #self.motors.stepper2.release()
 
