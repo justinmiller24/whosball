@@ -27,7 +27,7 @@ sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
 sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.7 2
 
 # Install packages
-sudo apt install -y git i2c-tools python3-gpiozero python3-numpy python3-pip python3-smbus vim
+sudo apt install -y git gpac i2c-tools python3-gpiozero python3-numpy python3-pip python3-smbus vim
 pip3 install --upgrade imutils scipy
 
 # Enable camera, SSH, and I2C interface
