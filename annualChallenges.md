@@ -25,7 +25,7 @@ While I did not formalize the concept of doing an annual challenge until the las
 | 2003 | Knightro | Become the [college mascot](https://en.wikipedia.org/wiki/Knightro) at UCF |
 | 2004 |  |  |
 | 2005 | Thesis | Complete thesis on the Security of Quantum Cryptography |
-| 2006 | Biking | Complete a 75 mile bike ride in one day |
+| 2006 | Biking | Complete 75 mile bike ride in one day |
 | 2007 | 26.2 | Complete the [Disney Marathon](https://www.wdwmagic.com/events/walt-disney-world-marathon.htm) (26.2 mile run) |
 | 2008 | RockBand | Teach myself how to play the drums from [RockBand](http://www.rockband4.com/) |
 | 2009 | Blazin | Sample every hot sauce from [Buffalo Wild Wings](https://www.buffalowildwings.com/en/food/sauces/blazin-side-of-sauce/) in progressing order (mildest to hottest) |
@@ -33,7 +33,7 @@ While I did not formalize the concept of doing an annual challenge until the las
 | 2011 |  |  |
 | 2012 | Double Meat | Increase the number of patties by one every time I visit [In N Out](https://www.in-n-out.com/) Burger (record - 7)|
 | 2013 | ESPN | Appear from the sideline of a football game with a sign on ESPN |
-| 2014 | Woodworking | Learn basic woodworking and design and build an octagon dining room table |
+| 2014 | Carpenter | Learn basic woodworking and design and build an octagon dining room table |
 | 2015 | Push Ups | Complete 100 consecutive push ups |
 | 2016 |  |  |
 | 2017 | Bookworm | Read 50 books in one year |
