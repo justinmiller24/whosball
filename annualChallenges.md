@@ -13,7 +13,7 @@ While I did not formalize the concept of doing an annual challenge until the las
 
 | Year | Challenge | Description |
 | --- | --- | --- |
-| 1994 | Pi Day | Memorize [Pi](https://en.wikipedia.org/wiki/Pi) to 314 digits |
+| 1994 | Pi Day | Memorize [Pi](https://en.wikipedia.org/wiki/Pi) to 314 digits (record: 408 digits) |
 | 1995 | Letters | Compete and win the school spelling bee |
 | 1996 | Strings | Teach myself to play the violin and perform in an orchestra |
 | 1997 | Computer | Built a computer from scratch |
@@ -25,16 +25,16 @@ While I did not formalize the concept of doing an annual challenge until the las
 | 2003 | Knightro | Become the [college mascot](https://en.wikipedia.org/wiki/Knightro) at UCF |
 | 2004 |  |  |
 | 2005 | Thesis | Complete thesis on the Security of Quantum Cryptography |
-| 2006 | Biking | Complete 75 mile bike ride in one day |
+| 2006 | Biking | Complete 75 mile bike ride in one day (record: 84 miles) |
 | 2007 | 26.2 | Complete the [Disney Marathon](https://www.wdwmagic.com/events/walt-disney-world-marathon.htm) (26.2 mile run) |
 | 2008 | RockBand | Teach myself how to play the drums from [RockBand](http://www.rockband4.com/) |
 | 2009 | Blazin | Sample every hot sauce from [Buffalo Wild Wings](https://www.buffalowildwings.com/en/food/sauces/blazin-side-of-sauce/) in progressing order (mildest to hottest) |
 | 2010 | 70.3 | Complete a [1/2 Ironman race](https://www.ironman.com/im703-races) (1.2 mile swim, 56 mile bike, 13.1 mile run) |
 | 2011 |  |  |
-| 2012 | Double Meat | Increase the number of patties by one every time I visit [In N Out](https://www.in-n-out.com/) Burger (record - 7)|
+| 2012 | Double Meat | Increase the number of patties by one every time I visit [In N Out](https://www.in-n-out.com/) Burger (record: 7)|
 | 2013 | ESPN | Appear from the sideline of a football game with a sign on ESPN |
 | 2014 | Carpenter | Learn basic woodworking and design and build an octagon dining room table |
-| 2015 | Push Ups | Complete 100 consecutive push ups |
+| 2015 | Push Ups | Complete 100 consecutive push ups (record: 103) |
 | 2016 |  |  |
 | 2017 | Bookworm | Read 50 books in one year |
 | 2018 | Ninja | Try out for [American Ninja Warrior](https://www.nbc.com/american-ninja-warrior) |
