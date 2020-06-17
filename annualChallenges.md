@@ -20,7 +20,7 @@ While I did not formalize the concept of doing an annual challenge until the las
 | 1998 | N/A | N/A |
 | 1999 | SAT | Get a perfect score on the math portion of the [SAT](https://collegereadiness.collegeboard.org/sat) |
 | 2000 | Robotics | Build a robot capable of performing [Für Elise](https://en.wikipedia.org/wiki/F%C3%BCr_Elise) |
-| 2001 | Rubiks | Complete a randomly sorted [Rubik's Cube](https://www.rubiks.com/en-us/rubik-s-cube-3x3.html) in under 90 seconds |
+| 2001 | Rubiks | Solve a mixed up [Rubik's Cube](https://www.rubiks.com/en-us/rubik-s-cube-3x3.html) in under 90 seconds |
 | 2002 | Juggling | Learn how to juggle with 3 objects |
 | 2003 | Knightro | Become the [college mascot](https://en.wikipedia.org/wiki/Knightro) at UCF |
 | 2004 | N/A | N/A |
@@ -29,14 +29,14 @@ While I did not formalize the concept of doing an annual challenge until the las
 | 2007 | 26.2 | Complete the [Disney Marathon](https://www.wdwmagic.com/events/walt-disney-world-marathon.htm) (26.2 mile run) |
 | 2008 | RockBand | Teach myself how to play the drums from [RockBand](http://www.rockband4.com/) |
 | 2009 | Blazin | Sample every flavor of hot sauce from [Buffalo Wild Wings](https://www.buffalowildwings.com/en/food/sauces/blazin-side-of-sauce/) in progressing order (mildest to hottest) |
-| 2010 | 70.3 | Complete a [1/2 ironman race](https://www.ironman.com/im703-races) (1.2 mile swim, 56 mile bike, 13.1 mile run) |
+| 2010 | 70.3 | Complete a [1/2 ironman](https://www.ironman.com/im703-races) race (1.2 mile swim, 56 mile bike, 13.1 mile run) |
 | 2011 | N/A | N/A |
-| 2012 | Double Meat | Add one extra patty every time I ordered a burger from [In N Out](https://www.in-n-out.com/) |
-| 2013 | ESPN | Appear from the sideline of a football game live on ESPN |
+| 2012 | Double Meat | Order a burger with one extra patty every time I visit [In N Out](https://www.in-n-out.com/) Burger |
+| 2013 | ESPN | Appear from the sideline of a football game with a sign on ESPN |
 | 2014 | Woodworking | Learn basic woodworking and design and build an octagon dining room table |
 | 2015 | Push Ups | Complete 100 consecutive push ups |
 | 2016 | N/A | N/A |
 | 2017 | Bookworm | Read 50 books in one year |
 | 2018 | Ninja | Try out for [American Ninja Warrior](https://www.nbc.com/american-ninja-warrior) |
-| 2019 | Mud Run | Complete [Conquer the Gauntlet](https://www.conquerthegauntlet.com/) |
-| 2020 | Foosball | Build a foosball table capable of beating a human at the game of [foosball](https://en.wikipedia.org/wiki/Table_football) |
+| 2019 | Mud Run | Complete a mud obstacle run ([Conquer the Gauntlet](https://www.conquerthegauntlet.com/)) |
+| 2020 | Foosball | Build an automated [foosball](https://en.wikipedia.org/wiki/Table_football) table capable of beating a human |
