@@ -31,7 +31,7 @@ While I did not formalize the concept of doing an annual challenge until the las
 | 2009 | Blazin | Sample every hot sauce from [Buffalo Wild Wings](https://www.buffalowildwings.com/en/food/sauces/blazin-side-of-sauce/) in progressing order (mildest to hottest) |
 | 2010 | 70.3 | Complete a [1/2 Ironman race](https://www.ironman.com/im703-races) (1.2 mile swim, 56 mile bike, 13.1 mile run) |
 | 2011 |  |  |
-| 2012 | Double Meat | Order a burger with one extra patty every time I visit [In N Out](https://www.in-n-out.com/) Burger |
+| 2012 | Double Meat | Increase the number of patties by one every time I visit [In N Out](https://www.in-n-out.com/) Burger (record - 7)|
 | 2013 | ESPN | Appear from the sideline of a football game with a sign on ESPN |
 | 2014 | Woodworking | Learn basic woodworking and design and build an octagon dining room table |
 | 2015 | Push Ups | Complete 100 consecutive push ups |
