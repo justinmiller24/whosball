@@ -21,7 +21,7 @@ While I did not formalize the concept of doing an annual challenge until the las
 | 1999 | SAT | Get a perfect score on the math portion of the [SAT](https://collegereadiness.collegeboard.org/sat) |
 | 2000 | Robotics | Build a robot capable of performing [Für Elise](https://en.wikipedia.org/wiki/F%C3%BCr_Elise) |
 | 2001 | Rubiks | Solve a mixed up [Rubik's Cube](https://www.rubiks.com/en-us/rubik-s-cube-3x3.html) in under 90 seconds |
-| 2002 | Juggling | Learn how to juggle with 3 objects |
+| 2002 | Juggling | Learn how to juggle (record: 3 objects) |
 | 2003 | Knightro | Become the [college mascot](https://en.wikipedia.org/wiki/Knightro) at UCF |
 | 2004 |  |  |
 | 2005 | Thesis | Complete thesis on the Security of Quantum Cryptography |
