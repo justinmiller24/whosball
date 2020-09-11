@@ -157,8 +157,8 @@ class Foosball:
 
         # Create foosmen "masks" for RED and BLUE players
         # We do this once, so that we don't need to recalculate it on every single frame
-        self.vars["foosmenREDMask"] = self._getMaskForPlayers(self.vars["foosmenRED"])
-        self.vars["foosmenBLUEMask"] = self._getMaskForPlayers(self.vars["foosmenBLUE"])
+        #self.vars["foosmenREDMask"] = self._getMaskForPlayers(self.vars["foosmenRED"])
+        #self.vars["foosmenBLUEMask"] = self._getMaskForPlayers(self.vars["foosmenBLUE"])
 
         # Start game
         self.gameIsActive = True
@@ -487,11 +487,11 @@ class Foosball:
 
         # Set variables based on mode (RED or BLUE)
         if mode == "RED":
-            foosmenMask = self.vars["foosmenREDMask"]
+            #foosmenMask = self.vars["foosmenREDMask"]
             contourRGB = self.vars["foosmenRedContour"]
             rectangleRGB = self.vars["foosmenRedBox"]
         else:
-            foosmenMask = self.vars["foosmenBLUEMask"]
+            #foosmenMask = self.vars["foosmenBLUEMask"]
             contourRGB = self.vars["foosmenBlueContour"]
             rectangleRGB = self.vars["foosmenBlueBox"]
 
