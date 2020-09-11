@@ -522,73 +522,49 @@ class Foosball:
         # Detect markers
         # `corners` is the list of corners returned in clockwise order: top left, top right, bottom right, bottom left
         # `ids` is a list of marker IDs of each of the detected markers
-        #gray = cv2.cvtColor(origImg, cv2.COLOR_BGR2GRAY)
-        #arucoDict = aruco.Dictionary_get(aruco.DICT_4X4_50)
-        #arucoParameters =  aruco.DetectorParameters_create()
-        #corners, ids, rejectedImgPoints = aruco.detectMarkers(gray, arucoDict, parameters=arucoParameters)
+        gray = cv2.cvtColor(origImg, cv2.COLOR_BGR2GRAY)
+        arucoDict = aruco.Dictionary_get(aruco.DICT_4X4_50)
+        arucoParameters =  aruco.DetectorParameters_create()
+        corners, ids, rejectedImgPoints = aruco.detectMarkers(gray, arucoDict, parameters=arucoParameters)
         #print(ids)
 
         # Display detected markers
-        #if ids is not None:
-            #self.log("[INFO] ArUco markers detected:")
-            #self.log(ids)
+        if ids is not None:
             #output = aruco.drawDetectedMarkers(output, corners, ids)
 
-            # Default to existing coordinates
-            #tL, tR, bR, bL = self.tableCoords
-
-            # Top Left
-            #if ids[0]:
-                #marker = np.squeeze(corners[0])
-                #x, y = marker[0]
-                #tL = (x, y)
-                #if self.debug:
-                    #self.log("[DEBUG] ArUco Marker exists in Top Left")
-                    #self.log(tL)
-
-            # Top Right
-            #if ids[1]:
-                #marker = np.squeeze(corners[1])
-                #x, y = marker[1]
-                #tR = (x, y)
-                #if self.debug:
-                    #self.log("[DEBUG] ArUco Marker exists in Top Right")
-                    #self.log(tR)
-
-            # Bottom Right
-            #if ids[2]:
-                #marker = np.squeeze(corners[2])
-                #x, y = marker[2]
-                #bR = (x, y)
-                #if self.debug:
-                    #self.log("[DEBUG] ArUco Marker exists in Bottom Right")
-                    #self.log(bR)
-
-            # Bottom Left
-            #if ids[3]:
-                #marker = np.squeeze(corners[3])
-                #x, y = marker[3]
-                #bL = (x, y)
-                #if self.debug:
-                    #self.log("[DEBUG] ArUco Marker exists in Bottom Left")
-                    #self.log(bL)
-
-            #self.tableCoords = [tL, tR, bR, bL]
-            #if self.debug:
-                #self.log("[DEBUG] Table boundaries (tL, tR, bR, bL): {}".format(self.tableCoords))
-            #for i in range(0, len(ids)):
-                #id = str(ids[i][0])
-
-                #marker = np.squeeze(corners[i])
-
-                #x0, y0 = marker[0]
+            # Iterate through detected markers
+            for i in range(0, len(ids)):
+                id = str(ids[i][0])
+                marker = np.squeeze(corners[i])
+                x0, y0 = marker[0]
                 #x2, y2 = marker[2]
                 #x = int((x0 + x2)/2)
                 #y = int((y0 + y2)/2)
-
                 #result.add((id, x, y))
-        #else:
-            #self.log("[INFO] No ArUco markers detected, use defaults")
+                self.log("[DEBUG] Marker ID {}: {}".format(id, marker[0]))
+
+            # Overwrite default table boundaries only if we detected exactly 4 corners
+            if len(ids) == 4:
+
+                #self.tableCoords = [tL, tR, bR, bL]
+                self.tableCoords = []
+
+                # Iterate through detected markers
+                for i in range(0, len(ids)):
+                    marker = np.squeeze(corners[i])
+                    #x0, y0 = marker[0]
+                    self.tableCoords.append(marker[0])
+
+                # Flatten marker corner array so all corners are grouped together in the same dimension of the array
+                # This is needed for the `findHomography` function to work properly
+                #these_res_corners = np.concatenate(corners, axis = 1)
+                #these_ref_corners = np.concatenate([refCorners[x] for x in idx], axis = 1)
+
+            else:
+                self.log("[INFO] ArUco markers detected but not 4 total, use defaults")
+
+        else:
+            self.log("[INFO] No ArUco markers detected, use defaults")
 
         # Apply projective transformation (also known as "perspective transformation" or "homography") to the
         # original image. This type of transformation was chosen because it preserves straight lines.
