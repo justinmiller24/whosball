@@ -362,7 +362,6 @@ class Foosball:
             self.log("[INFO] TODO: Foosball was previously detected. Localize search to save time here...")
 
         origImg = self.frame.copy()
-        self.outputImg = self.frame.copy()
 
         # Convert to HSV color range
         self.blurred = cv2.GaussianBlur(origImg, (11, 11), 0)
@@ -458,6 +457,26 @@ class Foosball:
 
         if self.debug:
             self.log("[DEBUG] Detect Foosball end")
+
+
+    # Take current image, find goal using location detetction,
+    # and overlay rectangular area on output image
+    def findGoal(self):
+        if self.debug:
+            self.log("[DEBUG] Find Goal begin")
+
+        # Goal boundaries
+        tL = (self.vars["width"] - 10, self.vars["goalUpper"])
+        tR = (self.vars["width"], self.vars["goalUpper"])
+        bR = (self.vars["width"], self.vars["goalLower"])
+        bL = (self.vars["width"] - 10, self.vars["goalLower"])
+        goalCoords = [tL, tR, bR, bL]
+
+        # Draw rectangle around goal on the frame
+        self.outputImg = cv2.polylines(self.outputImg, np.int32(goalCoords), True, (0,0,0) 10)
+
+        if self.debug:
+            self.log("[DEBUG] Find Goal end")
 
 
     # Take current image, perform object recognition,
@@ -574,6 +593,9 @@ class Foosball:
         finalCoords = np.array([(0, 0), (self.vars['width'] - 1, 0), (self.vars['width'] - 1, self.vars['height'] - 1), (0, self.vars['height'] - 1)], dtype="float32")
         M = cv2.getPerspectiveTransform(self.origCoords, finalCoords)
         self.frame = cv2.warpPerspective(origImg, M, (self.vars['width'], self.vars['height']))
+
+        # Save output frame, to be used later for overlays and output display
+        self.outputImg = self.frame.copy()
 
         if self.debug:
             self.log("[DEBUG] Detect table end")

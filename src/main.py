@@ -83,6 +83,9 @@ while fb.gameIsActive:
 	# then crop our live stream to these specific points.
 	fb.findTable()
 
+	# Find goal and display overlay
+	fb.findGoal()
+
 	# Find location of the foosball
 	fb.findBall()
 
