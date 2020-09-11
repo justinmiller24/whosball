@@ -490,10 +490,12 @@ class Foosball:
             #foosmenMask = self.vars["foosmenREDMask"]
             contourRGB = self.vars["foosmenRedContour"]
             rectangleRGB = self.vars["foosmenRedBox"]
+            foosmenRodArray = self.vars["foosmenRED"]
         else:
             #foosmenMask = self.vars["foosmenBLUEMask"]
             contourRGB = self.vars["foosmenBlueContour"]
             rectangleRGB = self.vars["foosmenBlueBox"]
+            foosmenRodArray = self.vars["foosmenBLUE"]
 
         # Get mask and apply mask to image
         # Create mask containing "only" the areas with the rods for RED/BLUE foosmen
@@ -517,14 +519,46 @@ class Foosball:
         # Detect foosmen using contours
         players = self._getContours(mask)
 
-        # Overlay contour and rectangle over each player
-        #self.playersImg = np.zeros((self.vars["height"], self.vars["width"], 3), dtype="uint8")
+        # Loop through players to filter out false positives
+        detectedPlayers = []
         for i in players:
 
-            # Get coordinates of bounding rectangle and draw rectangle on output image
+            # Get coordinates of bounding rectangle
             x, y, w, h = cv2.boundingRect(i)
-            cv2.drawContours(self.outputImg, [i], -1, contourRGB, -1)
-            cv2.rectangle(self.outputImg, (x, y), (x + w, y + h), rectangleRGB, 2)
+
+            # Draw rectangle on output image
+            #cv2.drawContours(self.outputImg, [i], -1, contourRGB, -1)
+            #cv2.rectangle(self.outputImg, (x, y), (x + w, y + h), rectangleRGB, 2)
+
+            # Filter contours that are adjacent to the top or bottom sides of the table
+            # Use `rowMargin` which stores the height of the "bumpers" at the ends of each foosmen row
+            if (y < self.vars["rowMargin"]) || (y > (self.vars["height"] - self.vars["rowMargin"])):
+                continue
+
+            # Filter contours with abnormal width (smaller than acceptable width)
+            if h < (self.vars["foosmenWidth"] - 5):
+                continue
+
+            # Filter contours that are not within an acceptable range of one of the foosmen rods
+            # Loop through each of the 4 foosmen rods for this color, and determine which rod this falls in, if any
+            # A player is considered within acceptable range of a foosmen row if the left and right bounds of that player fall on opposite sides of one of that foosmen row
+            for j in foosmenRodArray:
+                arrayPos = foosmenRodArray[j]
+                # TODO: Also ensure that it does not span more than self.vars["foosmenHeight"] pixels on either side of the foosmen row
+                if (x < arrayPos) && ((x + w) > arrayPos):
+
+                    # Add player to detectedPlayers array
+                    playerPos = (foosmenRodArray[j], (y + h) / 2)
+                    detectedPlayers.append([j, playerPos])
+
+                    # Draw contour and rectangle over player
+                    cv2.drawContours(self.outputImg, [i], -1, contourRGB, -1)
+                    cv2.rectangle(self.outputImg, (x, y), (x + w, y + h), rectangleRGB, 2)
+
+        # TODO: Sort and take action based on actual detected players locations
+        for i in detectedPlayers:
+            dp = detectedPlayers[i]
+            self.log("[INFO] Player detected in foosmen rod {} with center at {}".format(dp[0], dp[1])
 
         if self.debug:
             self.log("[DEBUG] Detect players end")
