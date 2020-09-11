@@ -390,7 +390,7 @@ class Foosball:
         if len(cnts) > 0:
             c = max(cnts, key=cv2.contourArea)
 
-            # Draw on output image
+            # Draw contour on output image
             #for c in cnts:
             cv2.drawContours(self.outputImg, c, -1, self.vars["foosballContour"], 3)
 
