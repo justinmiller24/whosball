@@ -473,7 +473,7 @@ class Foosball:
         goalCoords = [tL, tR, bR, bL]
 
         # Draw rectangle around goal on the frame
-        self.outputImg = cv2.polylines(self.outputImg, np.int32(goalCoords), True, (0,0,0) 10)
+        self.outputImg = cv2.polylines(self.outputImg, np.int32(goalCoords), True, (0,0,0), 10)
 
         if self.debug:
             self.log("[DEBUG] Find Goal end")
@@ -532,7 +532,7 @@ class Foosball:
 
             # Filter contours that are adjacent to the top or bottom sides of the table
             # Use `rowMargin` which stores the height of the "bumpers" at the ends of each foosmen row
-            if (y < self.vars["rowMargin"]) || (y > (self.vars["height"] - self.vars["rowMargin"])):
+            if ((y < self.vars["rowMargin"]) | (y > (self.vars["height"] - self.vars["rowMargin"]))):
                 continue
 
             # Filter contours with abnormal width (smaller than acceptable width)
@@ -545,7 +545,7 @@ class Foosball:
             for j in foosmenRodArray:
                 arrayPos = foosmenRodArray[j]
                 # TODO: Also ensure that it does not span more than self.vars["foosmenHeight"] pixels on either side of the foosmen row
-                if (x < arrayPos) && ((x + w) > arrayPos):
+                if ((x < arrayPos) & (arrayPos < (x + w))):
 
                     # Add player to detectedPlayers array
                     playerPos = (foosmenRodArray[j], (y + h) / 2)
@@ -558,7 +558,7 @@ class Foosball:
         # TODO: Sort and take action based on actual detected players locations
         for i in detectedPlayers:
             dp = detectedPlayers[i]
-            self.log("[INFO] Player detected in foosmen rod {} with center at {}".format(dp[0], dp[1])
+            self.log("[INFO] Player detected in foosmen rod {} with center at {}".format(dp[0], dp[1]))
 
         if self.debug:
             self.log("[DEBUG] Detect players end")
