@@ -155,11 +155,6 @@ class Foosball:
         self.tableCoords = [tL, tR, bR, bL]
         self.origCoords = None
 
-        # Create foosmen "masks" for RED and BLUE players
-        # We do this once, so that we don't need to recalculate it on every single frame
-        #self.vars["foosmenREDMask"] = self._getMaskForPlayers(self.vars["foosmenRED"])
-        #self.vars["foosmenBLUEMask"] = self._getMaskForPlayers(self.vars["foosmenBLUE"])
-
         # Start game
         self.gameIsActive = True
         self.ballIsInPlay = False
@@ -487,20 +482,15 @@ class Foosball:
 
         # Set variables based on mode (RED or BLUE)
         if mode == "RED":
-            #foosmenMask = self.vars["foosmenREDMask"]
             contourRGB = self.vars["foosmenRedContour"]
             rectangleRGB = self.vars["foosmenRedBox"]
             foosmenRodArray = self.vars["foosmenRED"]
         else:
-            #foosmenMask = self.vars["foosmenBLUEMask"]
             contourRGB = self.vars["foosmenBlueContour"]
             rectangleRGB = self.vars["foosmenBlueBox"]
             foosmenRodArray = self.vars["foosmenBLUE"]
 
-        # Get mask and apply mask to image
-        # Create mask containing "only" the areas with the rods for RED/BLUE foosmen
         origImg = self.frame.copy()
-        #maskedImg = cv2.bitwise_and(origImg, foosmenMask)
 
         # Convert to HSV color range
         blurred = cv2.GaussianBlur(origImg, (11, 11), 0)
