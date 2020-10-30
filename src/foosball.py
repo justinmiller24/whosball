@@ -532,14 +532,14 @@ class Foosball:
             # Filter contours that are not within an acceptable range of one of the foosmen rods
             # Loop through each of the 4 foosmen rods for this color, and determine which rod this falls in, if any
             # A player is considered within acceptable range of a foosmen row if the left and right bounds of that player fall on opposite sides of one of that foosmen row
-            for j in foosmenRodArray:
-                arrayPos = foosmenRodArray[j]
+            for row, xPos in enumerate(foosmenRodArray):
+                arrayPos = xPos
                 # TODO: Also ensure that it does not span more than self.vars["foosmenHeight"] pixels on either side of the foosmen row
-                if ((x < arrayPos) & (arrayPos < (x + w))):
+                if ((x < xPos) & (xPos < (x + w))):
 
                     # Add player to detectedPlayers array
-                    playerPos = (foosmenRodArray[j], (y + h) / 2)
-                    detectedPlayers.append([j, playerPos])
+                    playerPos = (xPos, (y + h) / 2)
+                    detectedPlayers.append([row, playerPos])
 
                     # Draw contour and rectangle over player
                     cv2.drawContours(self.outputImg, [i], -1, contourRGB, -1)
