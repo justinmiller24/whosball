@@ -148,10 +148,10 @@ class Foosball:
 
         # Initialize table coordinates
         # Define coordinates for foosball table in top-left, top-right, bottom-left, and bottom-right order
-        tL = (62,124)
-        tR = (546,132)
-        bR = (550,410)
-        bL = (49,400)
+        tL = (39,113)
+        tR = (570,126)
+        bR = (571,404)
+        bL = (23,389)
         self.tableCoords = [tL, tR, bR, bL]
         self.origCoords = None
 
@@ -580,10 +580,6 @@ class Foosball:
                 id = str(ids[i][0])
                 marker = np.squeeze(corners[i])
                 x0, y0 = marker[0]
-                #x2, y2 = marker[2]
-                #x = int((x0 + x2)/2)
-                #y = int((y0 + y2)/2)
-                #result.add((id, x, y))
                 self.log("[DEBUG] Marker ID {}: {}".format(id, marker[0]))
 
             # Overwrite default table boundaries only if we detected exactly 4 corners
