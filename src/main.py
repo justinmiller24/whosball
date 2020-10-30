@@ -177,6 +177,7 @@ while fb.gameIsActive:
 
 		# Move all rows to default defensive position
 		for row in [0, 1, 3, 5]:
+			fb.log("[INFO] Debug Main.py Row 180, rowID is: {}".format(row))
 			players[row].defaultPosition()
 
 
