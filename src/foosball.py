@@ -462,8 +462,8 @@ class Foosball:
 
         # Goal boundaries
         tL = [self.vars["width"] - 10, self.vars["goalUpper"]]
-        tR = [self.vars["width"], self.vars["goalUpper"]]
-        bR = [self.vars["width"], self.vars["goalLower"]]
+        tR = [self.vars["width"] - 1, self.vars["goalUpper"]]
+        bR = [self.vars["width"] - 1, self.vars["goalLower"]]
         bL = [self.vars["width"] - 10, self.vars["goalLower"]]
         pts = np.array([tL, tR, bR, bL], np.int32)
         pts = pts.reshape((-1, 1, 2))
