@@ -569,11 +569,15 @@ class Foosball:
         arucoDict = aruco.Dictionary_get(aruco.DICT_4X4_50)
         arucoParameters =  aruco.DetectorParameters_create()
         corners, ids, rejectedImgPoints = aruco.detectMarkers(gray, arucoDict, parameters=arucoParameters)
-        #print(ids)
+        print(ids)
 
         # Display detected markers
         if ids is not None:
             #output = aruco.drawDetectedMarkers(output, corners, ids)
+
+            # Make sure we found exactly 4 ArUco markers
+            #if len(ids) == 4:
+
 
             # Iterate through detected markers
             detectedMarkers = np.array([], dtype="float32")
