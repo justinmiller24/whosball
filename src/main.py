@@ -49,7 +49,6 @@ row1 = Foosmen(1, 2, fb.vars["row1"][0], fb.vars["row1"][1], fb.vars["foosmenWid
 row3 = Foosmen(3, 5, fb.vars["row2"][0], fb.vars["row2"][1], fb.vars["foosmenWidth"]).start()
 row5 = Foosmen(5, 3, fb.vars["row3"][0], fb.vars["row3"][1], fb.vars["foosmenWidth"]).start()
 players = [row0, row1, None, row3, None, row5, None, None]
-#players = [row0, row1, row3, row3, row5, row5]
 
 # Timer for number of frames in holding pattern
 idleFrames = 0
@@ -178,7 +177,6 @@ while fb.gameIsActive:
 
 		# Move all rows to default defensive position
 		for row in [0, 1, 3, 5]:
-			fb.log("[DEBUG] RowId: {}".format(row))
 			players[row].defaultPosition()
 
 
