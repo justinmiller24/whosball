@@ -466,8 +466,8 @@ class Foosball:
         bR = [self.vars["width"], self.vars["goalLower"]]
         bL = [self.vars["width"] - 10, self.vars["goalLower"]]
         #goalCoords = [tL, tR, bR, bL]
-        goalCoords = np.array([tL, tR, bR, bL], np.int32)
-        goalCoords = goalCoords.reshape((-1, 1, 2))
+        pts = np.array([tL, tR, bR, bL], np.int32)
+        pts = pts.reshape((-1, 1, 2))
 
         # Draw a blue polygon with thickness of 2px
         # Polygon is closed
