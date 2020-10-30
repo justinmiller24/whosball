@@ -148,10 +148,10 @@ class Foosball:
 
         # Initialize table coordinates
         # Define coordinates for foosball table in top-left, top-right, bottom-left, and bottom-right order
-        tL = (39,113)
-        tR = (570,126)
-        bR = (571,404)
-        bL = (23,389)
+        tL = (40,125)
+        tR = (556,128)
+        bR = (556,406)
+        bL = (33,392)
         self.tableCoords = [tL, tR, bR, bL]
         self.origCoords = None
 
