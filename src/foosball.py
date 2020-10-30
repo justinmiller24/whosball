@@ -580,7 +580,7 @@ class Foosball:
 
 
             # Iterate through detected markers
-            detectedMarkers = np.array([], dtype="float32")
+            detectedMarkers = []
             for i in range(len(ids)):
                 markerId = str(ids[i][0])
                 marker = np.squeeze(corners[i])
@@ -595,7 +595,7 @@ class Foosball:
             if len(ids) == 4:
 
                 #self.tableCoords = [tL, tR, bR, bL]
-                self.tableCoords = np.array([], dtype="float32")
+                self.tableCoords = []
 
                 # Iterate through detected markers
                 for markerId, coords in enumerate(detectedMarkers):
