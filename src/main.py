@@ -10,6 +10,7 @@
 # import the necessary packages
 import argparse
 import cv2
+import numpy as np
 import time
 from camera import videoStream
 from foosball import Foosball
