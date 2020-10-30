@@ -493,6 +493,10 @@ class Foosball:
 
         origImg = self.frame.copy()
 
+        # Draw line over each roosmen rod
+        for i, xPos in enumerate(foosmenRodArray):
+            self.outputImg = cv2.line(self.outputImg, (xPos, 0), (xPos, self.vars["height"] - 1), (0, 255, 0), 8)
+
         # Convert to HSV color range
         blurred = cv2.GaussianBlur(origImg, (11, 11), 0)
         hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
