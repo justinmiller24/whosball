@@ -565,49 +565,45 @@ class Foosball:
         # Detect markers
         # `corners` is the list of corners returned in clockwise order: top left, top right, bottom right, bottom left
         # `ids` is a list of marker IDs of each of the detected markers
-        gray = cv2.cvtColor(origImg, cv2.COLOR_BGR2GRAY)
-        arucoDict = aruco.Dictionary_get(aruco.DICT_4X4_50)
-        arucoParameters =  aruco.DetectorParameters_create()
-        corners, ids, rejectedImgPoints = aruco.detectMarkers(gray, arucoDict, parameters=arucoParameters)
-        print(ids)
+        #gray = cv2.cvtColor(origImg, cv2.COLOR_BGR2GRAY)
+        #arucoDict = aruco.Dictionary_get(aruco.DICT_4X4_50)
+        #arucoParameters =  aruco.DetectorParameters_create()
+        #corners, ids, rejectedImgPoints = aruco.detectMarkers(gray, arucoDict, parameters=arucoParameters)
+        #print(ids)
 
         # Display detected markers
-        if ids is not None:
+        #if ids is not None:
             #output = aruco.drawDetectedMarkers(output, corners, ids)
 
-            # Make sure we found exactly 4 ArUco markers
-            #if len(ids) == 4:
-
-
             # Iterate through detected markers
-            detectedMarkers = []
-            for i in range(len(ids)):
-                markerId = str(ids[i][0])
-                marker = np.squeeze(corners[i])
-                x0, y0 = marker[0]
-                self.log("[DEBUG] Marker ID {}: {}".format(markerId, marker[0]))
-                detectedMarkers.append((markerId, marker[0]))
+            #detectedMarkers = []
+            #for i in range(len(ids)):
+                #markerId = str(ids[i][0])
+                #marker = np.squeeze(corners[i])
+                #x0, y0 = marker[0]
+                #self.log("[DEBUG] Marker ID {}: {}".format(markerId, marker[0]))
+                #detectedMarkers.append((markerId, marker[0]))
 
             # Sort detected markers
-            detectedMarkers.sort()
+            #detectedMarkers.sort()
 
             # Overwrite default table boundaries only if we detected exactly 4 corners
-            if len(ids) == 4:
+            #if len(ids) == 4:
 
                 #self.tableCoords = [tL, tR, bR, bL]
-                self.tableCoords = []
+                #self.tableCoords = []
 
                 # Iterate through detected markers
-                for markerId, coords in enumerate(detectedMarkers):
-                    self.tableCoords.append(coords)
+                #for markerId, coords in enumerate(detectedMarkers):
+                    #self.tableCoords.append(coords)
 
-                self.log("[DEBUG] Table Coords: {}".format(self.tableCoords))
+                #self.log("[DEBUG] Table Coords: {}".format(self.tableCoords))
 
-            else:
-                self.log("[INFO] ArUco markers detected but not 4 total, use defaults")
+            #else:
+                #self.log("[INFO] ArUco markers detected but not 4 total, use defaults")
 
-        else:
-            self.log("[INFO] No ArUco markers detected, use defaults")
+        #else:
+            #self.log("[INFO] No ArUco markers detected, use defaults")
 
         # Apply projective transformation (also known as "perspective transformation" or "homography") to the
         # original image. This type of transformation was chosen because it preserves straight lines.
