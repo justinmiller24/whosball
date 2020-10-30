@@ -83,10 +83,10 @@ class Foosball:
             'foosmenHeight': 36,                    # Foosmen height (how far they "span" in either direction)
 
             # RED players
-            'foosmenRedHSV1Lower': (0, 0, 0),       # Foosmen lower bound (HSV)
-            'foosmenRedHSV1Upper': (10, 255, 255),  # Foosmen upper bound (HSV)
-            'foosmenRedHSV2Lower': (170, 0, 0),     # Foosmen lower bound (HSV)
-            'foosmenRedHSV2Upper': (180, 255, 255), # Foosmen upper bound (HSV)
+            'foosmenRedHSV1Lower': (0, 100, 50),    # Foosmen lower bound (HSV)
+            'foosmenRedHSV1Upper': (5, 200, 150),   # Foosmen upper bound (HSV)
+            'foosmenRedHSV2Lower': (175, 100, 50),  # Foosmen lower bound (HSV)
+            'foosmenRedHSV2Upper': (180, 200, 150), # Foosmen upper bound (HSV)
             'foosmenRedContour': (100, 100, 255),   # Foosmen contour highlight color
             'foosmenRedBox': (0, 0, 255),           # Foosmen bounding box color
 
