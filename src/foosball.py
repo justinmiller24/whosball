@@ -546,8 +546,8 @@ class Foosball:
                     cv2.rectangle(self.outputImg, (x, y), (x + w, y + h), rectangleRGB, 2)
 
         # TODO: Sort and take action based on actual detected players locations
-        for i in detectedPlayers:
-            dp = detectedPlayers[i]
+        for i, dp in enumerate(detectedPlayers):
+            #dp = detectedPlayers[i]
             self.log("[INFO] Player detected in foosmen rod {} with center at {}".format(dp[0], dp[1]))
 
         if self.debug:
