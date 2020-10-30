@@ -576,11 +576,43 @@ class Foosball:
             #output = aruco.drawDetectedMarkers(output, corners, ids)
 
             # Iterate through detected markers
+            detectedMarkers = []
             for i in range(0, len(ids)):
-                id = str(ids[i][0])
+                markerId = str(ids[i][0])
                 marker = np.squeeze(corners[i])
                 x0, y0 = marker[0]
-                self.log("[DEBUG] Marker ID {}: {}".format(id, marker[0]))
+                self.log("[DEBUG] Marker ID {}: {}".format(markerId, marker[0]))
+                detectedMarkers.append((markerId, marker[0]))
+
+            # Sort detected markers
+            detectedMarkers.sort()
+
+            # sort the points based on their x-coordinates
+            #xSorted = pts[np.argsort(pts[:, 0]), :]
+
+            # grab the left-most and right-most points from the sorted
+            # x-roodinate points
+            #leftMost = xSorted[:2, :]
+            #rightMost = xSorted[2:, :]
+
+            # now, sort the left-most coordinates according to their
+            # y-coordinates so we can grab the top-left and bottom-left
+            # points, respectively
+            #leftMost = leftMost[np.argsort(leftMost[:, 1]), :]
+            #(tl, bl) = leftMost
+
+            # now that we have the top-left coordinate, use it as an
+            # anchor to calculate the Euclidean distance between the
+            # top-left and right-most points; by the Pythagorean
+            # theorem, the point with the largest distance will be
+            # our bottom-right point
+            #D = dist.cdist(tl[np.newaxis], rightMost, "euclidean")[0]
+            #(br, tr) = rightMost[np.argsort(D)[::-1], :]
+
+            # return the coordinates in top-left, top-right,
+            # bottom-right, and bottom-left order
+            #return np.array([tl, tr, br, bl], dtype="float32")
+
 
             # Overwrite default table boundaries only if we detected exactly 4 corners
             if len(ids) == 4:
@@ -589,11 +621,13 @@ class Foosball:
                 self.tableCoords = []
 
                 # Iterate through detected markers
-                for i in range(0, len(ids)):
-                    marker = np.squeeze(corners[i])
+                #for i in range(0, len(ids)):
+                for markerId, coords in enumerate(detectedMarkers):
+                    #marker = np.squeeze(corners[i])
                     #x0, y0 = marker[0]
-                    self.log("[DEBUG] Append Table Marker ID {}: {}".format(i, marker[0]))
-                    self.tableCoords.append(marker[0])
+                    #self.log("[DEBUG] Append Table Marker ID {}: {}".format(i, marker[0]))
+                    #self.tableCoords.append(marker[0])
+                    self.tableCoords.append(coords)
 
                 # Flatten marker corner array so all corners are grouped together in the same dimension of the array
                 # This is needed for the `findHomography` function to work properly
