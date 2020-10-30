@@ -576,7 +576,7 @@ class Foosball:
             #output = aruco.drawDetectedMarkers(output, corners, ids)
 
             # Iterate through detected markers
-            detectedMarkers = []
+            detectedMarkers = np.array([], dtype="float32")
             for i in range(len(ids)):
                 markerId = str(ids[i][0])
                 marker = np.squeeze(corners[i])
@@ -591,7 +591,7 @@ class Foosball:
             if len(ids) == 4:
 
                 #self.tableCoords = [tL, tR, bR, bL]
-                self.tableCoords = []
+                self.tableCoords = np.array([], dtype="float32")
 
                 # Iterate through detected markers
                 for markerId, coords in enumerate(detectedMarkers):
