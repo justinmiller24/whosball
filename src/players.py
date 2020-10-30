@@ -120,6 +120,7 @@ class Foosmen:
 
     # Set to default defensive position
     def defaultPosition(self):
+        self.log("[DEBUG] Start function defaultPosition()")
         return
 
 
