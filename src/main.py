@@ -44,11 +44,11 @@ fb = Foosball(args["debug"]).start()
 # The midfield (3) row has 5 men, spaced 5" apart, and 4 1/4" of linear movement
 # The offense (5) row has 3 men, spaced 7 1/8" apart, and 8 1/2" of linear movement
 print("Initialize players and motors")
-players = [None] * 8
-players[0] = Foosmen(0, 3, fb.vars["row0"][0], fb.vars["row0"][1], fb.vars["foosmenWidth"]).start()
-players[1] = Foosmen(1, 2, fb.vars["row1"][0], fb.vars["row1"][1], fb.vars["foosmenWidth"]).start()
-players[3] = Foosmen(2, 5, fb.vars["row2"][0], fb.vars["row2"][1], fb.vars["foosmenWidth"]).start()
-players[5] = Foosmen(3, 3, fb.vars["row3"][0], fb.vars["row3"][1], fb.vars["foosmenWidth"]).start()
+players = []
+players.append(Foosmen(0, 3, fb.vars["row0"][0], fb.vars["row0"][1], fb.vars["foosmenWidth"]).start())
+players.append(Foosmen(1, 2, fb.vars["row1"][0], fb.vars["row1"][1], fb.vars["foosmenWidth"]).start())
+players.append(Foosmen(2, 5, fb.vars["row2"][0], fb.vars["row2"][1], fb.vars["foosmenWidth"]).start())
+players.append(Foosmen(3, 3, fb.vars["row3"][0], fb.vars["row3"][1], fb.vars["foosmenWidth"]).start())
 
 # Timer for number of frames in holding pattern
 idleFrames = 0
@@ -144,7 +144,7 @@ while fb.gameIsActive:
 		idleFrames = 0
 
 		# Loop through each row.
-		for row in [0, 1, 3, 5]:
+		for rowId, row in enumerate([0, 1, 3, 5]):
 
 			# For rows in between ball and goal, calculate direct or indirect interception point.
 			if row < closestRow:
@@ -159,14 +159,14 @@ while fb.gameIsActive:
 				numFramesNeededToMove = yDistanceNeededToMove // maxYSpeedOfRow
 				if numFramesNeededToMove < numFramesUntilRow:
 					fb.log("[INFO] Row{} move to intercept at {}".format(row, projectedY))
-					players[row].moveTo(projectedY)
+					players[rowId].moveTo(projectedY)
 				else:
 					fb.log("[INFO] Row{} not able to intercept at {}, do nothing".format(row, projectedY))
 
 			# For rows not in between ball and goal, move to default defensive position.
 			else:
 				fb.log("[INFO] Row{} not in between ball and goal, move to default position".format(row))
-				players[row].defaultPosition()
+				players[rowId].defaultPosition()
 
 
 	# Opponent is in control of ball and the ball is not moving towards our goal
@@ -176,9 +176,9 @@ while fb.gameIsActive:
 		idleFrames = 0
 
 		# Move all rows to default defensive position
-		for row in [0, 1, 3, 5]:
+		for rowId, row in enumerate([0, 1, 3, 5]):
 			fb.log("[INFO] Debug Main.py Row 180, rowID is: {}".format(row))
-			players[row].defaultPosition()
+			players[rowId].defaultPosition()
 
 
 	# TODO: build out based on scenario
@@ -204,7 +204,17 @@ while fb.gameIsActive:
 			angle = math.atan2(tempX, tempY) / math.pi * 180
 
 			fb.log("[INFO] Row{} kick towards opponent goal at angle {}".format(row, angle))
-			players[row].moveAngle(angle)
+			if (row == 0):
+				players[0].moveAngle(angle)
+			elif (row == 1):
+				players[1].moveAngle(angle)
+			elif (row == 3):
+				players[2].moveAngle(angle)
+			elif (row == 5):
+				players[3].moveAngle(angle)
+			else:
+				fb.log("[ERROR] Check code in main.py on lines 208-2015")
+			#players[row].moveAngle(angle)
 
 		else:
 			fb.log("[INFO] Row{} pause, since ball will not be ahead of row on next frame".format(row))
@@ -237,8 +247,8 @@ print("Avg FPS: {:.2f}".format(fb.fps))
 print()
 
 # Release motors
-for i in [0, 1, 3, 5]:
-	players[i].releaseMotors()
+for rowId, row in enumerate([0, 1, 3, 5]):
+	players[rowId].releaseMotors()
 
 
 # Do a bit of cleanup
