@@ -461,11 +461,22 @@ class Foosball:
             self.log("[DEBUG] Find Goal begin")
 
         # Goal boundaries
-        tL = (self.vars["width"] - 10, self.vars["goalUpper"])
-        tR = (self.vars["width"], self.vars["goalUpper"])
-        bR = (self.vars["width"], self.vars["goalLower"])
-        bL = (self.vars["width"] - 10, self.vars["goalLower"])
-        goalCoords = [tL, tR, bR, bL]
+        tL = [self.vars["width"] - 10, self.vars["goalUpper"]]
+        tR = [self.vars["width"], self.vars["goalUpper"]]
+        bR = [self.vars["width"], self.vars["goalLower"]]
+        bL = [self.vars["width"] - 10, self.vars["goalLower"]]
+        #goalCoords = [tL, tR, bR, bL]
+        goalCoords = np.array([tL, tR, bR, bL], np.int32)
+        goalCoords = goalCoords.reshape((-1, 1, 2))
+
+        # Draw a blue polygon with thickness of 2px
+        # Polygon is closed
+        isClosed = True
+        # Blue color in BGR
+        color =  (255, 0, 0)
+        # Line thickness of 2 px
+        thickness = 2
+        self.outputImg = cv2.polylines(self.outputImg, [pts], isClosed, color, thickness)
 
         # Draw rectangle around goal on the frame
         #self.outputImg = cv2.polylines(self.outputImg, np.int32(goalCoords), True, (0,0,0), 10)
