@@ -592,6 +592,7 @@ class Foosball:
                 for i in range(0, len(ids)):
                     marker = np.squeeze(corners[i])
                     #x0, y0 = marker[0]
+                    self.log("[DEBUG] Append Table Marker ID {}: {}".format(i, marker[0]))
                     self.tableCoords.append(marker[0])
 
                 # Flatten marker corner array so all corners are grouped together in the same dimension of the array
