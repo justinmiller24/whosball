@@ -72,9 +72,12 @@ class Foosball:
             # Total rod spacing = (640px - (79.09 * 7 + 8.55)) / 2 = 38.91px (on each end)
             # The first rod is located at 38.91px + (rodWidth / 2) = 43.185px
             # Each additional rod is located an additional "rodSpacing" (79.09px) apart
-            'rowPosition': [43.19, 122.28, 201.37, 280.46, 359.55, 438.64, 517.73, 596.82],
-            'foosmenRED': np.array([43.19, 122.28, 280.46, 438.64], dtype="float32"),
-            'foosmenBLUE': np.array([201.37, 359.55, 517.73, 596.82], dtype="float32"),
+            #'rowPosition': [43.19, 122.28, 201.37, 280.46, 359.55, 438.64, 517.73, 596.82],
+            'rowPosition': [32, 114, 196, 280, 360, 444, 526, 608],
+            #'foosmenRED': np.array([43.19, 122.28, 280.46, 438.64], dtype="float32"),
+            'foosmenRED': np.array([32, 114, 280, 444], dtype="float32"),
+            #'foosmenBLUE': np.array([201.37, 359.55, 517.73, 596.82], dtype="float32"),
+            'foosmenBLUE': np.array([196, 360, 526,608], dtype="float32"),
 
             # The foosmen are centered on each rod, but each rod (row) has a different number of men
             # There are 13 total foosmen, each with a unique ID from left to right and top to bottom
@@ -494,7 +497,7 @@ class Foosball:
 
         # Draw line over each roosmen rod
         for i, xPos in enumerate(foosmenRodArray):
-            self.outputImg = cv2.line(self.outputImg, (xPos, 0), (xPos, self.vars["height"] - 1), (0, 255, 0), 8)
+            self.outputImg = cv2.line(self.outputImg, (xPos, 0), (xPos, self.vars["height"] - 1), (0, 255, 0), 2)
 
         # Convert to HSV color range
         blurred = cv2.GaussianBlur(origImg, (11, 11), 0)
