@@ -203,15 +203,15 @@ while fb.gameIsActive:
 			# Calculate arc tangent (in radians) and convert to degrees
 			angle = math.atan2(tempX, tempY) / math.pi * 180
 
-			fb.log("[INFO] Row{} kick towards opponent goal at angle {}".format(row, angle))
-			players[row].moveAngle(angle)
+			fb.log("[INFO] Row{} kick towards opponent goal at angle {}".format(fb.controllingRow, angle))
+			players[fb.controllingRow].moveAngle(angle)
 
 		else:
-			fb.log("[INFO] Row{} pause, since ball will not be ahead of row on next frame".format(row))
+			fb.log("[INFO] Row{} pause, since ball will not be ahead of row on next frame".format(fb.controllingRow))
 
 
 	# Neither player is in control of the ball
-	elif controllingRow is -1:
+	elif fb.controllingRow is -1:
 
 		# Increment counter
 		idleFrames = idleFrames + 1
@@ -224,7 +224,7 @@ while fb.gameIsActive:
 
 	# Something went wrong
 	else:
-		fb.log("[INFO] Controlling row: {}".format(controllingRow))
+		fb.log("[INFO] Controlling row: {}".format(fb.controllingRow))
 		fb.log("[INFO] Something went wrong... exiting now")
 		fb.gameIsActive = False
 
