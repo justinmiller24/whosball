@@ -123,6 +123,11 @@ class Foosmen:
         return
 
 
+    # Move linear motor and rotational motor to kick the foosball at an angle
+    def moveAngle(self, angle):
+        self.log("[INFO] Kick row {} at angle {}".format(self.id, angle))
+
+
     # Move linear motor one step BACKWARD
     def moveBackward(self):
 
