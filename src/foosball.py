@@ -51,8 +51,8 @@ class Foosball:
 
             # The foosball measures 1 3/8" in diameter
             'foosballWidth': 18,                    # Foosball width and height (rounded down, in pixels)
-            'foosballHSVLower': (19, 100, 150),     # Foosball lower bound (HSV)
-            'foosballHSVUpper': (26, 125, 200),     # Foosball upper bound (HSV)
+            'foosballHSVLower': (19, 50, 50),     # Foosball lower bound (HSV)
+            'foosballHSVUpper': (26, 200, 200),     # Foosball upper bound (HSV)
             'foosballContour': (60, 255, 255),      # Foosball color (HSV)
             'foosballMaxPositions': 30,             # The maximum number of "coordinates" to track
 
@@ -371,7 +371,7 @@ class Foosball:
         mask = cv2.erode(mask, None, iterations=2)
         mask = cv2.dilate(mask, None, iterations=2)
 
-        self.radius = None
+        #self.radius = None
         self.distance = None
         #self.degrees = None
         self.velocity = None
