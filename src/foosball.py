@@ -262,17 +262,15 @@ class Foosball:
 
         # Key metrics
         metrics = {
-            "Score": self.score,
+            "Elapsed": self.elapsedTime,
             "In Play": self.ballIsInPlay,
             "Detected": self.foosballDetected,
-            #"Position": ("{}".format(self.foosballPosition)) if self.foosballPosition is not None else "-",
-            #"Projected": self.projectedPosition,
-            "Radius": ("%2.1f" % self.radius) if self.radius is not None else "-",
             #"Distance": ("%2.1f cm" % self.distance) if self.distance is not None else "-",
             "Velocity": ("%2.1f m/s" % self.velocity) if self.velocity is not None else "-",
             "FPS": ("%2.1f" % self.fps) if self.fps is not None else "-",
         }
         metricsRight = {
+            "Score": self.score,
             "Current": ("{}".format(self.foosballPosition)) if self.foosballPosition is not None else "-",
             "Projected": ("{}".format(self.projectedPosition)) if self.projectedPosition is not None else "-",
             "Wall": ("{}".format(self.projectedWallPosition)) if self.projectedWallPosition is not None else "-",
