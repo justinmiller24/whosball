@@ -196,8 +196,8 @@ while fb.gameIsActive:
 		if fb.projectedPosition[0] >= fb.vars["rowPosition"][fb.controllingRow]:
 
 			# Calculate optimal angle between ball and opponent's goal
-			tempX = self.vars["width"] - fb.currentPosition[0]
-			tempY = self.vars["height"] / 2 - fb.currentPosition[1]
+			tempX = fb.vars["width"] - fb.currentPosition[0]
+			tempY = fb.vars["height"] / 2 - fb.currentPosition[1]
 
 			# Calculate arc tangent (in radians) and convert to degrees
 			angle = math.atan2(tempX, tempY) / math.pi * 180
