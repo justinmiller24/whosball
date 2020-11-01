@@ -391,7 +391,7 @@ class Foosball:
 
             # Draw contour on output image
             #for c in cnts:
-            cv2.drawContours(self.outputImg, c, -1, self.vars["foosballContour"], 3)
+            cv2.drawContours(self.outputImg, [c], -1, self.vars["foosballContour"], 3)
 
             # Draw contours on output image
             #perimeter = cv2.arcLength(c, True)
