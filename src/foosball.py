@@ -382,7 +382,10 @@ class Foosball:
         #if self.debug:
             #self.log("[DEBUG] Contours found: {}".format(len(cnts)))
 
+        self.log("[INFO] {} contour(s) found".format(len(cnts)))
         if len(cnts) > 0:
+
+            # Find the largest contour in the mask
             c = max(cnts, key=cv2.contourArea)
 
             # Draw contour on output image
@@ -398,9 +401,7 @@ class Foosball:
             self.foosballDetected = True
             self.ballIsInPlay = True
 
-            # Find the largest contour in the mask and use this to
             # compute the minimum enclosing circle and centroid
-            #c = max(cnts, key=cv2.contourArea)
             #((x, y), self.radius) = cv2.minEnclosingCircle(c)
             M = cv2.moments(c)
             self.foosballPosition = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
