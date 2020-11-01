@@ -53,7 +53,7 @@ class Foosball:
             'foosballWidth': 18,                    # Foosball width and height (rounded down, in pixels)
             'foosballHSVLower': (25, 30, 150),      # Foosball lower bound (HSV)
             'foosballHSVUpper': (45, 100, 255),     # Foosball upper bound (HSV)
-            'foosballContour': (36, 255, 12),       # Foosball contour highlight color
+            'foosballContour': (60, 255, 255),      # Foosball color (HSV)
             'foosballMaxPositions': 30,             # The maximum number of "coordinates" to track
 
             # There are 8 foosball rods, each one measures 5/8" in diameter
