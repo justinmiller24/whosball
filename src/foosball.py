@@ -387,17 +387,17 @@ class Foosball:
 
         if len(cnts) > 0:
 
-            # Draw contours on output image
-            for cnt in cnts:
+            # Draw all contours on output image
+            for c in cnts:
                 #perimeter = cv2.arcLength(c, True)
                 #epsilon = 0.04 * perimeter
                 #approx = cv2.approxPolyDP(c, epsilon, True)
-                cv2.drawContours(self.outputImg, [cnt], -1, (36, 255, 12), -1)
-                #cv2.drawContours(self.outputImg, [cnt], -1, (30, 255, 255), -1)
+                cv2.drawContours(self.outputImg, [c], -1, (36, 255, 12), -1)
+                #cv2.drawContours(self.outputImg, [c], -1, (30, 255, 255), -1)
 
             # Find largest contour and draw on output image with a different color
-            maxCnt = max(cnts, key=cv2.contourArea)
-            cv2.drawContours(self.outputImg, [maxCnt], -1, (60, 255, 255), -1)
+            c = max(cnts, key=cv2.contourArea)
+            cv2.drawContours(self.outputImg, [c], -1, (60, 255, 255), -1)
 
 
             self.foosballDetected = True
