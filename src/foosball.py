@@ -497,7 +497,8 @@ class Foosball:
 
         # Draw line over each roosmen rod
         for i, xPos in enumerate(foosmenRodArray):
-            self.log("[DEBUG] Add line over roosmen rod. Mode {} Rod {} xPos {}".format(mode, i, xPos))
+            if self.debug:
+                self.log("[DEBUG] Add line over {} foosmen rod {} at xPos {}".format(mode, i, xPos))
             self.outputImg = cv2.line(self.outputImg, (xPos, 0), (xPos, self.vars["height"] - 1), (0, 255, 0), 2)
 
         # Convert to HSV color range
