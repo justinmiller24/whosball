@@ -51,9 +51,8 @@ class Foosball:
 
             # The foosball measures 1 3/8" in diameter
             'foosballWidth': 18,                    # Foosball width and height (rounded down, in pixels)
-            'foosballHSVLower': (19, 50, 50),     # Foosball lower bound (HSV)
+            'foosballHSVLower': (19, 50, 50),       # Foosball lower bound (HSV)
             'foosballHSVUpper': (26, 200, 200),     # Foosball upper bound (HSV)
-            'foosballContour': (60, 255, 255),      # Foosball color (HSV)
             'foosballMaxPositions': 30,             # The maximum number of "coordinates" to track
 
             # There are 8 foosball rods, each one measures 5/8" in diameter
@@ -383,21 +382,23 @@ class Foosball:
         #if self.debug:
             #self.log("[DEBUG] Contours found: {}".format(len(cnts)))
 
-        self.log("[INFO] {} contour(s) found".format(len(cnts)))
+        if self.debug:
+            self.log("[DEBUG] {} contour(s) found".format(len(cnts)))
+
         if len(cnts) > 0:
 
-            # Find the largest contour in the mask
-            c = max(cnts, key=cv2.contourArea)
-
-            # Draw contour on output image
-            #for c in cnts:
-            cv2.drawContours(self.outputImg, [c], -1, self.vars["foosballContour"], -1)
-
             # Draw contours on output image
-            #perimeter = cv2.arcLength(c, True)
-            #epsilon = 0.04 * perimeter
-            #approx = cv2.approxPolyDP(c, epsilon, True)
-            #cv2.drawContours(self.outputImg, [c], -1, (36, 255, 12), -1)
+            for cnt in cnts:
+                #perimeter = cv2.arcLength(c, True)
+                #epsilon = 0.04 * perimeter
+                #approx = cv2.approxPolyDP(c, epsilon, True)
+                cv2.drawContours(self.outputImg, [cnt], -1, (36, 255, 12), -1)
+                #cv2.drawContours(self.outputImg, [cnt], -1, (30, 255, 255), -1)
+
+            # Find largest contour and draw on output image with a different color
+            maxCnt = max(cnts, key=cv2.contourArea)
+            cv2.drawContours(self.outputImg, [maxCnt], -1, (60, 255, 255), -1)
+
 
             self.foosballDetected = True
             self.ballIsInPlay = True
