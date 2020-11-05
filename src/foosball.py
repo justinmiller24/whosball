@@ -74,10 +74,10 @@ class Foosball:
             # Each additional rod is located an additional "rodSpacing" (79.09px) apart
             #'rowPosition': [43.19, 122.28, 201.37, 280.46, 359.55, 438.64, 517.73, 596.82],
             'rowPosition': [29, 114, 197, 280, 360, 443, 526, 611],
-            #'foosmenRED': np.array([43.19, 122.28, 280.46, 438.64], dtype="float32"),
-            'foosmenRED': np.array([29, 114, 280, 443], dtype="float32"),
-            #'foosmenBLUE': np.array([201.37, 359.55, 517.73, 596.82], dtype="float32"),
-            'foosmenBLUE': np.array([197, 360, 526, 611], dtype="float32"),
+            #'foosmenBLUE': np.array([43.19, 122.28, 280.46, 438.64], dtype="float32"),
+            'foosmenBLUE': np.array([29, 114, 280, 443], dtype="float32"),
+            #'foosmenRED': np.array([201.37, 359.55, 517.73, 596.82], dtype="float32"),
+            'foosmenRED': np.array([197, 360, 526, 611], dtype="float32"),
 
             # The foosmen are centered on each rod, but each rod (row) has a different number of men
             # There are 13 total foosmen, each with a unique ID from left to right and top to bottom
