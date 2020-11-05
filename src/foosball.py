@@ -472,7 +472,7 @@ class Foosball:
         pts = pts.reshape((-1, 1, 2))
 
         # Draw rectangle around goal on output frame
-        self.outputImg = cv2.polylines(self.outputImg, [pts], True, (255, 255, 255), 5)
+        self.outputImg = cv2.polylines(self.outputImg, [pts], True, (255, 255, 255), 8)
 
         if self.debug:
             self.log("[DEBUG] Find Goal end")
