@@ -35,6 +35,7 @@ class Foosball:
             # Add additional spacing below picture for output display
             'outputWidth': 640,                     # Output width is the same as table width
             'outputHeight': 484,                    # Output height is 124px more than table height
+            'outputFont': cv2.FONT_HERSHEY_PLAIN,   # Font for text on output image
 
             # The number of pixels per cm is constant (640 px / 118.745 cm)
             # This means 5.39 pixels represents 1 cm of actual distance on the table
@@ -260,8 +261,6 @@ class Foosball:
         # Output image
         out[0:self.vars["height"], 0:self.vars["width"]] = self.outputImg
 
-        font = cv2.FONT_HERSHEY_PLAIN
-
         # Key metrics
         metrics = {
             "Elapsed": self.elapsedTime,
@@ -279,7 +278,7 @@ class Foosball:
         }
         for key in metrics:
             vPos += 18
-            cv2.putText(out, "%s: %s" % (key, metrics[key]), (10, vPos), font, 1, (255, 255, 255), 1)
+            cv2.putText(out, "%s: %s" % (key, metrics[key]), (10, vPos), self.vars["outputFont"], 1, (255, 255, 255), 1)
 
         vPos = self.vars["height"] + 4
 
@@ -288,13 +287,13 @@ class Foosball:
 
             # get boundary of this text
             text = "%s: %s" % (key, metricsRight[key])
-            textsize = cv2.getTextSize(text, font, 1, 2)[0]
+            textsize = cv2.getTextSize(text, self.vars["outputFont"], 1, 2)[0]
 
             # get coords based on boundary
             textX = self.vars["width"] - textsize[0] - 10
 
             # add text centered on image
-            cv2.putText(out, text, (textX, vPos), font, 1, (255, 255, 255), 1)
+            cv2.putText(out, text, (textX, vPos), self.vars["outputFont"], 1, (255, 255, 255), 1)
 
         if self.debug:
             self.log("[DEBUG] Update display end")
@@ -572,12 +571,11 @@ class Foosball:
 
             # Add text to "tag" each detected player, center in each player box
             if tagPlayers:
-                font = cv2.FONT_HERSHEY_PLAIN
                 text = "P%s" % (i + 1)
-                textsize = cv2.getTextSize(text, font, 1, 2)[0]
+                textsize = cv2.getTextSize(text, self.vars["outputFont"], 1, 2)[0]
                 textX = p[1] - textsize[0] / 2
                 textY = p[2] - textsize[1] / 2
-                cv2.putText(self.outputImg, text, (textX, textY), font, 1, (255, 255, 255), 1)
+                cv2.putText(self.outputImg, text, (textX, textY), self.vars["outputFont"], 1, (255, 255, 255), 1)
 
         # TODO: Take action based on ball position and detected players
 
