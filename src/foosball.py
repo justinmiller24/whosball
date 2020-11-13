@@ -777,25 +777,6 @@ class Foosball:
                 self.log("[DEBUG] No projected wall intersection, the ball is not currently moving")
 
 
-    # Get mask for RED or BLUE players based on foosmenRows array
-    def _getMaskForPlayers(self, foosmenRows):
-        if self.debug:
-            self.log("[DEBUG] Get Mask for Mode begin")
-
-        mask = np.zeros((self.vars["height"], self.vars["width"], 3), dtype="uint8")
-
-        # Add "whitelabel" mask for each rod containing foosmen with matching color
-        for rod in foosmenRows:
-            # Create "vertical strips" that are 2 x "foosmenHeight" pixels wide, spanning entire frame (0 to yMax height)
-            cv2.rectangle(mask, (int(rod - self.vars["foosmenHeight"]), 0), (int(rod + self.vars["foosmenHeight"]), self.vars["height"]), (255, 255, 255), -1)
-        mask = cv2.resize(mask, mask.shape[1::-1])
-
-        if self.debug:
-            self.log("[DEBUG] Get Mask for Mode end")
-
-        return mask
-
-
     # Get projected X coordinate of ball, if it exists
     def getProjectedX(self):
         if self.projectedPosition is None:
