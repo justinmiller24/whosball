@@ -92,7 +92,7 @@ while fb.gameIsActive:
 
 	# Find location of the players
 	fb.findPlayers("RED")
-	fb.findPlayers("BLUE")
+	fb.findPlayers("BLUE", True)
 
 
 	##########################################################################

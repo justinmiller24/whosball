@@ -480,7 +480,7 @@ class Foosball:
 
     # Take current image, perform object recognition,
     # and convert this information into the coordinates of the RED and BLUE players
-    def findPlayers(self, mode):
+    def findPlayers(self, mode, tagPlayers = False):
         if self.debug:
             self.log("[DEBUG] Detect players begin")
 
@@ -566,17 +566,20 @@ class Foosball:
         dp = dp[dp[:,2].argsort(kind='mergesort')]
         dp = dp[dp[:,1].argsort(kind='mergesort')]
 
-        # TODO: Sort and take action based on actual detected players locations
+        # Loop through detected players
         for i, p in enumerate(dp):
             self.log("[INFO] Player {} detected in foosmen rod {} with center at ({}, {})".format(i, p[0], p[1], p[2]))
 
             # Add text to "tag" each detected player, center in each player box
-            font = cv2.FONT_HERSHEY_PLAIN
-            text = "P%s" % (i + 1)
-            textsize = cv2.getTextSize(text, font, 1, 2)[0]
-            textX = p[1] - textsize[0] / 2
-            textY = p[2] - textsize[1] / 2
-            cv2.putText(self.outputImg, text, (textX, textY), font, 1, (255, 255, 255), 1)
+            if tagPlayers:
+                font = cv2.FONT_HERSHEY_PLAIN
+                text = "P%s" % (i + 1)
+                textsize = cv2.getTextSize(text, font, 1, 2)[0]
+                textX = p[1] - textsize[0] / 2
+                textY = p[2] - textsize[1] / 2
+                cv2.putText(self.outputImg, text, (textX, textY), font, 1, (255, 255, 255), 1)
+
+        # TODO: Take action based on ball position and detected players
 
         if self.debug:
             self.log("[DEBUG] Detect players end")
