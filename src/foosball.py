@@ -570,6 +570,14 @@ class Foosball:
         for i, p in enumerate(dp):
             self.log("[INFO] Player {} detected in foosmen rod {} with center at ({}, {})".format(i, p[0], p[1], p[2]))
 
+            # Add text to "tag" each detected player, center in each player box
+            font = cv2.FONT_HERSHEY_PLAIN
+            text = "P%s" % (i + 1)
+            textsize = cv2.getTextSize(text, font, 1, 2)[0]
+            textX = p[1] - textsize[0] / 2
+            textY = p[2] - textsize[1] / 2
+            cv2.putText(self.outputImg, text, (textX, textY), font, 1, (255, 255, 255), 1)
+
         if self.debug:
             self.log("[DEBUG] Detect players end")
 
