@@ -530,8 +530,8 @@ class Foosball:
             cv2.drawContours(self.outputImg, [i], -1, contourRGB, -1)
             cv2.rectangle(self.outputImg, (x, y), (x + w, y + h), rectangleRGB, 2)
 
-            # Filter contours that are adjacent to the top or bottom sides of the table
-            # Use `rowMargin` which stores the height of the "bumpers" at the ends of each foosmen row
+            # Filter contours that are adjacent to the top or bottom of the table
+            # We do this by using `rowMargin`, which stores the height of the "bumpers" on each side of the foosmen rod
             if ((y < self.vars["rowMargin"]) | (y > (self.vars["height"] - self.vars["rowMargin"]))):
                 continue
 
@@ -539,26 +539,36 @@ class Foosball:
             if h < (self.vars["foosmenWidth"] - 5):
                 continue
 
-            # Filter contours that are not within an acceptable range of one of the foosmen rods
-            # Loop through each of the 4 foosmen rods for this color, and determine which rod this falls in, if any
-            # A player is considered within acceptable range of a foosmen row if the left and right bounds of that player fall on opposite sides of one of that foosmen row
+            # Filter contours with abnormal height
+            #if w > (self.vars["foosmenHeight"] * 2):
+                #continue
+
+            # Normalize xPos based on foosball rod. We do this by looping through
+            # each of the 4 foosmen rods and determining if this contour falls
+            # within an acceptable range of one of them.
             for row, xPos in enumerate(foosmenRodArray):
-                arrayPos = xPos
-                # TODO: Also ensure that it does not span more than self.vars["foosmenHeight"] pixels on either side of the foosmen row
-                if ((x < xPos) & (xPos < (x + w))):
+
+                # Ensure boundaries are within acceptable margins on either side of foosmen rod
+                #if ((x < xPos) & (xPos < (x + w))):
+                if ((x > (xPos - self.vars["foosmenHeight"] - 5)) & (x < xPos) & ((x + w) > xPos) & ((x + w) < (xPos + self.vars["foosmenHeight"] + 5)))
 
                     # Add player to detectedPlayers array
+                    # Normalize x-coordinate by using [xPos] instead of [(x + w) / 2]
                     playerPos = (xPos, (y + h) / 2)
-                    detectedPlayers.append([row, playerPos])
+                    detectedPlayers.append([row, playerPos[0], playerPos[1]])
 
                     # Draw contour and rectangle over player
                     cv2.drawContours(self.outputImg, [i], -1, contourRGB, -1)
                     cv2.rectangle(self.outputImg, (x, y), (x + w, y + h), rectangleRGB, 2)
 
+        # Sort by x-coordinate (column 1), then by y-coordinate (column 2)
+        dp = np.array(detectedPlayers)
+        dp = dp[dp[:,2].argsort(kind='mergesort')]
+        dp = dp[dp[:,1].argsort(kind='mergesort')]
+
         # TODO: Sort and take action based on actual detected players locations
-        for i, dp in enumerate(detectedPlayers):
-            #dp = detectedPlayers[i]
-            self.log("[INFO] Player detected in foosmen rod {} with center at {}".format(dp[0], dp[1]))
+        for i, p in enumerate(dp):
+            self.log("[INFO] Player {} detected in foosmen rod {} with center at ({}, {})".format(i, p[0], p[1], p[2]))
 
         if self.debug:
             self.log("[DEBUG] Detect players end")
