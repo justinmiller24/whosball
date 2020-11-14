@@ -49,7 +49,7 @@ while(True):
         markerId = str(ids[i][0])
         marker = np.squeeze(corners[i])
         x0, y0 = marker[0]
-        self.log("[DEBUG] Marker ID {}: {}".format(markerId, marker[0]))
+        print("MarkerId {}: {}".format(markerId, marker[0]))
         detectedMarkers.append([markerId, x0, y0])
 
     # Sort by marker ID (column 0)
