@@ -4,18 +4,18 @@
 
 # This class handles all of the foosmen
 # Each row of foosmen has two motors, one for linear motion and one for rotational motion
-# https://learn.adafruit.com/adafruit-dc-and-stepper-motor-hat-for-raspberry-pi/using-stepper-motors
+# https://projects.raspberrypi.org/en/projects/physical-computing/14
+# https://gpiozero.readthedocs.io/en/stable/recipes.html
 
 # import the necessary packages
-from adafruit_motor import stepper
-from adafruit_motorkit import MotorKit
+from gpiozero import Motor
 import datetime
 
 
 class Foosmen:
 
     # Initialize foosmen row
-    def __init__(self, id, numPlayers, playerSpacing, rowLength, playerWidth):
+    def __init__(self, id, numPlayers, linearMotorAddr, rotationalMotorAddr, playerSpacing, rowLength, playerWidth):
 
         # The ID of each foosmen row goes from left to right (0-7)
         self.id = id
@@ -36,6 +36,10 @@ class Foosmen:
         # The number of foosmen on each row
         self.players = numPlayers
 
+        # The GPIO addresses for each motor
+        self.linearMotorAddr = linearMotorAddr
+        self.rotationalMotorAddr = rotationalMotorAddr
+
         # The number of pixels between two players on each row
         self.playerSpacing = playerSpacing
 
@@ -52,6 +56,9 @@ class Foosmen:
         # The number of steps per revolution (360 degrees), used for rotational motion
         self.stepsPerRevolution = 200
 
+        # The number of milliseconds per step
+        self.stepTimeInMs = .0208
+
 
     # Initialize motors and warm up
     def start(self):
@@ -60,60 +67,39 @@ class Foosmen:
         # This section initializes the linear and rotational motors              #
         ##########################################################################
 
-        # Each board in the stack must be assigned a unique address. This is done
-        # with the address jumpers on the left side of the board. The I2C base
-        # address for each board is 0x60. The binary address that you program
-        # with the address jumpers is added to the base I2C address.
-
-        # Initialize the 1st hat on the default address (0x60)
-        # Board 0: Address = 0x60 Offset = binary 0000 (no jumpers required)
-        if self.id == 0:
-            motorAddr = 0x60
-
-        # Initialize the 2nd hat on the default address (0x61)
-        # Board 1: Address = 0x61 Offset = binary 0001 (bridge A0)
-        elif self.id == 1:
-            motorAddr = 0x61
-
-        # Initialize the 3rd hat on the default address (0x63)
-        # Board 2: Address = 0x62 Offset = binary 0010 (bridge A1, the one above A0)
-        elif self.id == 3:
-            motorAddr = 0x62
-
-        # Initialize the 4th hat on the default address (0x67)
-        # Board 4: Address = 0x64 Offset = binary 0100 (bridge A2, middle jumper)
-        elif self.id == 5:
-            motorAddr = 0x64
-
+        # Linear Motion
+        if self.linearMotorAddr is not None:
+            self.motor1 = Motor(self.linearMotorAddr[0], self.self.linearMotorAddr[1])
+            self.log("[INFO] Initialized foosmen row {} linear motor from GPIO ({}, {})".format(self.id, self.linearMotorAddr[0], self.self.linearMotorAddr[1]))
         else:
-            self.log("[ERROR] Could not initialize motors")
+            self.log("[ERROR] Could not initialize linear motor on foosmen row {}".format(self.id))
+
+        # Rotational Motion
+        if self.rotationalMotorAddr is not None:
+            self.motor2 = Motor(self.rotationalMotorAddr[0], self.self.rotationalMotorAddr[1])
+            self.log("[INFO] Initialized foosmen row {} rotational motor from GPIO ({}, {})".format(self.id, self.rotationalMotorAddr[0], self.self.rotationalMotorAddr[1]))
+        else:
+            self.log("[ERROR] Could not initialize rotational motor on foosmen row {}".format(self.id))
             return
-
-
-        # Stepper motors are available as stepper1 and stepper2
-        # stepper1 is made up of the M1 and M2 terminals and used for linear motion
-        # stepper2 is made up of the M3 and M4 terminals and used for rotational motion
-        #self.motors = MotorKit(address=motorAddr)
-        self.motors = None
 
         # Release motors so they can spin freely
         #self.motors.stepper1.release()
         #self.motors.stepper2.release()
 
         # Warm up motors
-        self.log("[INFO] Warm up linear motors")
-        #for i in range(25):
-            #self.motors.stepper1.onestep(direction=stepper.FORWARD, style=stepper.SINGLE)
-        #for i in range(25):
-            #self.motors.stepper1.onestep(direction=stepper.BACKWARD, style=stepper.SINGLE)
+        self.log("[INFO] Warm up linear motor")
+        self.motor1.forward()
+        sleep(5)
+        self.motor1.backward()
+        sleep(5)
+        self.motor1.stop()
 
-        self.log("[INFO] Warm up rotational motors")
-        #for i in range(50):
-            #self.motors.stepper2.onestep(direction=stepper.FORWARD, style=stepper.SINGLE)
-        #for i in range(100):
-            #self.motors.stepper2.onestep(direction=stepper.BACKWARD, style=stepper.SINGLE)
-        #for i in range(50):
-            #self.motors.stepper2.onestep(direction=stepper.FORWARD, style=stepper.SINGLE)
+        self.log("[INFO] Warm up rotational motor")
+        self.motor2.forward()
+        sleep(5)
+        self.motor2.backward()
+        sleep(5)
+        self.motor2.stop()
 
         return self
 
@@ -124,8 +110,87 @@ class Foosmen:
 
 
     # Move linear motor and rotational motor to kick the foosball at an angle
-    def moveAngle(self, angle):
+    # Determine if we need to move left/right/none based on angle (Y/X ratio)
+    def kickAngle(self, angle, x, y):
         self.log("[INFO] Kick row {} at angle {}".format(self.id, angle))
+        self.log("[INFO] Move {}px X axis and {}px Y axis".format(x, y))
+
+        # Setup shot
+        angle = 75
+        numSteps = int((angle - self.angle) * self.stepsPerRevolution / 360)
+        self.log("[MOTOR] Setup shot, kick to 75 degree rotation requires {} steps".format(numSteps))
+
+        # If shot angle is exactly 90 degrees, then we are vertically centered
+        # and only need to kick straight ahead (rotational motion)
+        if angle == 90:
+            self.log("[MOTOR] Kick at 90 degree angle")
+            # Kick to maximum angle (75 degrees forward)
+            #self.rotateTo(75)
+            self.motor2.forward()
+            sleep(self.stepTimeInMs * numSteps)
+            # Reset
+            #self.rotateTo(0)
+            self.motor2.reverse()
+            sleep(self.stepTimeInMs * numSteps)
+            # Stop motor
+            self.motor2.stop()
+
+        # If shot angle is not within +/- 45 degrees of center, then limit the
+        # shot angle to +45 degrees or -45 degrees by moving both motors simultaneously
+        elif angle <= 45 | angle >= 135:
+            if angle <= 45:
+                self.log("[MOTOR] Kick at 45 degree angle, move both motors simultaneously")
+                self.motor1.forward()
+            else:
+                self.log("[MOTOR] Kick at 135 degree angle, move both motors simultaneously")
+                self.motor1.backward()
+            self.motor2.forward()
+            sleep(self.stepTimeInMs * numSteps)
+            # Reset
+            self.motor1.reverse()
+            self.motor2.reverse()
+            sleep(self.stepTimeInMs * numSteps)
+            # Stop motors
+            self.motor1.stop()
+            self.motor2.stop()
+
+        # If shot angle is within +/- 45 degrees of center, then limit the
+        # shot angle by calculating the Y/X ratio and using this percentage
+        # to throttle the linear motion so the kick remains at full speed
+        elif angle > 45 & angle < 135:
+            throttleSpeed = abs(y/x)
+            self.log("[MOTOR] Kick at {} degree angle, move both motors and throttle linear motion at {}%".format(angle, (throttleSpeed * 100)))
+            #angle = 75
+            #numSteps = int((angle - self.angle) * self.stepsPerRevolution / 360)
+
+            # Rotational motion
+            #self.angle += (360 / self.stepsPerRevolution * numSteps)
+
+            # Linear motion
+            #numLinearSteps = int(numSteps * throttleSpeed)
+            #self.position += (self.pixelsPerStep * numLinearSteps)
+
+            # If foosball is "above" vertical center line, then kick + move right
+            if angle < 90:
+                #self.log("[MOTOR] Move row {} {} steps FORWARD at {}% while kicking at 100%".format(self.id, numSteps, (throttleSpeed * 100)))
+                self.motor1.forward(throttleSpeed)
+            else:
+                #self.log("[MOTOR] Move row {} {} steps FORWARD at {}% while kicking at 100%".format(self.id, numSteps, (throttleSpeed * 100)))
+                self.motor1.backward(throttleSpeed)
+            self.motor2.forward()
+            sleep(self.stepTimeInMs * numSteps)
+            # Reset
+            self.motor1.reverse()
+            self.motor2.reverse()
+            sleep(self.stepTimeInMs * numSteps)
+            # Stop motors
+            self.motor1.stop()
+            self.motor2.stop()
+
+        # Something went wrong
+        else:
+            self.log("[ERROR] Something went wrong, exiting...")
+            return
 
 
     # Move linear motor one step BACKWARD
@@ -138,7 +203,9 @@ class Foosmen:
 
         # Move backward one step
         self.position -= self.pixelsPerStep
-        #self.motors.stepper1.onestep(direction=stepper.BACKWARD, style=stepper.SINGLE)
+        self.motor1.backward()
+        sleep(self.stepTimeInMs)
+        self.motor1.stop()
         self.log("[INFO] Move row {} one step BACKWARD, position is now: {}".format(self.id, self.position))
 
 
@@ -152,7 +219,9 @@ class Foosmen:
 
         # Move forward one step
         self.position += self.pixelsPerStep
-        #self.motors.stepper1.onestep(direction=stepper.FORWARD, style=stepper.SINGLE)
+        self.motor1.forward()
+        sleep(self.stepTimeInMs)
+        self.motor1.stop()
         self.log("[INFO] Move row {} one step FORWARD, position is now: {}".format(self.id, self.position))
 
 
@@ -173,22 +242,33 @@ class Foosmen:
         if pos > self.position:
             numSteps = int((pos - self.position) * self.pixelsPerStep)
             self.log("[MOTOR] Move row {} {} steps FORWARD to position {}".format(self.id, numSteps, pos))
-            for i in range(numSteps):
-                self.moveForward()
+            #for i in range(numSteps):
+                #self.moveForward()
+            self.position += (self.pixelsPerStep * numSteps)
+            self.motor1.forward()
+            sleep(self.stepTimeInMs * numSteps)
+            self.motor1.stop()
+
 
         # Need to move backward
         else:
             numSteps = int((self.position - pos) * self.pixelsPerStep)
             self.log("[MOTOR] Move row {} {} steps BACKWARD to position {}".format(self.id, numSteps, pos))
-            for i in range(numSteps):
-                self.moveBackward()
+            #for i in range(numSteps):
+                #self.moveBackward()
+            self.position -= (self.pixelsPerStep * numSteps)
+            self.motor1.backward()
+            sleep(self.stepTimeInMs * numSteps)
+            self.motor1.stop()
 
 
     # Release motors so they can spin freely
     def releaseMotors(self):
-        return
         #self.motors.stepper1.release()
         #self.motors.stepper2.release()
+        self.motor1.stop()
+        self.motor2.stop()
+        #return
 
 
     # Move rotational motor one step BACKWARD
@@ -204,7 +284,9 @@ class Foosmen:
         # Move backward one step
         # There are 200 steps per revolution, so each step is 1.8 degrees
         self.angle -= (360 / self.stepsPerRevolution)
-        #self.motors.stepper2.onestep(direction=stepper.BACKWARD, style=stepper.SINGLE)
+        self.motor2.backward()
+        sleep(self.stepTimeInMs)
+        self.motor2.stop()
         self.log("[INFO] Rotate row {} one step BACKWARD, angle is now: {}".format(self.id, self.angle))
 
 
@@ -221,7 +303,9 @@ class Foosmen:
         # Move forward one step
         # There are 200 steps per revolution, so each step is 1.8 degrees
         self.angle += (360 / self.stepsPerRevolution)
-        #self.motors.stepper2.onestep(direction=stepper.FORWARD, style=stepper.SINGLE)
+        self.motor2.forward()
+        sleep(self.stepTimeInMs)
+        self.motor2.stop()
         self.log("[INFO] Rotate row {} one step FORWARD, angle is now: {}".format(self.id, self.angle))
 
 
@@ -242,15 +326,23 @@ class Foosmen:
         if angle > self.angle:
             numSteps = int((angle - self.angle) * self.stepsPerRevolution / 360)
             self.log("[MOTOR] Rotate row {} {} steps FORWARD to angle {}".format(self.id, numSteps, angle))
-            for i in range(numSteps):
-                self.rotateForward()
+            #for i in range(numSteps):
+                #self.rotateForward()
+            self.angle += (360 / self.stepsPerRevolution * numSteps)
+            self.motor2.forward()
+            sleep(self.stepTimeInMs * numSteps)
+            self.motor2.stop()
 
         # Need to rotate backward
         else:
             numSteps = int((self.angle - angle) * self.stepsPerRevolution / 360)
             self.log("[MOTOR] Rotate row {} {} steps BACKWARD to angle {}".format(self.id, numSteps, angle))
-            for i in range(numSteps):
-                self.rotateBackward()
+            #for i in range(numSteps):
+                #self.rotateBackward()
+            self.angle -= (360 / self.stepsPerRevolution * numSteps)
+            self.motor2.backward()
+            sleep(self.stepTimeInMs * numSteps)
+            self.motor2.stop()
 
 
     # Print output message to console
