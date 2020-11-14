@@ -32,6 +32,9 @@ class Foosball:
             'width': 640,                           # Table width (in pixels) -- this is the x max
             'height': 360,                          # Table height (in pixels) -- this is the y max
 
+            # Output coordinates of frame
+            'outputCoords': [(0, 0), (639, 0), (639, 359), (0, 359)],
+
             # Add additional spacing below picture for output display
             'outputWidth': 640,                     # Output width is the same as table width
             'outputHeight': 484,                    # Output height is 124px more than table height
@@ -156,7 +159,6 @@ class Foosball:
         bR = (544,409)
         bL = (43,395)
         self.tableCoords = [tL, tR, bR, bL]
-        self.origCoords = None
 
         # Start game
         self.gameIsActive = True
@@ -591,56 +593,62 @@ class Foosball:
 
         origImg = self.rawFrame.copy()
 
-        # Detect markers
+
+        # Detect ArUco markers
         # `corners` is the list of corners returned in clockwise order: top left, top right, bottom right, bottom left
         # `ids` is a list of marker IDs of each of the detected markers
-        #gray = cv2.cvtColor(origImg, cv2.COLOR_BGR2GRAY)
-        #arucoDict = aruco.Dictionary_get(aruco.DICT_4X4_50)
-        #arucoParameters =  aruco.DetectorParameters_create()
-        #corners, ids, rejectedImgPoints = aruco.detectMarkers(gray, arucoDict, parameters=arucoParameters)
+        gray = cv2.cvtColor(origImg, cv2.COLOR_BGR2GRAY)
+        arucoDict = aruco.Dictionary_get(aruco.DICT_4X4_50)
+        arucoParameters =  aruco.DetectorParameters_create()
+        corners, ids, rejectedImgPoints = aruco.detectMarkers(gray, arucoDict, parameters=arucoParameters)
         #print(ids)
 
-        # Display detected markers
-        #if ids is not None:
-            #output = aruco.drawDetectedMarkers(output, corners, ids)
+        # Make sure we found at least one markerId
+        if ids is not None:
 
             # Iterate through detected markers
-            #detectedMarkers = []
-            #for i in range(len(ids)):
-                #markerId = str(ids[i][0])
-                #marker = np.squeeze(corners[i])
-                #x0, y0 = marker[0]
-                #self.log("[DEBUG] Marker ID {}: {}".format(markerId, marker[0]))
-                #detectedMarkers.append((markerId, marker[0]))
+            detectedMarkers = []
+            for i in range(len(ids)):
+                markerId = str(ids[i][0])
+                marker = np.squeeze(corners[i])
+                x0, y0 = marker[0]
+                #if self.debug:
+                    #self.log("[DEBUG] MarkerId {} detected at ({}, {})".format(markerId, x0, y0))
+                detectedMarkers.append([markerId, x0, y0])
 
-            # Sort detected markers
-            #detectedMarkers.sort()
+            # Sort by markerId (column 0)
+            dm = np.array(detectedMarkers)
+            dm = dm[dm[:,0].argsort(kind='mergesort')]
 
-            # Overwrite default table boundaries only if we detected exactly 4 corners
-            #if len(ids) == 4:
+            if self.debug:
+                self.log("[DEBUG] {} ArUco markers detected".format(len(dm)))
+                for i, m in enumerate(dm):
+                    self.log("[DEBUG] MarkerId {} detected at ({}, {})".format(m[0], m[1], m[2]))
 
-                #self.tableCoords = [tL, tR, bR, bL]
-                #self.tableCoords = []
+            # Update coordinates if exactly 4 ArUco markers were found
+            if len(dm) == 4:
+                self.log("[INFO] 4 markers detected, update table coordinates")
+                self.tableCoords = []
+                for i, m in enumerate(dm):
+                    self.tableCoords.append((m[1], m[2]))
+                self.log(self.tableCoords)
 
-                # Iterate through detected markers
-                #for markerId, coords in enumerate(detectedMarkers):
-                    #self.tableCoords.append(coords)
+            else:
+                if self.debug:
+                    self.log("[DEBUG] ArUco markers detected but not 4 total, do not update table coordinates")
 
-                #self.log("[DEBUG] Table Coords: {}".format(self.tableCoords))
+        else:
+            if self.debug:
+                self.log("[DEBUG] No ArUco markers detected, use default table coordinates")
 
-            #else:
-                #self.log("[INFO] ArUco markers detected but not 4 total, use defaults")
-
-        #else:
-            #self.log("[INFO] No ArUco markers detected, use defaults")
 
         # Apply projective transformation (also known as "perspective transformation" or "homography") to the
         # original image. This type of transformation was chosen because it preserves straight lines.
         # To do this, we first compute the transformational matrix (M) and then apply it to the original image.
         # The resulting frame will have an aspect ratio identical to the size (in pixels) of the foosball playing field
-        self.origCoords = np.array(self.tableCoords, dtype="float32")
-        finalCoords = np.array([(0, 0), (self.vars['width'] - 1, 0), (self.vars['width'] - 1, self.vars['height'] - 1), (0, self.vars['height'] - 1)], dtype="float32")
-        M = cv2.getPerspectiveTransform(self.origCoords, finalCoords)
+        origCoords = np.array(self.tableCoords, dtype="float32")
+        finalCoords = np.array(self.vars['outputCoords'], dtype="float32")
+        M = cv2.getPerspectiveTransform(origCoords, finalCoords)
         self.frame = cv2.warpPerspective(origImg, M, (self.vars['width'], self.vars['height']))
 
         # Save output frame, to be used later for overlays and output display
