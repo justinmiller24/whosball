@@ -551,7 +551,7 @@ class Foosball:
 
                 # Ensure boundaries are within acceptable margins on either side of foosmen rod
                 #if ((x < xPos) & (xPos < (x + w))):
-                if ((x > (xPos - self.vars["foosmenHeight"] - 5)) & (x < xPos) & ((x + w) > xPos) & ((x + w) < (xPos + self.vars["foosmenHeight"] + 5)))
+                if ((x > (xPos - self.vars["foosmenHeight"] - 5)) & (x < xPos) & ((x + w) < (xPos + self.vars["foosmenHeight"] + 5)) & ((x + w) > xPos)):
 
                     # Add player to detectedPlayers array
                     # Normalize x-coordinate by using [xPos] instead of [(x + w) / 2]
