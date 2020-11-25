@@ -119,7 +119,7 @@ class Foosmen:
 
         # Setup shot
         angle = 75
-        numSteps = int((angle - self.angle) * self.stepsPerRevolution / 360)
+        numSteps = int(float((angle - self.angle) * self.stepsPerRevolution / 360))
         self.log("[MOTOR] Setup shot, kick to 75 degree rotation requires {} steps".format(numSteps))
 
         # If shot angle is exactly 90 degrees, then we are vertically centered
@@ -163,13 +163,13 @@ class Foosmen:
             throttleSpeed = abs(y/x)
             self.log("[MOTOR] Kick at {} degree angle, move both motors and throttle linear motion at {}%".format(angle, (throttleSpeed * 100)))
             #angle = 75
-            #numSteps = int((angle - self.angle) * self.stepsPerRevolution / 360)
+            #numSteps = int(float((angle - self.angle) * self.stepsPerRevolution / 360))
 
             # Rotational motion
             #self.angle += (360 / self.stepsPerRevolution * numSteps)
 
             # Linear motion
-            #numLinearSteps = int(numSteps * throttleSpeed)
+            #numLinearSteps = int(float(numSteps * throttleSpeed))
             #self.position += (self.pixelsPerStep * numLinearSteps)
 
             # If foosball is "above" vertical center line, then kick + move right
@@ -242,7 +242,7 @@ class Foosmen:
 
         # Need to move forward
         if pos > self.position:
-            numSteps = int((pos - self.position) * self.pixelsPerStep)
+            numSteps = int(float((pos - self.position) * self.pixelsPerStep))
             self.log("[MOTOR] Move row {} {} steps FORWARD to position {}".format(self.id, numSteps, pos))
             #for i in range(numSteps):
                 #self.moveForward()
@@ -254,7 +254,7 @@ class Foosmen:
 
         # Need to move backward
         else:
-            numSteps = int((self.position - pos) * self.pixelsPerStep)
+            numSteps = int(float((self.position - pos) * self.pixelsPerStep))
             self.log("[MOTOR] Move row {} {} steps BACKWARD to position {}".format(self.id, numSteps, pos))
             #for i in range(numSteps):
                 #self.moveBackward()
@@ -326,7 +326,7 @@ class Foosmen:
 
         # Need to rotate forward
         if angle > self.angle:
-            numSteps = int((angle - self.angle) * self.stepsPerRevolution / 360)
+            numSteps = int(float((angle - self.angle) * self.stepsPerRevolution / 360))
             self.log("[MOTOR] Rotate row {} {} steps FORWARD to angle {}".format(self.id, numSteps, angle))
             #for i in range(numSteps):
                 #self.rotateForward()
@@ -337,7 +337,7 @@ class Foosmen:
 
         # Need to rotate backward
         else:
-            numSteps = int((self.angle - angle) * self.stepsPerRevolution / 360)
+            numSteps = int(float((self.angle - angle) * self.stepsPerRevolution / 360))
             self.log("[MOTOR] Rotate row {} {} steps BACKWARD to angle {}".format(self.id, numSteps, angle))
             #for i in range(numSteps):
                 #self.rotateBackward()
