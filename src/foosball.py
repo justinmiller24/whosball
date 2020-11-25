@@ -575,8 +575,9 @@ class Foosball:
             if tagPlayers:
                 text = "P%s" % (i + 1)
                 textsize = cv2.getTextSize(text, self.vars["outputFont"], 1, 2)[0]
-                textX = p[1] - textsize[0] / 2
-                textY = p[2] - textsize[1] / 2
+                textX = p[1] - (textsize[0] / 2)
+                textY = p[2] - (textsize[1] / 2)
+                self.log("[DEBUG] Output text {} at ({}, {})".format(text, textX, textY))
                 cv2.putText(self.outputImg, text, (int(textX), int(textY)), self.vars["outputFont"], 1, (255, 255, 255), 1)
 
         # TODO: Take action based on ball position and detected players
