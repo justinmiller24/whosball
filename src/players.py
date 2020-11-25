@@ -10,6 +10,7 @@
 # import the necessary packages
 from gpiozero import Motor
 import datetime
+import time
 
 
 class Foosmen:
@@ -89,16 +90,16 @@ class Foosmen:
         # Warm up motors
         self.log("[INFO] Warm up linear motor")
         self.motor1.forward()
-        sleep(5)
+        time.sleep(.005)
         self.motor1.backward()
-        sleep(5)
+        time.sleep(.005)
         self.motor1.stop()
 
         self.log("[INFO] Warm up rotational motor")
         self.motor2.forward()
-        sleep(5)
+        time.sleep(.005)
         self.motor2.backward()
-        sleep(5)
+        time.sleep(.005)
         self.motor2.stop()
 
         return self
@@ -127,11 +128,11 @@ class Foosmen:
             # Kick to maximum angle (75 degrees forward)
             #self.rotateTo(75)
             self.motor2.forward()
-            sleep(self.stepTimeInMs * numSteps)
+            time.sleep(self.stepTimeInMs * numSteps / 1000)
             # Reset
             #self.rotateTo(0)
             self.motor2.reverse()
-            sleep(self.stepTimeInMs * numSteps)
+            time.sleep(self.stepTimeInMs * numSteps / 1000)
             # Stop motor
             self.motor2.stop()
 
@@ -145,11 +146,11 @@ class Foosmen:
                 self.log("[MOTOR] Kick at 135 degree angle, move both motors simultaneously")
                 self.motor1.backward()
             self.motor2.forward()
-            sleep(self.stepTimeInMs * numSteps)
+            time.sleep(self.stepTimeInMs * numSteps / 1000)
             # Reset
             self.motor1.reverse()
             self.motor2.reverse()
-            sleep(self.stepTimeInMs * numSteps)
+            time.sleep(self.stepTimeInMs * numSteps / 1000)
             # Stop motors
             self.motor1.stop()
             self.motor2.stop()
@@ -178,11 +179,11 @@ class Foosmen:
                 #self.log("[MOTOR] Move row {} {} steps FORWARD at {}% while kicking at 100%".format(self.id, numSteps, (throttleSpeed * 100)))
                 self.motor1.backward(throttleSpeed)
             self.motor2.forward()
-            sleep(self.stepTimeInMs * numSteps)
+            time.sleep(self.stepTimeInMs * numSteps / 1000)
             # Reset
             self.motor1.reverse()
             self.motor2.reverse()
-            sleep(self.stepTimeInMs * numSteps)
+            time.sleep(self.stepTimeInMs * numSteps / 1000)
             # Stop motors
             self.motor1.stop()
             self.motor2.stop()
@@ -204,7 +205,7 @@ class Foosmen:
         # Move backward one step
         self.position -= self.pixelsPerStep
         self.motor1.backward()
-        sleep(self.stepTimeInMs)
+        time.sleep(self.stepTimeInMs / 1000)
         self.motor1.stop()
         self.log("[INFO] Move row {} one step BACKWARD, position is now: {}".format(self.id, self.position))
 
@@ -220,7 +221,7 @@ class Foosmen:
         # Move forward one step
         self.position += self.pixelsPerStep
         self.motor1.forward()
-        sleep(self.stepTimeInMs)
+        time.sleep(self.stepTimeInMs / 1000)
         self.motor1.stop()
         self.log("[INFO] Move row {} one step FORWARD, position is now: {}".format(self.id, self.position))
 
@@ -246,7 +247,7 @@ class Foosmen:
                 #self.moveForward()
             self.position += (self.pixelsPerStep * numSteps)
             self.motor1.forward()
-            sleep(self.stepTimeInMs * numSteps)
+            time.sleep(self.stepTimeInMs * numSteps / 1000)
             self.motor1.stop()
 
 
@@ -258,7 +259,7 @@ class Foosmen:
                 #self.moveBackward()
             self.position -= (self.pixelsPerStep * numSteps)
             self.motor1.backward()
-            sleep(self.stepTimeInMs * numSteps)
+            time.sleep(self.stepTimeInMs * numSteps / 1000)
             self.motor1.stop()
 
 
@@ -285,7 +286,7 @@ class Foosmen:
         # There are 200 steps per revolution, so each step is 1.8 degrees
         self.angle -= (360 / self.stepsPerRevolution)
         self.motor2.backward()
-        sleep(self.stepTimeInMs)
+        time.sleep(self.stepTimeInMs / 1000)
         self.motor2.stop()
         self.log("[INFO] Rotate row {} one step BACKWARD, angle is now: {}".format(self.id, self.angle))
 
@@ -304,7 +305,7 @@ class Foosmen:
         # There are 200 steps per revolution, so each step is 1.8 degrees
         self.angle += (360 / self.stepsPerRevolution)
         self.motor2.forward()
-        sleep(self.stepTimeInMs)
+        time.sleep(self.stepTimeInMs / 1000)
         self.motor2.stop()
         self.log("[INFO] Rotate row {} one step FORWARD, angle is now: {}".format(self.id, self.angle))
 
@@ -330,7 +331,7 @@ class Foosmen:
                 #self.rotateForward()
             self.angle += (360 / self.stepsPerRevolution * numSteps)
             self.motor2.forward()
-            sleep(self.stepTimeInMs * numSteps)
+            time.sleep(self.stepTimeInMs * numSteps / 1000)
             self.motor2.stop()
 
         # Need to rotate backward
@@ -341,7 +342,7 @@ class Foosmen:
                 #self.rotateBackward()
             self.angle -= (360 / self.stepsPerRevolution * numSteps)
             self.motor2.backward()
-            sleep(self.stepTimeInMs * numSteps)
+            time.sleep(self.stepTimeInMs * numSteps / 1000)
             self.motor2.stop()
 
 
