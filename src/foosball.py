@@ -614,8 +614,25 @@ class Foosball:
                 x0, y0 = marker[0]
                 #if self.debug:
                     #self.log("[DEBUG] MarkerId {} detected at ({}, {})".format(markerId, x0, y0))
-                if (markerId >= 0) & (markerId <= 3):
-                    detectedMarkers.append([markerId, x0, y0])
+
+                # Account for difference between marker position and corner of table
+                #detectedMarkers.append([markerId, x0, y0])
+                if markerId = 0:
+                    #tL = (36,111)
+                    #tL = (58,118)
+                    detectedMarkers.append([markerId, x0 + 22, y0 + 7])
+                elif markerId = 1:
+                    #tR = (568,123)
+                    #tR = (544,130)
+                    detectedMarkers.append([markerId, x0 - 24, y0 + 7])
+                elif markerId = 2:
+                    #bR = (570,401)
+                    #bR = (544,409)
+                    detectedMarkers.append([markerId, x0 - 26, y0 + 8])
+                elif markerId = 3:
+                    #bL = (21,388)
+                    #bL = (43,395)
+                    detectedMarkers.append([markerId, x0 + 22, y0 + 7])
 
             # Sort by markerId (column 0)
             dm = np.array(detectedMarkers)
