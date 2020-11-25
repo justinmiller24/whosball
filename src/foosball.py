@@ -555,7 +555,7 @@ class Foosball:
 
                     # Add player to detectedPlayers array
                     # Normalize x-coordinate by using [xPos] instead of [(x + w) / 2]
-                    playerPos = (xPos, (y + h) / 2)
+                    playerPos = (xPos, y + (h / 2))
                     detectedPlayers.append([row, playerPos[0], playerPos[1]])
 
                     # Draw contour and rectangle over player
@@ -577,7 +577,6 @@ class Foosball:
                 textsize = cv2.getTextSize(text, self.vars["outputFont"], 1, 2)[0]
                 textX = p[1] - (textsize[0] / 2)
                 textY = p[2] - (textsize[1] / 2)
-                self.log("[DEBUG] Output text {} at ({}, {})".format(text, textX, textY))
                 cv2.putText(self.outputImg, text, (int(textX), int(textY)), self.vars["outputFont"], 1, (255, 255, 255), 1)
 
         # TODO: Take action based on ball position and detected players
