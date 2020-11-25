@@ -69,15 +69,15 @@ class Foosmen:
 
         # Linear Motion
         if self.linearMotorAddr is not None:
-            self.motor1 = Motor(self.linearMotorAddr[0], self.self.linearMotorAddr[1])
-            self.log("[INFO] Initialized foosmen row {} linear motor from GPIO ({}, {})".format(self.id, self.linearMotorAddr[0], self.self.linearMotorAddr[1]))
+            self.motor1 = Motor(self.linearMotorAddr[0], self.linearMotorAddr[1])
+            self.log("[INFO] Initialized foosmen row {} linear motor from GPIO ({}, {})".format(self.id, self.linearMotorAddr[0], self.linearMotorAddr[1]))
         else:
             self.log("[ERROR] Could not initialize linear motor on foosmen row {}".format(self.id))
 
         # Rotational Motion
         if self.rotationalMotorAddr is not None:
-            self.motor2 = Motor(self.rotationalMotorAddr[0], self.self.rotationalMotorAddr[1])
-            self.log("[INFO] Initialized foosmen row {} rotational motor from GPIO ({}, {})".format(self.id, self.rotationalMotorAddr[0], self.self.rotationalMotorAddr[1]))
+            self.motor2 = Motor(self.rotationalMotorAddr[0], self.rotationalMotorAddr[1])
+            self.log("[INFO] Initialized foosmen row {} rotational motor from GPIO ({}, {})".format(self.id, self.rotationalMotorAddr[0], self.rotationalMotorAddr[1]))
         else:
             self.log("[ERROR] Could not initialize rotational motor on foosmen row {}".format(self.id))
             return
