@@ -609,7 +609,7 @@ class Foosball:
             # Iterate through detected markers
             detectedMarkers = []
             for i in range(len(ids)):
-                markerId = str(ids[i][0])
+                markerId = int(str(ids[i][0]))
                 marker = np.squeeze(corners[i])
                 x0, y0 = marker[0]
                 #if self.debug:
