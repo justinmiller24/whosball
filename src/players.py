@@ -41,6 +41,9 @@ class Foosmen:
         self.linearMotorAddr = linearMotorAddr
         self.rotationalMotorAddr = rotationalMotorAddr
 
+        # Both motors exist and initialized
+        self.motorsExist = False
+
         # The number of pixels between two players on each row
         self.playerSpacing = playerSpacing
 
@@ -84,6 +87,8 @@ class Foosmen:
             self.log("[ERROR] Could not initialize rotational motor on foosmen row {}".format(self.id))
             return self
 
+        self.motorsExist = True
+
         # Release motors so they can spin freely
         #self.motors.stepper1.release()
         #self.motors.stepper2.release()
@@ -114,6 +119,10 @@ class Foosmen:
     # Move linear motor and rotational motor to kick the foosball at an angle
     # Determine if we need to move left/right/none based on angle (Y/X ratio)
     def kickAngle(self, angle, x, y):
+        if not self.motorsExist:
+            self.log("[MOTOR] Skipping kickAngle({}, {}) - motors do not exist".format(x,y))
+            return
+
         self.log("[INFO] Kick row {} at angle {}".format(self.id, angle))
         self.log("[INFO] Move {}px X axis and {}px Y axis".format(x, y))
 
@@ -197,6 +206,10 @@ class Foosmen:
 
     # Move linear motor one step BACKWARD
     def moveBackward(self):
+        if not self.motorsExist:
+            self.log("[MOTOR] Skipping moveBackward() - motors do not exist")
+            return
+
 
         # Make sure next position is not out of bounds
         if self.position < self.pixelsPerStep:
@@ -213,6 +226,9 @@ class Foosmen:
 
     # Move linear motor one step FORWARD
     def moveForward(self):
+        if not self.motorsExist:
+            self.log("[MOTOR] Skipping moveForward() - motors do not exist")
+            return
 
         # Make sure next position is not out of bounds
         if self.position + self.pixelsPerStep > self.maxPosition:
@@ -229,6 +245,9 @@ class Foosmen:
 
     # Move linear motor to get to specific position
     def moveTo(self, pos):
+        if not self.motorsExist:
+            self.log("[MOTOR] Skipping moveTo({}) - motors do not exist".format(pos))
+            return
 
         # Make sure new position is different
         if pos == self.position:
@@ -266,6 +285,10 @@ class Foosmen:
 
     # Release motors so they can spin freely
     def releaseMotors(self):
+        if not self.motorsExist:
+            self.log("[MOTOR] Skipping releaseMotors() - motors do not exist")
+            return
+
         #self.motors.stepper1.release()
         #self.motors.stepper2.release()
         self.motor1.stop()
@@ -275,6 +298,9 @@ class Foosmen:
 
     # Move rotational motor one step BACKWARD
     def rotateBackward(self):
+        if not self.motorsExist:
+            self.log("[MOTOR] Skipping rotateBackward() - motors do not exist")
+            return
 
         # Make sure next angle is not out of bounds
         # Min angle is -90 degrees
@@ -294,6 +320,9 @@ class Foosmen:
 
     # Move rotational motor one step FORWARD
     def rotateForward(self):
+        if not self.motorsExist:
+            self.log("[MOTOR] Skipping rotatteForward() - motors do not exist")
+            return
 
         # Make sure next angle is not out of bounds
         # Max angle is +90 degrees
@@ -313,6 +342,9 @@ class Foosmen:
 
     # Move rotational motor to get to specific angle
     def rotateTo(self, angle):
+        if not self.motorsExist:
+            self.log("[MOTOR] Skipping rotateTo({}) - motors do not exist".format(angle))
+            return
 
         # Make sure new angle is different
         if angle == self.angle:
