@@ -614,7 +614,8 @@ class Foosball:
                 x0, y0 = marker[0]
                 #if self.debug:
                     #self.log("[DEBUG] MarkerId {} detected at ({}, {})".format(markerId, x0, y0))
-                detectedMarkers.append([markerId, x0, y0])
+                if (markerId >= 0) & (markerId <= 3):
+                    detectedMarkers.append([markerId, x0, y0])
 
             # Sort by markerId (column 0)
             dm = np.array(detectedMarkers)
