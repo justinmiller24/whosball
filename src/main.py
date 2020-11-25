@@ -238,7 +238,7 @@ while fb.gameIsActive:
 # Stop timer and display FPS information
 print()
 print("Ending Main Script")
-print("Elasped time: {:.2f}".format(fb.elapsedTime))
+print("Elapsed time: {:.2f}".format(fb.elapsedTime))
 print("Avg FPS: {:.2f}".format(fb.fps))
 print()
 

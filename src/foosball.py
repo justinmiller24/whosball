@@ -265,7 +265,7 @@ class Foosball:
 
         # Key metrics
         metrics = {
-            "Elapsed": self.elapsedTime,
+            "Elapsed": (":.2f" % self.elapsedTime) if self.elapsedTime is not None else "-",
             "In Play": self.ballIsInPlay,
             "Detected": self.foosballDetected,
             #"Distance": ("%2.1f cm" % self.distance) if self.distance is not None else "-",
@@ -576,7 +576,7 @@ class Foosball:
                 text = "P%s" % (i + 1)
                 textsize = cv2.getTextSize(text, self.vars["outputFont"], 1, 2)[0]
                 textX = p[1] - (textsize[0] / 2)
-                textY = p[2] - (textsize[1] / 2)
+                textY = p[2]
                 cv2.putText(self.outputImg, text, (int(textX), int(textY)), self.vars["outputFont"], 1, (255, 255, 255), 1)
 
         # TODO: Take action based on ball position and detected players
