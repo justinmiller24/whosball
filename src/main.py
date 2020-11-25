@@ -45,10 +45,10 @@ fb = Foosball(args["debug"]).start()
 # The midfield (3) row has 5 men, spaced 5" apart, and 4 1/4" of linear movement
 # The offense (5) row has 3 men, spaced 7 1/8" apart, and 8 1/2" of linear movement
 print("Initialize players and motors")
-row0 = Foosmen(0, 3, (17, 27), (23, 24), fb.vars["row0"][0], fb.vars["row0"][1], fb.vars["foosmenWidth"]).start()
-row1 = Foosmen(1, 2, (17, 27), (23, 24), fb.vars["row1"][0], fb.vars["row1"][1], fb.vars["foosmenWidth"]).start()
+row0 = Foosmen(0, 3, None, None, fb.vars["row0"][0], fb.vars["row0"][1], fb.vars["foosmenWidth"]).start()
+row1 = Foosmen(1, 2, None, None, fb.vars["row1"][0], fb.vars["row1"][1], fb.vars["foosmenWidth"]).start()
 row3 = Foosmen(3, 5, (17, 27), (23, 24), fb.vars["row2"][0], fb.vars["row2"][1], fb.vars["foosmenWidth"]).start()
-row5 = Foosmen(5, 3, (17, 27), (23, 24), fb.vars["row3"][0], fb.vars["row3"][1], fb.vars["foosmenWidth"]).start()
+row5 = Foosmen(5, 3, None, None, fb.vars["row3"][0], fb.vars["row3"][1], fb.vars["foosmenWidth"]).start()
 players = [row0, row1, None, row3, None, row5, None, None]
 
 # Timer for number of frames in holding pattern

@@ -74,6 +74,7 @@ class Foosmen:
             self.log("[INFO] Initialized foosmen row {} linear motor from GPIO ({}, {})".format(self.id, self.linearMotorAddr[0], self.linearMotorAddr[1]))
         else:
             self.log("[ERROR] Could not initialize linear motor on foosmen row {}".format(self.id))
+            return self
 
         # Rotational Motion
         if self.rotationalMotorAddr is not None:
@@ -81,7 +82,7 @@ class Foosmen:
             self.log("[INFO] Initialized foosmen row {} rotational motor from GPIO ({}, {})".format(self.id, self.rotationalMotorAddr[0], self.rotationalMotorAddr[1]))
         else:
             self.log("[ERROR] Could not initialize rotational motor on foosmen row {}".format(self.id))
-            return
+            return self
 
         # Release motors so they can spin freely
         #self.motors.stepper1.release()
