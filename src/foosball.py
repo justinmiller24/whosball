@@ -280,7 +280,7 @@ class Foosball:
         }
         for key in metrics:
             vPos += 18
-            cv2.putText(out, "%s: %s" % (key, metrics[key]), (10, vPos), self.vars["outputFont"], 1, (255, 255, 255), 1)
+            cv2.putText(out, "%s: %s" % (key, metrics[key]), (10, int(vPos)), self.vars["outputFont"], 1, (255, 255, 255), 1)
 
         vPos = self.vars["height"] + 4
 
@@ -295,7 +295,7 @@ class Foosball:
             textX = self.vars["width"] - textsize[0] - 10
 
             # add text centered on image
-            cv2.putText(out, text, (textX, vPos), self.vars["outputFont"], 1, (255, 255, 255), 1)
+            cv2.putText(out, text, (int(textX), int(vPos)), self.vars["outputFont"], 1, (255, 255, 255), 1)
 
         if self.debug:
             self.log("[DEBUG] Update display end")
@@ -577,7 +577,7 @@ class Foosball:
                 textsize = cv2.getTextSize(text, self.vars["outputFont"], 1, 2)[0]
                 textX = p[1] - textsize[0] / 2
                 textY = p[2] - textsize[1] / 2
-                cv2.putText(self.outputImg, text, (textX, textY), self.vars["outputFont"], 1, (255, 255, 255), 1)
+                cv2.putText(self.outputImg, text, (int(textX), int(textY)), self.vars["outputFont"], 1, (255, 255, 255), 1)
 
         # TODO: Take action based on ball position and detected players
 
