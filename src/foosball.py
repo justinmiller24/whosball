@@ -265,7 +265,7 @@ class Foosball:
 
         # Key metrics
         metrics = {
-            "Elapsed": ("%5.2f sec" % self.elapsedTime) if self.elapsedTime is not None else "-",
+            "Elapsed": ("%5.2f s" % self.elapsedTime) if self.elapsedTime is not None else "-",
             "In Play": self.ballIsInPlay,
             "Detected": self.foosballDetected,
             #"Distance": ("%2.1f cm" % self.distance) if self.distance is not None else "-",
