@@ -599,7 +599,7 @@ class Foosball:
             self.log("[INFO] Total players row 3: {}".format(totPlayersRow3))
             self.log("[INFO] Total players row 5: {}".format(totPlayersRow5))
 
-            if totPlayersRow0 == 3 & totPlayersRow1 == 2 & totPlayersRow3 == 5 & totPlayersRow5 = 3:
+            if totPlayersRow0 == 3 & totPlayersRow1 == 2 & totPlayersRow3 == 5 & totPlayersRow5 == 3:
                 self.playersDetected = True
             else:
                 self.playersDetetcted = False
