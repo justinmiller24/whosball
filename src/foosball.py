@@ -86,7 +86,7 @@ class Foosball:
             # There are 13 total foosmen, each with a unique ID from left to right and top to bottom
             # Each foosmen kicks the ball with feet that measure 1" in width
             'foosmenWidth': 14,                     # Foosmen width (rounded up, in pixels)
-            'foosmenHeight': 36,                    # Foosmen height (how far they "span" in either direction)
+            'foosmenHeight': 42,                    # Foosmen height (how far they "span" in either direction)
 
             # RED players
             'foosmenRedHSV1Lower': (0, 0, 0),       # Foosmen lower bound (HSV)
