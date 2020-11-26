@@ -664,15 +664,15 @@ class Foosball:
 
             # Update coordinates if exactly 4 ArUco markers were found
             if len(dm) == 4:
-                self.log("[INFO] 4 markers detected, update table coordinates")
                 self.tableCoords = []
                 for i, m in enumerate(dm):
                     self.tableCoords.append((m[1], m[2]))
-                self.log(self.tableCoords)
+                self.log("[INFO] 4 ArUco markers detected, update table coordinates")
+                self.log("[INFO] ArUco marker coordinates: {}".format(self.tableCoords))
 
             else:
                 if self.debug:
-                    self.log("[DEBUG] ArUco markers detected but not 4 total, do not update table coordinates")
+                    self.log("[DEBUG] ArUco markers detected but not 4 total")
 
         else:
             if self.debug:
