@@ -140,6 +140,7 @@ class Foosball:
         self.gameIsActive = False
         self.ballIsInPlay = False
         self.foosballDetected = False
+        self.playersDetected = False
 
         # Track frames and time so that we can display FPS
         self.startTime = None
@@ -262,7 +263,7 @@ class Foosball:
             "Elapsed": ("%5.2f s" % self.elapsedTime) if self.elapsedTime is not None else "-",
             "In Play": self.ballIsInPlay,
             "Detect Ball": self.foosballDetected,
-            "Detect Players": self.foosballDetected,
+            "Detect Players": self.playersDetected,
             #"Distance": ("%2.1f cm" % self.distance) if self.distance is not None else "-",
             "Velocity": ("%2.1f m/s" % self.velocity) if self.velocity is not None else "-",
             "FPS": ("%2.1f" % self.fps) if self.fps is not None else "-",
@@ -595,7 +596,7 @@ class Foosball:
             if totPlayersRow0 == 3 & totPlayersRow1 == 2 & totPlayersRow3 == 5 & totPlayersRow5 == 3:
                 self.playersDetected = True
             else:
-                self.playersDetetcted = False
+                self.playersDetected = False
 
         # TODO: Take action based on ball position and detected players
 
