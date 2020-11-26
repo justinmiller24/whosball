@@ -100,15 +100,15 @@ while fb.gameIsActive:
 	##########################################################################
 
 	# Display original (uncropped) image and transformation coordinates
-	origImg = fb.rawFrame.copy()
-	if fb.tableCoords is not None:
+	#origImg = fb.rawFrame.copy()
+	#if fb.tableCoords is not None:
 		#origCoords = np.array(fb.tableCoords, dtype="float32")
 		#for (x, y) in origCoords:
-		for (x, y) in fb.tableCoords:
-			cv2.circle(origImg, (int(float(x)), int(float(y))), 5, (0, 255, 0), -1)
-	cv2.namedWindow("Raw")
-	cv2.moveWindow("Raw", 1250, 100)
-	cv2.imshow("Raw", origImg)
+		#for (x, y) in fb.tableCoords:
+			#cv2.circle(origImg, (int(float(x)), int(float(y))), 5, (0, 255, 0), -1)
+	#cv2.namedWindow("Raw")
+	#cv2.moveWindow("Raw", 1250, 100)
+	#cv2.imshow("Raw", origImg)
 
 	# Build output frame
 	out = fb.buildOutputFrame()
