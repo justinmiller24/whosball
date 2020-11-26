@@ -207,7 +207,7 @@ class Foosball:
         # Otherwise, calculate deltas based on last 3 known points
         else:
             self.deltaX = int((self.ballPositions[-1:][0][0] - self.ballPositions[-3:][0][0]) / 2)
-            self.deltaY = intt((self.ballPositions[-1:][0][1] - self.ballPositions[-3:][0][1]) / 2)
+            self.deltaY = int((self.ballPositions[-1:][0][1] - self.ballPositions[-3:][0][1]) / 2)
 
         # Ignore deltas unless there is "significant" movement
         if abs(self.deltaX) + abs(self.deltaY) < 2:
