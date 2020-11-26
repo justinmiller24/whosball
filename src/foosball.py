@@ -563,26 +563,46 @@ class Foosball:
 
         # Check if all players are detected
         if myPlayer:
-            totPlayersRow0 = sum(1 for i in dp if dp[1] == foosmenRodArray[0])
-            totPlayersRow1 = sum(1 for i in dp if dp[1] == foosmenRodArray[1])
-            totPlayersRow3 = sum(1 for i in dp if dp[1] == foosmenRodArray[2])
-            totPlayersRow5 = sum(1 for i in dp if dp[1] == foosmenRodArray[3])
             self.log("[INFO] Total players detected in foosmen rod {}: {}".format(0, totPlayersRow0))
             self.log("[INFO] Total players detected in foosmen rod {}: {}".format(1, totPlayersRow1))
             self.log("[INFO] Total players detected in foosmen rod {}: {}".format(3, totPlayersRow3))
             self.log("[INFO] Total players detected in foosmen rod {}: {}".format(5, totPlayersRow5))
 
         # Loop through detected players
-        for i, p in enumerate(dp):
-            self.log("[INFO] Player {} detected in foosmen rod {} with center at ({}, {})".format(i, p[0], p[1], p[2]))
+        if myPlayer:
+            totPlayersRow0 = 0
+            totPlayersRow1 = 0
+            totPlayersRow3 = 0
+            totPlayersRow5 = 0
 
-            # Add text to "tag" each detected player, center in each player box
-            if myPlayer:
+            for i, p in enumerate(dp):
+                self.log("[INFO] Player {} detected in foosmen rod {} with center at ({}, {})".format(i, p[0], p[1], p[2]))
+
+                if p[0] == 0:
+                    totPlayersRow0 += 1
+                elif p[0] == 1:
+                    totPlayersRow1 += 1
+                elif p[0] == 2:
+                    totPlayersRow3 += 1
+                elif p[0] == 3:
+                    totPlayersRow5 += 1
+
+                # Add text to "tag" each detected player, center in each player box
                 text = "P%s" % (i + 1)
                 textsize = cv2.getTextSize(text, self.vars["outputFont"], 1, 2)[0]
                 textX = p[1] - (textsize[0] / 2)
                 textY = p[2] + (textsize[1] / 2)
                 cv2.putText(self.outputImg, text, (int(textX), int(textY)), self.vars["outputFont"], 1, (255, 255, 255), 1)
+
+            self.log("[INFO] Total players row 0: {}".format(totPlayersRow0))
+            self.log("[INFO] Total players row 1: {}".format(totPlayersRow1))
+            self.log("[INFO] Total players row 3: {}".format(totPlayersRow3))
+            self.log("[INFO] Total players row 5: {}".format(totPlayersRow5))
+
+            if totPlayersRow0 == 3 & totPlayersRow1 == 2 & totPlayersRow3 == 5 & totPlayersRow5 = 3:
+                self.playersDetected = True
+            else:
+                self.playersDetetcted = False
 
         # TODO: Take action based on ball position and detected players
 
