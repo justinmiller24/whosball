@@ -561,13 +561,6 @@ class Foosball:
         dp = dp[dp[:,2].argsort(kind='mergesort')]
         dp = dp[dp[:,1].argsort(kind='mergesort')]
 
-        # Check if all players are detected
-        if myPlayer:
-            self.log("[INFO] Total players detected in foosmen rod {}: {}".format(0, totPlayersRow0))
-            self.log("[INFO] Total players detected in foosmen rod {}: {}".format(1, totPlayersRow1))
-            self.log("[INFO] Total players detected in foosmen rod {}: {}".format(3, totPlayersRow3))
-            self.log("[INFO] Total players detected in foosmen rod {}: {}".format(5, totPlayersRow5))
-
         # Loop through detected players
         if myPlayer:
             totPlayersRow0 = 0
@@ -594,11 +587,11 @@ class Foosball:
                 textY = p[2] + (textsize[1] / 2)
                 cv2.putText(self.outputImg, text, (int(textX), int(textY)), self.vars["outputFont"], 1, (255, 255, 255), 1)
 
-            self.log("[INFO] Total players row 0: {}".format(totPlayersRow0))
-            self.log("[INFO] Total players row 1: {}".format(totPlayersRow1))
-            self.log("[INFO] Total players row 3: {}".format(totPlayersRow3))
-            self.log("[INFO] Total players row 5: {}".format(totPlayersRow5))
-
+            # Check if all players are detected
+            self.log("[INFO] Total players detected in foosmen rod {}: {}".format(0, totPlayersRow0))
+            self.log("[INFO] Total players detected in foosmen rod {}: {}".format(1, totPlayersRow1))
+            self.log("[INFO] Total players detected in foosmen rod {}: {}".format(3, totPlayersRow3))
+            self.log("[INFO] Total players detected in foosmen rod {}: {}".format(5, totPlayersRow5))
             if totPlayersRow0 == 3 & totPlayersRow1 == 2 & totPlayersRow3 == 5 & totPlayersRow5 == 3:
                 self.playersDetected = True
             else:
