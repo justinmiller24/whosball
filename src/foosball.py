@@ -477,12 +477,6 @@ class Foosball:
 
         origImg = self.frame.copy()
 
-        # Draw line over each roosmen rod
-        for i, xPos in enumerate(foosmenRodArray):
-            if self.debug:
-                self.log("[DEBUG] Add line over {} foosmen rod {} at xPos {}".format(mode, i, xPos))
-            self.outputImg = cv2.line(self.outputImg, (xPos, 0), (xPos, self.vars["height"] - 1), (0, 255, 0), 2)
-
         # Convert to HSV color range
         blurred = cv2.GaussianBlur(origImg, (11, 11), 0)
         hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
@@ -514,6 +508,12 @@ class Foosball:
         else:
             self.log("[ERROR] Invalid `mode` in findPlayers() function")
             return
+
+        # Draw line over each roosmen rod
+        for i, xPos in enumerate(foosmenRodArray):
+            if self.debug:
+                self.log("[DEBUG] Add line over {} foosmen rod {} at xPos {}".format(mode, i, xPos))
+            self.outputImg = cv2.line(self.outputImg, (xPos, 0), (xPos, self.vars["height"] - 1), (0, 255, 0), 2)
 
         # Detect foosmen using contours
         players = self._getContours(mask)
@@ -560,6 +560,17 @@ class Foosball:
         dp = np.array(detectedPlayers)
         dp = dp[dp[:,2].argsort(kind='mergesort')]
         dp = dp[dp[:,1].argsort(kind='mergesort')]
+
+        # Check if all players are detected
+        if myPlayer:
+            totPlayersRow0 = sum(1 for i in dp if dp[1] == foosmenRodArray[0])
+            totPlayersRow1 = sum(1 for i in dp if dp[1] == foosmenRodArray[1])
+            totPlayersRow3 = sum(1 for i in dp if dp[1] == foosmenRodArray[2])
+            totPlayersRow5 = sum(1 for i in dp if dp[1] == foosmenRodArray[3])
+            self.log("[INFO] Total players detected in foosmen rod {}: {}".format(0, totPlayersRow0))
+            self.log("[INFO] Total players detected in foosmen rod {}: {}".format(1, totPlayersRow1))
+            self.log("[INFO] Total players detected in foosmen rod {}: {}".format(3, totPlayersRow3))
+            self.log("[INFO] Total players detected in foosmen rod {}: {}".format(5, totPlayersRow5))
 
         # Loop through detected players
         for i, p in enumerate(dp):
