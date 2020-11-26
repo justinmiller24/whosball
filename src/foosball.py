@@ -201,13 +201,13 @@ class Foosball:
 
         # If we only have two points, then calculate deltas between the last 2 known points
         elif len(self.ballPositions) < 3:
-            self.deltaX = (self.ballPositions[-1:][0][0] - self.ballPositions[-2:][0][0]) / 1
-            self.deltaY = (self.ballPositions[-1:][0][1] - self.ballPositions[-2:][0][1]) / 1
+            self.deltaX = int((self.ballPositions[-1:][0][0] - self.ballPositions[-2:][0][0]) / 1)
+            self.deltaY = int((self.ballPositions[-1:][0][1] - self.ballPositions[-2:][0][1]) / 1)
 
         # Otherwise, calculate deltas based on last 3 known points
         else:
-            self.deltaX = (self.ballPositions[-1:][0][0] - self.ballPositions[-3:][0][0]) / 2
-            self.deltaY = (self.ballPositions[-1:][0][1] - self.ballPositions[-3:][0][1]) / 2
+            self.deltaX = int((self.ballPositions[-1:][0][0] - self.ballPositions[-3:][0][0]) / 2)
+            self.deltaY = intt((self.ballPositions[-1:][0][1] - self.ballPositions[-3:][0][1]) / 2)
 
         # Ignore deltas unless there is "significant" movement
         if abs(self.deltaX) + abs(self.deltaY) < 2:
@@ -222,12 +222,6 @@ class Foosball:
         # Calculate projected next coordinate
         self.projectedPosition = (self.ballPositions[-1:][0][0] + self.deltaX, self.ballPositions[-1:][0][1] + self.deltaY)
         self.log("[INFO] Projected next position is: {}".format(self.projectedPosition))
-
-        # Project goal on next frame
-        #if self.projectedPosition[0] < 0:
-            #self.log("[INFO] Projected Goal: WHOSBALL Player")
-        #elif self.projectedPosition[0] > self.vars["width"]:
-            #self.log("[INFO] Projected Goal: Human Player")
 
         # Calculate distance (in cm), velocity, and direction -- for visual display only
         distancePX = math.sqrt(self.deltaX * self.deltaX + self.deltaY * self.deltaY)
@@ -267,7 +261,7 @@ class Foosball:
         metrics = {
             "Elapsed": ("%5.2f s" % self.elapsedTime) if self.elapsedTime is not None else "-",
             "In Play": self.ballIsInPlay,
-            "Detected": self.foosballDetected,
+            "Detect Ball": self.foosballDetected,
             #"Distance": ("%2.1f cm" % self.distance) if self.distance is not None else "-",
             "Velocity": ("%2.1f m/s" % self.velocity) if self.velocity is not None else "-",
             "FPS": ("%2.1f" % self.fps) if self.fps is not None else "-",
@@ -353,10 +347,6 @@ class Foosball:
         if self.debug:
             self.log("[DEBUG] Detect Foosball begin")
 
-        # If the foosball was previously detected, localize the search to save overall computation time
-        if self.foosballDetected:
-            self.log("[INFO] TODO: Foosball was previously detected. Localize search to save time here...")
-
         origImg = self.frame.copy()
 
         # Convert to HSV color range
@@ -393,8 +383,7 @@ class Foosball:
                 #perimeter = cv2.arcLength(c, True)
                 #epsilon = 0.04 * perimeter
                 #approx = cv2.approxPolyDP(c, epsilon, True)
-                cv2.drawContours(self.outputImg, [c], -1, (36, 255, 12), -1)
-                #cv2.drawContours(self.outputImg, [c], -1, (30, 255, 255), -1)
+                cv2.drawContours(self.outputImg, [c], -1, (30, 255, 255), -1)
 
             # Find largest contour and draw on output image with a different color
             c = max(cnts, key=cv2.contourArea)
