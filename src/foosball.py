@@ -262,6 +262,7 @@ class Foosball:
             "Elapsed": ("%5.2f s" % self.elapsedTime) if self.elapsedTime is not None else "-",
             "In Play": self.ballIsInPlay,
             "Detect Ball": self.foosballDetected,
+            "Detect Players": self.foosballDetected,
             #"Distance": ("%2.1f cm" % self.distance) if self.distance is not None else "-",
             "Velocity": ("%2.1f m/s" % self.velocity) if self.velocity is not None else "-",
             "FPS": ("%2.1f" % self.fps) if self.fps is not None else "-",
@@ -540,7 +541,7 @@ class Foosball:
 
                 # Ensure boundaries are within acceptable margins on either side of foosmen rod
                 #if ((x < xPos) & (xPos < (x + w))):
-                if ((x > (xPos - self.vars["foosmenHeight"] - 5)) & (x < xPos) & ((x + w) < (xPos + self.vars["foosmenHeight"] + 5)) & ((x + w) > xPos)):
+                if ((x > (xPos - self.vars["foosmenHeight"] - 8)) & (x < xPos) & ((x + w) < (xPos + self.vars["foosmenHeight"] + 8)) & ((x + w) > xPos)):
 
                     # Add player to detectedPlayers array
                     # Normalize x-coordinate by using [xPos] instead of [(x + w) / 2]
