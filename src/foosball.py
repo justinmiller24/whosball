@@ -471,19 +471,9 @@ class Foosball:
 
     # Take current image, perform object recognition,
     # and convert this information into the coordinates of the RED and BLUE players
-    def findPlayers(self, mode, tagPlayers = False):
+    def findPlayers(self, mode, myPlayer = False):
         if self.debug:
             self.log("[DEBUG] Detect players begin")
-
-        # Set variables based on mode (RED or BLUE)
-        if mode == "RED":
-            contourRGB = self.vars["foosmenRedContour"]
-            rectangleRGB = self.vars["foosmenRedBox"]
-            foosmenRodArray = self.vars["foosmenRED"]
-        else:
-            contourRGB = self.vars["foosmenBlueContour"]
-            rectangleRGB = self.vars["foosmenBlueBox"]
-            foosmenRodArray = self.vars["foosmenBLUE"]
 
         origImg = self.frame.copy()
 
@@ -497,15 +487,33 @@ class Foosball:
         blurred = cv2.GaussianBlur(origImg, (11, 11), 0)
         hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
 
-        # Create color mask for foosmen and perform erosions and dilation to remove small blobs in mask
+        # Set variables based on mode (RED or BLUE)
+        self.foosmenDetected = False
         if mode == "RED":
+            contourRGB = self.vars["foosmenRedContour"]
+            rectangleRGB = self.vars["foosmenRedBox"]
+            foosmenRodArray = self.vars["foosmenRED"]
+
+            # Create color mask for foosmen and perform erosions and dilation to remove small blobs in mask
             mask1 = cv2.inRange(hsv, self.vars["foosmenRedHSV1Lower"], self.vars["foosmenRedHSV1Upper"])
             mask2 = cv2.inRange(hsv, self.vars["foosmenRedHSV2Lower"], self.vars["foosmenRedHSV2Upper"])
             mask = cv2.bitwise_or(mask1, mask2)
-        else:
+            mask = cv2.erode(mask, None, iterations=4)
+            mask = cv2.dilate(mask, None, iterations=4)
+
+        elif mode == "BLUE":
+            contourRGB = self.vars["foosmenBlueContour"]
+            rectangleRGB = self.vars["foosmenBlueBox"]
+            foosmenRodArray = self.vars["foosmenBLUE"]
+
+            # Create color mask for foosmen and perform erosions and dilation to remove small blobs in mask
             mask = cv2.inRange(hsv, self.vars["foosmenBlueHSVLower"], self.vars["foosmenBlueHSVUpper"])
-        mask = cv2.erode(mask, None, iterations=4)
-        mask = cv2.dilate(mask, None, iterations=4)
+            mask = cv2.erode(mask, None, iterations=4)
+            mask = cv2.dilate(mask, None, iterations=4)
+
+        else:
+            self.log("[ERROR] Invalid `mode` in findPlayers() function")
+            return
 
         # Detect foosmen using contours
         players = self._getContours(mask)
@@ -530,10 +538,6 @@ class Foosball:
             if h < (self.vars["foosmenWidth"] - 5):
                 continue
 
-            # Filter contours with abnormal height
-            #if w > (self.vars["foosmenHeight"] * 2):
-                #continue
-
             # Normalize xPos based on foosball rod. We do this by looping through
             # each of the 4 foosmen rods and determining if this contour falls
             # within an acceptable range of one of them.
@@ -544,7 +548,7 @@ class Foosball:
                 if ((x > (xPos - self.vars["foosmenHeight"] - 8)) & (x < xPos) & ((x + w) < (xPos + self.vars["foosmenHeight"] + 8)) & ((x + w) > xPos)):
 
                     # Add player to detectedPlayers array
-                    # Normalize x-coordinate by using [xPos] instead of [(x + w) / 2]
+                    # Normalize x-coordinate by using [xPos] instead of [x + (w / 2)]
                     playerPos = (xPos, y + (h / 2))
                     detectedPlayers.append([row, playerPos[0], playerPos[1]])
 
@@ -562,7 +566,7 @@ class Foosball:
             self.log("[INFO] Player {} detected in foosmen rod {} with center at ({}, {})".format(i, p[0], p[1], p[2]))
 
             # Add text to "tag" each detected player, center in each player box
-            if tagPlayers:
+            if myPlayer:
                 text = "P%s" % (i + 1)
                 textsize = cv2.getTextSize(text, self.vars["outputFont"], 1, 2)[0]
                 textX = p[1] - (textsize[0] / 2)
