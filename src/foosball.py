@@ -139,6 +139,7 @@ class Foosball:
         # This can be toggled at any time to STOP or PAUSE play
         self.gameIsActive = False
         self.ballIsInPlay = False
+        self.arucoDetected = False
         self.foosballDetected = False
         self.playersDetected = False
 
@@ -261,7 +262,8 @@ class Foosball:
         # Key metrics
         metrics = {
             "Elapsed": ("%5.2f s" % self.elapsedTime) if self.elapsedTime is not None else "-",
-            "In Play": self.ballIsInPlay,
+            #"In Play": self.ballIsInPlay,
+            "Detect Markers": self.arucoDetected,
             "Detect Ball": self.foosballDetected,
             "Detect Players": self.playersDetected,
             #"Distance": ("%2.1f cm" % self.distance) if self.distance is not None else "-",
@@ -614,6 +616,8 @@ class Foosball:
 
         origImg = self.rawFrame.copy()
 
+        self.arucoDetected = False
+
 
         # Detect ArUco markers
         # `corners` is the list of corners returned in clockwise order: top left, top right, bottom right, bottom left
@@ -666,6 +670,7 @@ class Foosball:
 
             # Update coordinates if exactly 4 ArUco markers were found
             if len(dm) == 4:
+                self.arucoDetected = True
                 self.tableCoords = []
                 for i, m in enumerate(dm):
                     self.tableCoords.append((m[1], m[2]))
