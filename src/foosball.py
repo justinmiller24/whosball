@@ -593,10 +593,12 @@ class Foosball:
             self.log("[INFO] Total players detected in foosmen rod {}: {}".format(1, totPlayersRow1))
             self.log("[INFO] Total players detected in foosmen rod {}: {}".format(3, totPlayersRow3))
             self.log("[INFO] Total players detected in foosmen rod {}: {}".format(5, totPlayersRow5))
-            if totPlayersRow0 == 3 & totPlayersRow1 == 2 & totPlayersRow3 == 5 & totPlayersRow5 == 3:
+            if ((totPlayersRow0 == 3) & (totPlayersRow1 == 2) & (totPlayersRow3 == 5) & (totPlayersRow5 == 3)):
                 self.playersDetected = True
+                self.log("[INFO] All 13 players detected")
             else:
                 self.playersDetected = False
+                self.log("[INFO] All 13 players NOT detected")
 
         # TODO: Take action based on ball position and detected players
 
