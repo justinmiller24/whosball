@@ -9,7 +9,6 @@
 
 # import the necessary packages
 import argparse
-import curses
 import cv2
 import math
 import time
@@ -18,10 +17,6 @@ from foosball import Foosball
 from players import Foosmen
 
 print("Starting Main Script")
-
-
-# Handle user input during game play
-screen = curses.initscr()
 
 
 # construct the argument parse and parse the arguments
@@ -78,20 +73,6 @@ while fb.gameIsActive:
 	print()
 	fb.log("[INFO] Main loop begin", True)
 
-	c = screen.getch()
-	time.sleep(0.03)
-
-	# Toggle preview
-	if c == ord('t'):
-		fb.log("Toggle Preview")
-		showPreview = not showPreview
-
-	# Quit
-	elif c == ord('q'):
-		fb.log("Quitting Now...", True)
-		fb.gameIsActive = False
-		break
-
 
 	##########################################################################
 	# This section grabs the latest image from the camera stream             #
@@ -147,8 +128,14 @@ while fb.gameIsActive:
 		writer.write(out)
 
 	# Handle user input. Stop loop if the "q" key is pressed.
-	if cv2.waitKey(1) & 0xFF == ord("q"):
+	key = cv2.waitKey(1) & 0xFF
+	# Quit
+	if key == ord("q"):
 		break
+	# Toggle debug mode
+	elif key == ord("d"):
+		fb.debug = not fb.debug
+
 
 	# Only continue if the location of the foosball is known
 	if fb.foosballPosition is None:
