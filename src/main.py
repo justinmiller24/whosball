@@ -22,6 +22,8 @@ print("Starting Main Script")
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("--debug", help="whether or not to show debug mode", action="store_true")
+ap.add_argument("--preview", help="whether or not to show video preview", action="store_true")
+ap.add_argument("--raw", help="whether or not to show raw video capture", action="store_true")
 ap.add_argument("--output", help="path to output video file")
 args = vars(ap.parse_args())
 
@@ -100,21 +102,23 @@ while fb.gameIsActive:
 	##########################################################################
 
 	# Display original (uncropped) image and transformation coordinates
-	#origImg = fb.rawFrame.copy()
-	#if fb.tableCoords is not None:
-		#origCoords = np.array(fb.tableCoords, dtype="float32")
-		#for (x, y) in origCoords:
-		#for (x, y) in fb.tableCoords:
-			#cv2.circle(origImg, (int(float(x)), int(float(y))), 5, (0, 255, 0), -1)
-	#cv2.namedWindow("Raw")
-	#cv2.moveWindow("Raw", 1250, 100)
-	#cv2.imshow("Raw", origImg)
+	if args["raw"]:
+		origImg = fb.rawFrame.copy()
+		#if fb.tableCoords is not None:
+			#origCoords = np.array(fb.tableCoords, dtype="float32")
+			#for (x, y) in origCoords:
+			#for (x, y) in fb.tableCoords:
+				#cv2.circle(origImg, (int(float(x)), int(float(y))), 5, (0, 255, 0), -1)
+		cv2.namedWindow("Raw")
+		cv2.moveWindow("Raw", 1250, 100)
+		cv2.imshow("Raw", origImg)
 
 	# Build output frame
 	out = fb.buildOutputFrame()
 
 	# Show on screen
-	cv2.imshow("Output", out)
+	if args["preview"]:
+		cv2.imshow("Output", out)
 
 	# Write frame to output file
 	if writer is not None:
