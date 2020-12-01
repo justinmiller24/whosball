@@ -854,10 +854,7 @@ class Foosball:
     def log(self, msg, flush=False):
         self.msgs.append(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f") + " " + msg)
         if flush:
-            myOutput = ''
-            for i, m in enumerate(self.msgs):
-                myOutput += m + "\n"
-            print(myOutput)
+            print("\n".join(self.msgs))
             self.msgs = []
 
 
