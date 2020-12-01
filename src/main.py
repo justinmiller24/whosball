@@ -20,6 +20,10 @@ from players import Foosmen
 print("Starting Main Script")
 
 
+# Handle user input during game play
+screen = curses.initscr()
+
+
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("--debug", help="whether or not to show debug mode", action="store_true")
