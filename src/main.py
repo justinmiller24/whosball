@@ -117,7 +117,7 @@ while fb.gameIsActive:
 	out = fb.buildOutputFrame()
 
 	# Show on screen
-	if args["nopreview"]:
+	if not args["nopreview"]:
 		cv2.imshow("Output", out)
 
 	# Write frame to output file
@@ -142,6 +142,7 @@ while fb.gameIsActive:
 	closestRow = fb.getClosestRow(currentPosition[0])
 	fb.getControllingRow()
 	projectedRow = fb.getClosestRow(currentPosition[0] + 3 * fb.deltaX)
+	fb.log("[INFO] Closest Row: {} Projected Row: {}".format(closestRow, projectedRow))
 
 
 	# Check if ball is coming towards us and will change possession within next 3 frames
