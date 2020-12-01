@@ -70,7 +70,7 @@ if args["output"]:
 
 # Main loop
 while fb.gameIsActive:
-	fb.log("", True)
+	print()
 	fb.log("[INFO] Main loop begin")
 
 
@@ -128,6 +128,7 @@ while fb.gameIsActive:
 		writer.write(out)
 
 	# Handle user input. Stop loop if the "q" key is pressed.
+	fb.log("[INFO] Wait for user input", True)
 	key = cv2.waitKey(1) & 0xFF
 	# Quit
 	if key == ord("q"):
@@ -247,6 +248,9 @@ while fb.gameIsActive:
 		fb.log("[INFO] Controlling row: {}".format(fb.controllingRow))
 		fb.log("[INFO] Something went wrong... exiting now")
 		fb.gameIsActive = False
+
+
+	fb.log("[INFO] Main loop end", True)
 
 
 # Stop timer and display FPS information
