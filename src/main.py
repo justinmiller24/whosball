@@ -70,8 +70,8 @@ if args["output"]:
 
 # Main loop
 while fb.gameIsActive:
-	print()
-	fb.log("[INFO] Main loop begin", True)
+	fb.log("", True)
+	fb.log("[INFO] Main loop begin")
 
 
 	##########################################################################
