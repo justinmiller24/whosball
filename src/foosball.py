@@ -18,6 +18,9 @@ class Foosball:
 
         self.debug = debug
 
+        # Track console log in buffer to save processing time
+        self.msgs = []
+
         # Create a dictionary with pre-calculated values for faster lookup
         # Attributes prefixed with an underscore (_) are needed for calculation only
         self.vars = {
@@ -149,9 +152,6 @@ class Foosball:
         self.elapsedTime = 0
         self.numFrames = 0
         self.fps = None
-
-        # Track console output in buffer to save processing time
-        self.msgs = []
 
 
     # Start game
