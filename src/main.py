@@ -9,6 +9,7 @@
 
 # import the necessary packages
 import argparse
+import curses
 import cv2
 import math
 import time
@@ -26,6 +27,9 @@ ap.add_argument("--nopreview", help="whether or not to hide video preview", acti
 ap.add_argument("--raw", help="whether or not to show raw video capture", action="store_true")
 ap.add_argument("--output", help="path to output video file")
 args = vars(ap.parse_args())
+
+# Show preview
+showPreview = not args["nopreview"]
 
 
 ##########################################################################
@@ -60,7 +64,7 @@ idleFrames = 0
 # Record video output to file
 writer = None
 if args["output"]:
-	print("Initialize video output")
+	print("Initialize video output: {}".format(args["output"]))
 	fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
 	writer = cv2.VideoWriter(args["output"], fourcc, 30, (fb.vars["outputWidth"], fb.vars["outputHeight"]), True)
 
@@ -69,6 +73,20 @@ if args["output"]:
 while fb.gameIsActive:
 	print()
 	fb.log("[INFO] Main loop begin", True)
+
+	c = screen.getch()
+	time.sleep(0.03)
+
+	# Toggle preview
+	if c == ord('t'):
+		fb.log("Toggle Preview")
+		showPreview = not showPreview
+
+	# Quit
+	elif c == ord('q'):
+		fb.log("Quitting Now...", True)
+		fb.gameIsActive = False
+		break
 
 
 	##########################################################################
@@ -117,7 +135,7 @@ while fb.gameIsActive:
 	out = fb.buildOutputFrame()
 
 	# Show on screen
-	if not args["nopreview"]:
+	if showPreview:
 		cv2.imshow("Output", out)
 
 	# Write frame to output file
