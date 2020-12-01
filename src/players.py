@@ -74,7 +74,7 @@ class Foosmen:
         # Linear Motion
         if self.linearMotorAddr is not None:
             self.motor1 = Motor(self.linearMotorAddr[0], self.linearMotorAddr[1])
-            self.log("[INFO] Initialized foosmen row {} linear motor from GPIO ({}, {})".format(self.id, self.linearMotorAddr[0], self.linearMotorAddr[1]))
+            self.log("[MOTOR] Initialized foosmen row {} linear motor from GPIO ({}, {})".format(self.id, self.linearMotorAddr[0], self.linearMotorAddr[1]))
         else:
             self.log("[ERROR] Could not initialize linear motor on foosmen row {}".format(self.id))
             return self
@@ -82,7 +82,7 @@ class Foosmen:
         # Rotational Motion
         if self.rotationalMotorAddr is not None:
             self.motor2 = Motor(self.rotationalMotorAddr[0], self.rotationalMotorAddr[1])
-            self.log("[INFO] Initialized foosmen row {} rotational motor from GPIO ({}, {})".format(self.id, self.rotationalMotorAddr[0], self.rotationalMotorAddr[1]))
+            self.log("[MOTOR] Initialized foosmen row {} rotational motor from GPIO ({}, {})".format(self.id, self.rotationalMotorAddr[0], self.rotationalMotorAddr[1]))
         else:
             self.log("[ERROR] Could not initialize rotational motor on foosmen row {}".format(self.id))
             return self
@@ -94,14 +94,14 @@ class Foosmen:
         #self.motors.stepper2.release()
 
         # Warm up motors
-        self.log("[INFO] Warm up linear motor")
+        self.log("[MOTOR] Warm up linear motor")
         self.motor1.forward()
         time.sleep(.005)
         self.motor1.backward()
         time.sleep(.005)
         self.motor1.stop()
 
-        self.log("[INFO] Warm up rotational motor")
+        self.log("[MOTOR] Warm up rotational motor")
         self.motor2.forward()
         time.sleep(.005)
         self.motor2.backward()
@@ -123,8 +123,8 @@ class Foosmen:
             self.log("[MOTOR] Skipping kickAngle({}, {}) - motors do not exist".format(x,y))
             return
 
-        self.log("[INFO] Kick row {} at angle {}".format(self.id, angle))
-        self.log("[INFO] Move {}px X axis and {}px Y axis".format(x, y))
+        self.log("[MOTOR] Kick row {} at angle {}".format(self.id, angle))
+        self.log("[MOTOR] Move {}px X axis and {}px Y axis".format(x, y))
 
         # Setup shot
         angle = 75
@@ -221,7 +221,7 @@ class Foosmen:
         self.motor1.backward()
         time.sleep(self.stepTimeInMs / 1000)
         self.motor1.stop()
-        self.log("[INFO] Move row {} one step BACKWARD, position is now: {}".format(self.id, self.position))
+        self.log("[MOTOR] Move row {} one step BACKWARD, position is now: {}".format(self.id, self.position))
 
 
     # Move linear motor one step FORWARD
@@ -240,7 +240,7 @@ class Foosmen:
         self.motor1.forward()
         time.sleep(self.stepTimeInMs / 1000)
         self.motor1.stop()
-        self.log("[INFO] Move row {} one step FORWARD, position is now: {}".format(self.id, self.position))
+        self.log("[MOTOR] Move row {} one step FORWARD, position is now: {}".format(self.id, self.position))
 
 
     # Move linear motor to get to specific position
@@ -315,7 +315,7 @@ class Foosmen:
         self.motor2.backward()
         time.sleep(self.stepTimeInMs / 1000)
         self.motor2.stop()
-        self.log("[INFO] Rotate row {} one step BACKWARD, angle is now: {}".format(self.id, self.angle))
+        self.log("[MOTOR] Rotate row {} one step BACKWARD, angle is now: {}".format(self.id, self.angle))
 
 
     # Move rotational motor one step FORWARD
@@ -337,7 +337,7 @@ class Foosmen:
         self.motor2.forward()
         time.sleep(self.stepTimeInMs / 1000)
         self.motor2.stop()
-        self.log("[INFO] Rotate row {} one step FORWARD, angle is now: {}".format(self.id, self.angle))
+        self.log("[MOTOR] Rotate row {} one step FORWARD, angle is now: {}".format(self.id, self.angle))
 
 
     # Move rotational motor to get to specific angle
