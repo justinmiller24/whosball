@@ -136,7 +136,7 @@ class Foosball:
             ])
         }
         if self.debug:
-            self.log(self.vars)
+            self.log(str(self.vars))
 
         # Variable to determine if a game is currently in progress or not
         # This can be toggled at any time to STOP or PAUSE play
