@@ -16,14 +16,12 @@ Because the table can move slightly during game play, we account for this by pla
 
 ![ArUco Marker](media/aruco.png)
 
-To detect the foosball and the players, we convert every frame into the [HSV color space](https://en.wikipedia.org/wiki/HSL_and_HSV) and use native functions within OpenCV to create a mask using HSV ranges for each object. We then perform morphological operations to remove small blobs in the mask while preserving the overall shape and size of the larger objects.
-
-Because the main script processes this information on every frame, we are also able to "preview" what the computer sees in real time:
+To detect the foosball and the players, we convert every frame into the [HSV color space](https://en.wikipedia.org/wiki/HSL_and_HSV) and use native functions within OpenCV to create a mask using HSV ranges for each object. We then perform morphological operations to remove small blobs in the mask while preserving the overall shape and size of the larger objects. Because the main script processes this information on every frame, we are also able to "preview" what the computer sees in real time.
 
 ![Screenshot](media/screenshot.png)
 
-This information is fed into the AI portion of the script, which is responsible for strategy and determining how to respond based on the current conditions of the game. The response for each row of players (foosmen) is translated into motor movement, which sends specific commands to the motors responsible for moving the players.
+This information is fed into the AI portion of the script, which is responsible for strategy and determining how to respond based on the current conditions of the game. At a high level, the "order" of response on each frame is (i) defense (ii) offense (iii) hold. A detailed version of this strategy can be found [here](media/strategy.pdf).
 
-![Wiring Diagram](media/wiring.png)
+Once the response for each row of players (foosmen) is determined, the AI portion of the script translates this into movement needed from each motor to respond. These commands are sent to the motors responsible for moving the players via the [GPIO pins](https://www.raspberrypi.org/documentation/usage/gpio/) (general purpose input/output) from the Raspberry Pi to a Stepper Motor Driver, which in turn controls each [stepper motor](https://en.wikipedia.org/wiki/Stepper_motor).
 
-A detailed version of the strategy can be found [here](media/strategy.pdf).
+![GPIO Pinout](media/gpio-pinout.png)
