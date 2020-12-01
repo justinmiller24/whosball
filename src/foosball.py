@@ -151,7 +151,7 @@ class Foosball:
         self.fps = None
 
         # Track console output in buffer to save processing time
-        self.msgs = []
+        #self.msgs = []
 
 
     # Start game
@@ -858,13 +858,14 @@ class Foosball:
 
     # Print output message to console
     def log(self, msg, flush=False):
-        self.msgs.append(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f") + " " + msg)
-        if flush:
-            myOutput = ''
-            for i, m in enumerate(self.msgs):
-                myOutput += m + "\n"
-            print(myOutput)
-            self.msgs = []
+        print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), msg)
+        #self.msgs.append(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f") + " " + msg)
+        #if flush:
+            #myOutput = ''
+            #for i, m in enumerate(self.msgs):
+                #myOutput += m + "\n"
+            #print(myOutput)
+            #self.msgs = []
 
 
     # Save new frame and update FPS data
