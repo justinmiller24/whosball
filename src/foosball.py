@@ -857,7 +857,7 @@ class Foosball:
 
     # Print output message to console
     def log(self, msg, flush=False):
-        self.msgs.append(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), msg)
+        self.msgs.append(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f") + " " + msg)
         if flush:
             myOutput = ''
             for i, m in enumerate(self.msgs):
