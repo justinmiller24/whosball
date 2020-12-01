@@ -151,7 +151,7 @@ class Foosball:
         self.fps = None
 
         # Track console output in buffer to save processing time
-        #self.msgs = []
+        self.msgs = []
 
 
     # Start game
@@ -850,22 +850,15 @@ class Foosball:
         return (xi - x1) * (y2 - y1) / (x2 - x1) + y1
 
 
-    # Determine if the ball position of the foosball is currently known
-    # This returns true, even in the case of ball occlusion
-    #def isKnownBallPosition(self):
-        #return self.foosballPosition is not None
-
-
     # Print output message to console
     def log(self, msg, flush=False):
-        print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"), msg)
-        #self.msgs.append(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f") + " " + msg)
-        #if flush:
-            #myOutput = ''
-            #for i, m in enumerate(self.msgs):
-                #myOutput += m + "\n"
-            #print(myOutput)
-            #self.msgs = []
+        self.msgs.append(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f") + " " + msg)
+        if flush:
+            myOutput = ''
+            for i, m in enumerate(self.msgs):
+                myOutput += m + "\n"
+            print(myOutput)
+            self.msgs = []
 
 
     # Save new frame and update FPS data
