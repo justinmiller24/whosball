@@ -22,7 +22,7 @@ print("Starting Main Script")
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("--debug", help="whether or not to show debug mode", action="store_true")
-ap.add_argument("--preview", help="whether or not to show video preview", action="store_true")
+ap.add_argument("--nopreview", help="whether or not to hide video preview", action="store_true")
 ap.add_argument("--raw", help="whether or not to show raw video capture", action="store_true")
 ap.add_argument("--output", help="path to output video file")
 args = vars(ap.parse_args())
@@ -117,7 +117,7 @@ while fb.gameIsActive:
 	out = fb.buildOutputFrame()
 
 	# Show on screen
-	if args["preview"]:
+	if args["nopreview"]:
 		cv2.imshow("Output", out)
 
 	# Write frame to output file
