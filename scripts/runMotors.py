@@ -15,11 +15,30 @@
 # This makes the TB6600 an ideal candidate for high power and high precision applications.
 # The 5V input current is ideal for RaspberryPi and Arduino applications.
 
+# NEMA 17 Stepper Motor
+# Motor type: Bipolar Stepper
+# Phase Resistance: 1.5Ohm
+# Phase Inductance: 2.8mH
+# Detent Torque: 2.2N.cm
+# Rotor Inertia: 54g.cm2
+# Holding Torque: 40N.cm
+# Step angle: 1.8 deg
+# Motor Weight: 280g
+# Step angle accuracy: + - 5%(full step, not load)
+# Resistance accuracy: + - 10%
+# Inductance accuracy: + - 20%
+# Temperature rise: 80deg Max(rated current, 2 phase on)
+# Ambient temperature: —20deg ~+50deg
+# Insulation resistance: 100MΩ Min, 500VDC
+# Insultion Strength: 500VAC for one minute
+# Connection: Red(A+), Green(A-), Yellow(B+), Blue(B-)
+
 # Current Specs
-#200 steps/rev
-#24V, 1.7A
-#TB6600 driver = 1:1 microstep mode
-#Turn a 200 step motor left one full revolution: 200
+# 200 steps/rev
+# 24V
+# 1.7A
+# TB6600 driver = 1:1 microstep mode
+# Number of steps to turn one full revolution = 200
 
 # Import packages
 import RPi.GPIO as io
