@@ -10,7 +10,7 @@ The end goal is to complete a working prototype of a foosball table that is capa
 ## Overview
 The basic setup will be a foosball table and a camera connected to a [Raspberry Pi](https://www.raspberrypi.org/). This will allow for image detection to be able to detect and track the position of the table, foosball, and players at all times.
 
-![Basic Setup](media/img1.png)
+![Basic Setup](media/foosball-setup.png)
 
 Because the table can move slightly during game play, we account for this by placing [ArUco markers](https://docs.opencv.org/master/d9/d6d/tutorial_table_of_content_aruco.html) in each of the four corners of the table to identify and crop each image captured to the table boundaries. An example of an ArUco marker is below:
 
@@ -22,6 +22,8 @@ Because the main script processes this information on every frame, we are also a
 
 ![Screenshot](media/screenshot.png)
 
-This information is fed into the AI portion of the script, which is responsible for strategy and determining how to respond based on the current conditions of the game. The response for each row of players (foosmen) is translated into motor movement, which sends specific commands to each of the eight motors responsible for moving the players.
+This information is fed into the AI portion of the script, which is responsible for strategy and determining how to respond based on the current conditions of the game. The response for each row of players (foosmen) is translated into motor movement, which sends specific commands to the motors responsible for moving the players.
+
+![Wiring Diagram](media/wiring.png)
 
 A detailed version of the strategy can be found [here](media/strategy.pdf).
