@@ -226,7 +226,6 @@ class Foosball:
 
         # Calculate projected next coordinate
         self.projectedPosition = (self.ballPositions[-1:][0][0] + self.deltaX, self.ballPositions[-1:][0][1] + self.deltaY)
-        self.log("[INFO] Projected next position is: {}".format(self.projectedPosition))
 
         # Calculate distance (in cm), velocity, and direction -- for visual display only
         distancePX = math.sqrt(self.deltaX * self.deltaX + self.deltaY * self.deltaY)
@@ -575,7 +574,8 @@ class Foosball:
             totPlayersRow5 = 0
 
             for i, p in enumerate(dp):
-                self.log("[INFO] Player {} detected in foosmen rod {} with center at ({}, {})".format(i, p[0], p[1], p[2]))
+                if self.debug:
+                    self.log("[DEBUG] Player {} detected in foosmen rod {} with center at ({}, {})".format(i, p[0], p[1], p[2]))
 
                 if p[0] == 0:
                     totPlayersRow0 += 1
@@ -594,10 +594,11 @@ class Foosball:
                 cv2.putText(self.outputImg, text, (int(textX), int(textY)), self.vars["outputFont"], 1, (255, 255, 255), 1)
 
             # Check if all players are detected
-            self.log("[INFO] Total players detected in foosmen rod {}: {}".format(0, totPlayersRow0))
-            self.log("[INFO] Total players detected in foosmen rod {}: {}".format(1, totPlayersRow1))
-            self.log("[INFO] Total players detected in foosmen rod {}: {}".format(3, totPlayersRow3))
-            self.log("[INFO] Total players detected in foosmen rod {}: {}".format(5, totPlayersRow5))
+            if self.debug:
+                self.log("[INFO] Total players detected in foosmen rod {}: {}".format(0, totPlayersRow0))
+                self.log("[INFO] Total players detected in foosmen rod {}: {}".format(1, totPlayersRow1))
+                self.log("[INFO] Total players detected in foosmen rod {}: {}".format(3, totPlayersRow3))
+                self.log("[INFO] Total players detected in foosmen rod {}: {}".format(5, totPlayersRow5))
             if ((totPlayersRow0 == 3) & (totPlayersRow1 == 2) & (totPlayersRow3 == 5) & (totPlayersRow5 == 3)):
                 self.playersDetected = True
                 self.log("[INFO] All 13 players detected")
