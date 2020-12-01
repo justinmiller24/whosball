@@ -29,9 +29,9 @@ import time
 STEPS_PER_REVOLUTION = 200  # The number of steps needed for one full revolution
 DELAY = .002    # Delay time, in seconds
 # GPIO pins
-STP = 22    # Step
-DIR = 23    # Direction
-ENA = 24    # Enable
+STP = 17    # Step
+DIR = 27    # Direction
+ENA = 22    # Enable
 
 # Use broadcom pin-numbering scheme for GPIO pins
 # These pin numbers follow the lower-level numbering system defined by the Raspberry Pi's Broadcom-chip brain
@@ -51,6 +51,12 @@ io.output(DIR, 1)
 #io.output(ENA, True)
 io.output(ENA, 1)
 
+for pin in [17, 27, 22]:
+    if io.input(pin):
+        print("GPIO pin {} is HIGH".format(pin))
+    else:
+        print("GPIO pin {} is LOW".format(pin))
+
 # Main Loop
 for x in range(STEPS_PER_REVOLUTION):
     #io.output(STP, io.HIGH)
@@ -58,7 +64,7 @@ for x in range(STEPS_PER_REVOLUTION):
     time.sleep(DELAY)
     io.output(STP, 0)
     time.sleep(DELAY)
-    print("Move one step")
+    print("Move one step: {}".format(x))
 
 # Stop motor - power is NOT going to the motor
 io.output(ENA, 0)
