@@ -46,7 +46,7 @@ import time
 
 # Global variables
 STEPS_PER_REV = 200     # The number of steps needed for one full revolution
-DELAY = .002            # Delay time, in seconds
+DELAY = .005            # Delay time, in seconds
 
 # GPIO pins
 STP = 17                # Step
@@ -66,7 +66,7 @@ io.setup(ENA, io.OUT)
 io.output(DIR, 1)
 
 # Start motor - power IS going to the motor
-io.output(ENA, 1)
+io.output(ENA, 0)
 
 for pin in [17, 27, 22]:
     if io.input(pin):
@@ -83,7 +83,7 @@ for x in range(STEPS_PER_REV):
     print("Move one step: {}".format(x))
 
 # Stop motor - power is NOT going to the motor
-io.output(ENA, 0)
+io.output(ENA, 1)
 
 # Clear GPIO settings
 io.cleanup()
