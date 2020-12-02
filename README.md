@@ -22,6 +22,12 @@ To detect the foosball and the players, we convert every frame into the [HSV col
 
 This information is fed into the AI portion of the script, which is responsible for strategy and determining how to respond based on the current conditions of the game. At a high level, the "order" of response on each frame is (i) defense (ii) offense (iii) hold. A detailed version of this strategy can be found [here](media/strategy.pdf).
 
-Once the response for each row of players (foosmen) is determined, the AI portion of the script translates this into movement needed from each motor to respond. These commands are sent to the motors responsible for moving the players via the [GPIO pins](https://www.raspberrypi.org/documentation/usage/gpio/) (general purpose input/output) from the Raspberry Pi to a Stepper Motor Driver, which in turn controls each [stepper motor](https://en.wikipedia.org/wiki/Stepper_motor).
+Once the response for each row of players (foosmen) is determined, the AI portion of the script translates this into movement needed from each motor to respond. These commands are sent to the motors via [GPIO pins](https://www.raspberrypi.org/documentation/usage/gpio/) (general purpose input/output).
 
 ![GPIO Pinout](media/gpio-pinout.png)
+
+Commands are sent from the GPIO pins to a TB6600 stepper motor driver, which in turn controls movement for the motors. The motors are connected to the foosball rods via a shaft coupler and a custom designed adapter which was 3D printed.
+
+![Foosball Adapter](media/foosball-adapter.png)
+
+After 11 months of hard work, I am proud to report that the automated foosball table ran and successfully defeated a human opponent by a score of 4-0.
