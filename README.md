@@ -30,4 +30,4 @@ Commands are sent from the GPIO pins to a TB6600 stepper motor driver, which in 
 
 ![Foosball Adapter](media/foosball-adapter.png)
 
-After 11 months of hard work, I am proud to report that the automated foosball table ran and successfully defeated a human opponent by a score of 4-0.
+After 11 months of hard work, I am proud to report that as of December 1, 2020, the automated foosball table ran and successfully defeated a human opponent by a score of 4-0.
