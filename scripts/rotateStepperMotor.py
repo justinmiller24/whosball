@@ -75,7 +75,7 @@ for pin in [17, 27, 22]:
         print("GPIO pin {} is LOW".format(pin))
 
 # Main Loop
-print("Rotate 360 degrees = {} steps".format(STETPS_PER_REV))
+print("Rotate 360 degrees = {} steps".format(STEPS_PER_REV))
 for x in range(STEPS_PER_REV):
     io.output(STP, 1)
     time.sleep(DELAY)
