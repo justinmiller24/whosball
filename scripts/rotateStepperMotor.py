@@ -8,7 +8,7 @@
 # https://learn.adafruit.com/adafruit-dc-and-stepper-motor-hat-for-raspberry-pi/powering-motors
 
 # USAGE:
-# python3 runMotors.py
+# python3 rotateStepperMotor.py
 
 # The TB6600 is a high voltage 2 phase stepper motor driver with current control.
 # The driver microsteps up to 32 steps, outputs 3.5A to motors, and takes up to 42V of VCC.
@@ -46,7 +46,7 @@ import time
 
 # Global variables
 STEPS_PER_REV = 200     # The number of steps needed for one full revolution
-DELAY = .005            # Delay time, in seconds
+DELAY = .0022           # Delay time, in seconds
 
 # GPIO pins
 STP = 17                # Step
@@ -75,12 +75,12 @@ for pin in [17, 27, 22]:
         print("GPIO pin {} is LOW".format(pin))
 
 # Main Loop
+print("Rotate 360 degrees = {} steps".format(STETPS_PER_REV))
 for x in range(STEPS_PER_REV):
     io.output(STP, 1)
     time.sleep(DELAY)
     io.output(STP, 0)
     time.sleep(DELAY)
-    print("Move one step: {}".format(x))
 
 # Stop motor - power is NOT going to the motor
 io.output(ENA, 1)
