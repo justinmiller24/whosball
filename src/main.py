@@ -183,7 +183,7 @@ while fb.gameIsActive:
 	# Current position of foosball
 	currentPosition = fb.ballPositions[-1:][0]
 
-    # Loop through active rows to determine if foosball is within reach
+	# Loop through active rows to determine if foosball is within reach
 	for row in players:
 		if row is not None:
 
