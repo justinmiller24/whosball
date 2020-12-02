@@ -80,15 +80,12 @@ class Foosball:
             # Each additional rod is located an additional "rodSpacing" (79.09px) apart
             #'rowPosition': [43.19, 122.28, 201.37, 280.46, 359.55, 438.64, 517.73, 596.82],
             'rowPosition': [29, 114, 197, 280, 360, 443, 526, 611],
-            #'foosmenBLUE': np.array([43.19, 122.28, 280.46, 438.64], dtype="float32"),
-            'foosmenBLUE': np.array([29, 114, 280, 443], dtype="float32"),
-            #'foosmenRED': np.array([201.37, 359.55, 517.73, 596.82], dtype="float32"),
-            'foosmenRED': np.array([197, 360, 526, 611], dtype="float32"),
+            'foosmenBLUE': [0, 1, 3, 5],
+            'foosmenRED': [2, 4, 6, 7],
 
             # The foosmen are centered on each rod, but each rod (row) has a different number of men
             # There are 13 total foosmen, each with a unique ID from left to right and top to bottom
             # Each foosmen kicks the ball with feet that measure 1" in width
-            'foosmenWidth': 14,                     # Foosmen width (rounded up, in pixels)
             'foosmenHeight': 42,                    # Foosmen height (how far they "span" in either direction)
 
             # RED players
@@ -103,40 +100,8 @@ class Foosball:
             'foosmenBlueHSVLower': (85, 0, 0),      # Foosmen lower bound (HSV)
             'foosmenBlueHSVUpper': (110, 255, 255), # Foosmen upper bound (HSV)
             'foosmenBlueContour': (255, 100, 100),  # Foosmen contour highlight color
-            'foosmenBlueBox': (255, 0, 0),          # Foosmen bounding box color
-
-            # The first row (goalie) has 3 men, spaced 7 1/8" apart, and 8 1/2" of linear movement
-            # The second row (defense) has 2 men, spaced 9 5/8" apart, and 13 3/8" of linear movement
-            # The third row (midfield) has 5 men, spaced 5" apart, and 4 1/4" of linear movement
-            # The fourth row (offense) has 3 men, spaced 7 1/8" apart, and 8 1/2" of linear movement
-            'row0': (97.54, 116.37),                # Spacing, linear movement (in pixels)
-            'row1': (131.77, 183.11),               # Spacing, linear movement (in pixels)
-            'row2': (68.45, 58.18),                 # Spacing, linear movement (in pixels)
-            'row3': (97.54, 116.37),                # Spacing, linear movement (in pixels)
-
-            # Calculate the lower and upper bounds for each foosmen
-            'foosmen': np.array([
-                # Goalie
-                (17, 148),                          # Min/max coordinates (in pixels)
-                (115, 246),                         # Min/max coordinates (in pixels)
-                (212, 343),                         # Min/max coordinates (in pixels)
-                # Defense
-                (17, 211),                          # Min/max coordinates (in pixels)
-                (149, 343),                         # Min/max coordinates (in pixels)
-                # Midfield
-                (17, 69),                           # Min/max coordinates (in pixels)
-                (85, 137),                          # Min/max coordinates (in pixels)
-                (154, 206),                         # Min/max coordinates (in pixels)
-                (222, 274),                         # Min/max coordinates (in pixels)
-                (291, 343),                         # Min/max coordinates (in pixels)
-                # Offense
-                (17, 148),                          # Min/max coordinates (in pixels)
-                (115, 246),                         # Min/max coordinates (in pixels)
-                (212, 343),                         # Min/max coordinates (in pixels)
-            ])
+            'foosmenBlueBox': (255, 0, 0)           # Foosmen bounding box color
         }
-        if self.debug:
-            self.log(str(self.vars))
 
         # Variable to determine if a game is currently in progress or not
         # This can be toggled at any time to STOP or PAUSE play
@@ -175,7 +140,7 @@ class Foosball:
         self.lostBallFrames = 0
         self.foosballPosition = None
         self.projectedPosition = None
-        self.projectedWallPosition = None
+        #self.projectedWallPosition = None
 
         # Initialize score to 0-0
         self.score = [0, 0]
@@ -222,7 +187,7 @@ class Foosball:
             self.deltaY = 0
 
         # Calculate which wall the ball will hit next, assuming it continues uninterrupted
-        self._getIntersectingWallPosition()
+        #self._getIntersectingWallPosition()
 
         # Calculate projected next coordinate
         self.projectedPosition = (self.ballPositions[-1:][0][0] + self.deltaX, self.ballPositions[-1:][0][1] + self.deltaY)
@@ -276,7 +241,7 @@ class Foosball:
             "Score": self.score,
             "Current": ("{}".format(self.foosballPosition)) if self.foosballPosition is not None else "-",
             "Projected": ("{}".format(self.projectedPosition)) if self.projectedPosition is not None else "-",
-            "Wall": ("{}".format(self.projectedWallPosition)) if self.projectedWallPosition is not None else "-",
+            #"Wall": ("{}".format(self.projectedWallPosition)) if self.projectedWallPosition is not None else "-",
         }
         for key in metrics:
             vPos += 18
@@ -309,13 +274,6 @@ class Foosball:
         # An actual goal can only happen once
         if self.lostBallFrames > 1:
             return False
-
-        # An actual goal likely requires some kind of projected position
-        #lastProjectedX = self.getProjectedX()
-        #if lastProjectedX is None:
-            #if self.debug:
-                #self.log("[DEBUG] Projected Position is None, it is unlikely a goal was scored")
-            #return False
 
         # Make sure Y-coordinate is between the upper/lower bounds of goal
         lastProjectedY = self.projectedPosition[1]
@@ -411,9 +369,9 @@ class Foosball:
             #cv2.circle(self.outputImg, self.foosballPosition, 5, (0, 0, 255), -1)
 
             # Draw projected coordinates between current position and wall
-            if self.projectedWallPosition is not None:
-                cv2.line(self.outputImg, self.foosballPosition, self.projectedWallPosition, (255,0,0), 5)
-                self.log("[INFO] Intersecting wall coordinates: {}".format(self.projectedWallPosition))
+            #if self.projectedWallPosition is not None:
+                #cv2.line(self.outputImg, self.foosballPosition, self.projectedWallPosition, (255,0,0), 5)
+                #self.log("[INFO] Intersecting wall coordinates: {}".format(self.projectedWallPosition))
 
             # Update list of tracked points
             #self._updateTrackedPoints()
@@ -515,10 +473,10 @@ class Foosball:
             return
 
         # Draw line over each roosmen rod
-        for i, xPos in enumerate(foosmenRodArray):
+        #for i, xPos in enumerate(foosmenRodArray):
+        for row in foosmenRodArray:
+            xPos = self.vars["foosmenRodArray"][row]
             self.outputImg = cv2.line(self.outputImg, (xPos, 0), (xPos, self.vars["height"] - 1), (0, 255, 0), 2)
-        if self.debug:
-            self.log("[DEBUG] Add line(s) over {} foosmen rods at xPos {}".format(mode, foosmenRodArray))
 
         # Detect foosmen using contours
         players = self._getContours(mask)
@@ -540,13 +498,15 @@ class Foosball:
                 continue
 
             # Filter contours with abnormal width (smaller than acceptable width)
-            if h < (self.vars["foosmenWidth"] - 5):
+            if (h < 10):
                 continue
 
             # Normalize xPos based on foosball rod. We do this by looping through
             # each of the 4 foosmen rods and determining if this contour falls
             # within an acceptable range of one of them.
-            for row, xPos in enumerate(foosmenRodArray):
+            #for row, xPos in enumerate(foosmenRodArray):
+            for row in foosmenRodArray:
+                xPos = self.vars["foosmenRodArray"][row]
 
                 # Ensure boundaries are within acceptable margins on either side of foosmen rod
                 #if ((x < xPos) & (xPos < (x + w))):
@@ -708,50 +668,6 @@ class Foosball:
         return self.frame
 
 
-    # Determine which foosmen row is closest to the foosball
-    # Rows 0, 1, 3, and 5 are controlled by the automated player
-    def getClosestRow(self, xPos):
-        if self.debug:
-            self.log("[DEBUG] Get Closest Row begin")
-
-        # Loop through all rows to determine which is closest to xPos
-        closestRow = -1
-        min = self.vars["width"]
-
-        # Loop through foosball rows and determine which is closest to X-coordinate of the foosball's current position
-        for row in range(len(self.vars["rowPosition"])):
-            if abs(self.vars["rowPosition"][row] - xPos) < min:
-                min = abs(self.vars["rowPosition"][row] - xPos)
-                closestRow = row
-
-        if self.debug:
-            self.log("[DEBUG] Get Closest Row end")
-
-        return closestRow
-
-
-    # Determine which foosmen row is closest to the foosball
-    # Rows 0, 1, 3, and 5 are controlled by the automated player
-    def getControllingRow(self):
-        if self.debug:
-            self.log("[DEBUG] Get Controlling Row begin")
-
-        # Loop through all rows to determine which is closest to current xPos
-        xPos = self.ballPositions[-1:][0][0]
-        self.controllingRow = -1
-
-        # Loop through rows to determine if ball is within boundaries of any row
-        for row in range(len(self.vars["rowPosition"])):
-            if abs(self.vars["rowPosition"][row] - xPos) < self.vars["foosmenHeight"]:
-                self.controllingRow = row
-                break
-
-        if self.debug:
-            self.log("[DEBUG] Get Controlling Row end")
-
-        return self.controllingRow
-
-
     # Get contours
     def _getContours(self, mask):
 
@@ -761,93 +677,83 @@ class Foosball:
         return contours
 
 
-    # Determine intersecting y-coordinate based on x-coordinate
-    def getIntersectingYPos(self, xPos):
-
-        # Calculate latest two coordinates for interpolation
-        x2 = self.ballPositions[-1:][0][0]
-        y2 = self.ballPositions[-1:][0][1]
-        x1 = x2 - self.deltaX
-        y1 = y2 - self.deltaY
-
-        yPos = self._interpolate(xPos, x2, y2, x1, y1)
-
-        # Intersecting yPos is out of bounds
-        while yPos < 0 or yPos > self.vars["height"]:
-            if yPos > self.vars["height"]:
-                yPos -= 2 * self.vars["height"]
-            yPos = abs(yPos)
-
-        return int(yPos)
-
-
-    # Determine which WALL the foosball will hit next
-    # We use linear interpolation, along with the latest coordinates, to calculate this
-    def _getIntersectingWallPosition(self):
-
-        # Calculate latest two coordinates for interpolation
-        x2 = self.ballPositions[-1:][0][0]
-        y2 = self.ballPositions[-1:][0][1]
-        x1 = x2 - self.deltaX
-        y1 = y2 - self.deltaY
-
-        # The ball is heading towards our goal (LEFT)
-        if self.deltaX < 0:
-            wallX = 0
-            wallY = self._interpolate(wallX, x2, y2, x1, y1)
-            if wallY >= 0 and wallY <= self.vars["height"]:
-                self.projectedWallPosition = (wallX, int(wallY))
-                if self.debug:
-                    self.log("[DEBUG] Projected wall intersection is LEFT wall at coordinates: {}".format(self.projectedWallPosition))
-
-        # The ball is heading towards our opponent's goal (RIGHT)
-        elif self.deltaX > 0:
-            wallX = self.vars["width"]
-            wallY = self._interpolate(wallX, x2, y2, x1, y1)
-            if wallY >= 0 and wallY <= self.vars["height"]:
-                self.projectedWallPosition = (wallX, int(wallY))
-                if self.debug:
-                    self.log("[DEBUG] Projected wall intersection is RIGHT wall at coordinates: {}".format(self.projectedWallPosition))
-
-        # The ball is heading towards our side (DOWN)
-        elif self.deltaY < 0:
-            wallY = 0
-            wallX = self._interpolate(wallY, y2, x2, y1, x1)
-            if wallX >= 0 and wallX <= self.vars["width"]:
-                self.projectedWallPosition = (int(wallX), wallY)
-                if self.debug:
-                    self.log("[DEBUG] Projected wall intersection is BOTTOM wall at coordinates: {}".format(self.projectedWallPosition))
-
-        # The ball is heading towards our opponent's side (UP)
-        elif self.deltaY > 0:
-            wallY = self.vars["height"]
-            wallX = self._interpolate(wallY, y2, x2, y1, x1)
-            if wallX >= 0 and wallX <= self.vars["width"]:
-                self.projectedWallPosition = (int(wallX), wallY)
-                if self.debug:
-                    self.log("[DEBUG] Projected wall intersection is TOP wall at coordinates: {}".format(self.projectedWallPosition))
-
-        # The ball is not moving
-        else:
-            self.projectedWallPosition = None
-            if self.debug:
-                self.log("[DEBUG] No projected wall intersection, the ball is not currently moving")
-
-
-    # Get projected X coordinate of ball, if it exists
-    def getProjectedX(self):
-        if self.projectedPosition is None:
-            self.projectedX = None
-        else:
-            self.projectedX = self.projectedPosition[0]
-
-        return self.projectedX
-
-
-    # We use linear interpolation between two points (x1, y1) and (x2, y2)
-    # to determine the future intersection point (xi, yi) for a fixed xi
-    def _interpolate(self, xi, x2, y2, x1, y1):
-        return (xi - x1) * (y2 - y1) / (x2 - x1) + y1
+    # # Determine intersecting y-coordinate based on x-coordinate
+    # def getIntersectingYPos(self, xPos):
+    #
+    #     # Calculate latest two coordinates for interpolation
+    #     x2 = self.ballPositions[-1:][0][0]
+    #     y2 = self.ballPositions[-1:][0][1]
+    #     x1 = x2 - self.deltaX
+    #     y1 = y2 - self.deltaY
+    #
+    #     yPos = self._interpolate(xPos, x2, y2, x1, y1)
+    #
+    #     # Intersecting yPos is out of bounds
+    #     while yPos < 0 or yPos > self.vars["height"]:
+    #         if yPos > self.vars["height"]:
+    #             yPos -= 2 * self.vars["height"]
+    #         yPos = abs(yPos)
+    #
+    #     return int(yPos)
+    #
+    #
+    # # Determine which WALL the foosball will hit next
+    # # We use linear interpolation, along with the latest coordinates, to calculate this
+    # def _getIntersectingWallPosition(self):
+    #
+    #     # Calculate latest two coordinates for interpolation
+    #     x2 = self.ballPositions[-1:][0][0]
+    #     y2 = self.ballPositions[-1:][0][1]
+    #     x1 = x2 - self.deltaX
+    #     y1 = y2 - self.deltaY
+    #
+    #     # The ball is heading towards our goal (LEFT)
+    #     if self.deltaX < 0:
+    #         wallX = 0
+    #         wallY = self._interpolate(wallX, x2, y2, x1, y1)
+    #         if wallY >= 0 and wallY <= self.vars["height"]:
+    #             self.projectedWallPosition = (wallX, int(wallY))
+    #             if self.debug:
+    #                 self.log("[DEBUG] Projected wall intersection is LEFT wall at coordinates: {}".format(self.projectedWallPosition))
+    #
+    #     # The ball is heading towards our opponent's goal (RIGHT)
+    #     elif self.deltaX > 0:
+    #         wallX = self.vars["width"]
+    #         wallY = self._interpolate(wallX, x2, y2, x1, y1)
+    #         if wallY >= 0 and wallY <= self.vars["height"]:
+    #             self.projectedWallPosition = (wallX, int(wallY))
+    #             if self.debug:
+    #                 self.log("[DEBUG] Projected wall intersection is RIGHT wall at coordinates: {}".format(self.projectedWallPosition))
+    #
+    #     # The ball is heading towards our side (DOWN)
+    #     elif self.deltaY < 0:
+    #         wallY = 0
+    #         wallX = self._interpolate(wallY, y2, x2, y1, x1)
+    #         if wallX >= 0 and wallX <= self.vars["width"]:
+    #             self.projectedWallPosition = (int(wallX), wallY)
+    #             if self.debug:
+    #                 self.log("[DEBUG] Projected wall intersection is BOTTOM wall at coordinates: {}".format(self.projectedWallPosition))
+    #
+    #     # The ball is heading towards our opponent's side (UP)
+    #     elif self.deltaY > 0:
+    #         wallY = self.vars["height"]
+    #         wallX = self._interpolate(wallY, y2, x2, y1, x1)
+    #         if wallX >= 0 and wallX <= self.vars["width"]:
+    #             self.projectedWallPosition = (int(wallX), wallY)
+    #             if self.debug:
+    #                 self.log("[DEBUG] Projected wall intersection is TOP wall at coordinates: {}".format(self.projectedWallPosition))
+    #
+    #     # The ball is not moving
+    #     else:
+    #         self.projectedWallPosition = None
+    #         if self.debug:
+    #             self.log("[DEBUG] No projected wall intersection, the ball is not currently moving")
+    #
+    #
+    # # We use linear interpolation between two points (x1, y1) and (x2, y2)
+    # # to determine the future intersection point (xi, yi) for a fixed xi
+    # def _interpolate(self, xi, x2, y2, x1, y1):
+    #     return (xi - x1) * (y2 - y1) / (x2 - x1) + y1
 
 
     # Print output message to console
@@ -875,19 +781,19 @@ class Foosball:
             self.log("[DEBUG] Read frame end")
 
 
-    # Show trailing list of tracked points
-    #def _updateTrackedPoints(self):
-
-        # Add latest point to list of tracked points
-        #self.pts.appendleft(self.foosballPosition)
-
-        # loop over the set of tracked points
-        #for i in range(1, len(self.pts)):
-
-        	# if either of the tracked points are None, ignore them
-        	#if self.pts[i - 1] is None or self.pts[i] is None:
-        		#continue
-
-        	# otherwise, compute the thickness of the line and draw the connecting lines
-        	#thickness = int(np.sqrt(30 / float(i + 1)) * 2.5)
-        	#cv2.line(self., self.pts[i - 1], self.pts[i], (0, 0, 255), thickness)
+    # # Show trailing list of tracked points
+    # def _updateTrackedPoints(self):
+    #
+    #     # Add latest point to list of tracked points
+    #     self.pts.appendleft(self.foosballPosition)
+    #
+    #     # loop over the set of tracked points
+    #     for i in range(1, len(self.pts)):
+    #
+    #     	# if either of the tracked points are None, ignore them
+    #     	if self.pts[i - 1] is None or self.pts[i] is None:
+    #     		continue
+    #
+    #     	# otherwise, compute the thickness of the line and draw the connecting lines
+    #     	thickness = int(np.sqrt(30 / float(i + 1)) * 2.5)
+    #     	cv2.line(self., self.pts[i - 1], self.pts[i], (0, 0, 255), thickness)
