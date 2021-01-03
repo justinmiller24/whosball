@@ -162,7 +162,7 @@ class Foosmen:
         if (self.position < pos):
             io.output(self.linearDIR, 1)
         # Need to move backward
-        else
+        else:
             io.output(self.linearDIR, 0)
 
         # Calculate number of steps needed and move
