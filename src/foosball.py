@@ -475,7 +475,7 @@ class Foosball:
         # Draw line over each roosmen rod
         #for i, xPos in enumerate(foosmenRodArray):
         for row in foosmenRodArray:
-            xPos = self.vars["foosmenRodArray"][row]
+            xPos = self.vars["rowPosition"][row]
             self.outputImg = cv2.line(self.outputImg, (xPos, 0), (xPos, self.vars["height"] - 1), (0, 255, 0), 2)
 
         # Detect foosmen using contours
@@ -506,7 +506,7 @@ class Foosball:
             # within an acceptable range of one of them.
             #for row, xPos in enumerate(foosmenRodArray):
             for row in foosmenRodArray:
-                xPos = self.vars["foosmenRodArray"][row]
+                xPos = self.vars["rowPosition"][row]
 
                 # Ensure boundaries are within acceptable margins on either side of foosmen rod
                 #if ((x < xPos) & (xPos < (x + w))):
